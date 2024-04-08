@@ -18,7 +18,7 @@ const TabButton: FC<TabButtonProps> = ({Icon, name, currentRoute,focused, ...pro
     return (
         <View style={{
             flex: 1,
-            borderTopWidth: 2,
+            borderTopWidth: focused? 2 : 0,
             height: "100%",
             justifyContent: "center",
             alignItems: "center",

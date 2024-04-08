@@ -4,6 +4,7 @@ import OnboardingStack from "../onboarding/onboarding-stack.tsx";
 import {View} from "react-native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import HomeStack from "../home-entry/home-stack.tsx";
+import themeColors from "../../theme/colors.ts";
 
 
 const Stack = createNativeStackNavigator();
@@ -11,7 +12,7 @@ const Stack = createNativeStackNavigator();
 
 export default function Root() {
     return (
-        <View style={{flex: 1,}}>
+        <View style={{flex: 1, backgroundColor: themeColors.black}}>
             <NavigationContainer>
 
                 <Stack.Navigator
