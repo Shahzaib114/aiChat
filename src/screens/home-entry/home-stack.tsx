@@ -6,6 +6,7 @@ import Home from "./home/home.tsx";
 import BottomNavigationTab from "../../components/bottom-navigation-tab/bottom-navigation-tab.tsx";
 import HomeHeader from "./home/components/home-header.tsx";
 import themeColors from "../../theme/colors.ts";
+import Subscription from "../payments/subscription.tsx";
 
 
 const Tab = createBottomTabNavigator();
@@ -45,7 +46,7 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                         }}
                         component={Home}/>
             <Tab.Screen name="history" component={Home}/>
-            <Tab.Screen name="plans" component={Home}/>
+            <Tab.Screen name="plans" component={Subscription}/>
             <Tab.Screen name="settings" component={Home}/>
 
         </Tab.Navigator>

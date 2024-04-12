@@ -12,8 +12,7 @@ const themeColors = {
     white: '#ffffff',
     background: '#f8f9fa',
     transparent: 'transparent',
-
-
+    blue:'#4F8BFF',
 }
 
 export default themeColors;
