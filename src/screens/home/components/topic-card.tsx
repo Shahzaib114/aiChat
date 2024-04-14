@@ -1,20 +1,20 @@
 import React, {FC} from "react";
-import {FlatList, Image, StyleSheet, Text, View} from "react-native";
+import {Dimensions, FlatList, Image, StyleSheet, Text, View} from "react-native";
 import {prompt, TransFormedCategory} from "../variables/types.ts";
-import {IDefaultProps} from "../../../../utils/types.ts";
-import themeColors from "../../../../theme/colors.ts";
+import {IDefaultProps} from "../../../utils/types.ts";
+import themeColors from "../../../theme/colors.ts";
 
 interface TopicCardProps extends IDefaultProps, prompt {
 
 }
 
 const TopicCard: FC<TopicCardProps> = ({...props}) => {
-
+    const size = Dimensions.get('window').width * 0.4;
     return (
         <View style={{
             backgroundColor: props.backgroundColor,
-            width: 165,
-            height: 166,
+            width: size,
+            height: Dimensions.get('window').width * 0.4,
             gap: 10,
             borderRadius: 25,
             paddingHorizontal: 10,
@@ -31,7 +31,7 @@ const TopicCard: FC<TopicCardProps> = ({...props}) => {
                 style={{
                     width: 40,
                     height: 40,
-                    objectFit: "cover"
+                    objectFit: "contain"
                 }}
             />
 
@@ -57,12 +57,19 @@ const TopicCardLayout: FC<TopicCardLayoutProps> = ({...props}) => {
                                           renderItem={({item, index}) =>
                                               <TopicCard
                                                   style={{
-                                                      marginHorizontal: 10
+                                                      marginHorizontal: index % 2 === 0 ? 0 : 20,
+                                                      width: props?.data.length % 2 !== 0 && index === props.data.length - 1 ? "100%" : Dimensions.get('window').width * 0.4
+
                                                   }}
 
                                                   {...item} key={index}/>
                                           }
-                                          style={{}}
+                                          columnWrapperStyle={{
+                                              justifyContent: "center",
+                                              alignItems: "center",
+
+                                          }}
+
                                           ItemSeparatorComponent={() => <View style={{
                                               height: 20,
                                           }}/>}
@@ -89,7 +96,7 @@ const TopicCardLayout: FC<TopicCardLayoutProps> = ({...props}) => {
 const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     container: {
         gap: 5,
-        paddingHorizontal: 20
+        paddingHorizontal: 10
     },
     text: {
         fontSize: 20,

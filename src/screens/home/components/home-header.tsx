@@ -1,9 +1,9 @@
 import React, {FC} from "react";
 import {StatusBar, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../../utils/types.ts";
-import themeColors from "../../../../theme/colors.ts";
-import hand from "../../../../../assets/svgs/hand.js";
-import SvgImport from "../../../../utils/import-svg.tsx";
+import {IDefaultProps} from "../../../utils/types.ts";
+import themeColors from "../../../theme/colors.ts";
+import hand from "../../../../assets/svgs/hand.js";
+import SvgImport from "../../../utils/import-svg.tsx";
 
 interface HomeHeaderProps extends IDefaultProps {
 

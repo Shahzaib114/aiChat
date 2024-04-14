@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import {Pressable, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../../utils/types.ts";
-import themeColors from "../../../../theme/colors.ts";
+import {IDefaultProps} from "../../../utils/types.ts";
+import themeColors from "../../../theme/colors.ts";
 
 export interface tabProps {
     text: string,
