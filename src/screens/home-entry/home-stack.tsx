@@ -2,11 +2,14 @@ import React, {FC} from "react";
 import {StyleSheet, Text, View} from "react-native";
 import {IDefaultProps} from "../../utils/types.ts";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import Home from "./home/home.tsx";
 import BottomNavigationTab from "../../components/bottom-navigation-tab/bottom-navigation-tab.tsx";
-import HomeHeader from "./home/components/home-header.tsx";
 import themeColors from "../../theme/colors.ts";
 import Subscription from "../payments/subscription.tsx";
+import HomeHeader from "../home/components/home-header.tsx";
+import Home from "../home/home.tsx";
+import InBox from "../history/inbox/inbox.tsx";
+import InBoxHeader from "../history/inbox/components/inbox-header.tsx";
+import HistoryScreen from "../history/history.tsx";
 
 
 const Tab = createBottomTabNavigator();
@@ -35,6 +38,7 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
                     }}/>,
+                    tabBarHideOnKeyboard: true,
                 }
             }}
             initialRouteName={'home'}
@@ -45,7 +49,10 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                             header: () => <HomeHeader/>
                         }}
                         component={Home}/>
-            <Tab.Screen name="history" component={Home}/>
+            <Tab.Screen name="history"
+
+                        component={HistoryScreen}/>
+
             <Tab.Screen name="plans" component={Subscription}/>
             <Tab.Screen name="settings" component={Home}/>
 

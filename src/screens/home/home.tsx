@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import {FlatList, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../utils/types.ts";
-import themeColors from "../../../theme/colors.ts";
+import {IDefaultProps} from "../../utils/types.ts";
+import themeColors from "../../theme/colors.ts";
 import homeScreenDummyData from "./variables/home-screen-dummy-data.ts";
 import {category, promptObject, TransFormedCategory} from "./variables/types.ts";
 import TabComponent, {tabProps} from "./components/tab-button.tsx";
@@ -77,6 +77,9 @@ const Home: FC<HomeProps> = ({...props}) => {
                       renderItem={({item}) => <GetCategoryComponent
                           {...item}
                       />}
+                      contentContainerStyle={{
+                          paddingBottom:20
+                      }}
                       ItemSeparatorComponent={() => <View style={{height: 20}}/>}
 
                       keyExtractor={(item) => item.title}
@@ -90,7 +93,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     container: {
         backgroundColor: themeColors.black,
         flex: 1,
-        gap: 10
+        gap: 10,
+
     }
 })
 

@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import {StyleSheet, Text, View} from "react-native";
 import {TransFormedCategory} from "../variables/types.ts";
-import themeColors from "../../../../theme/colors.ts";
+import themeColors from "../../../theme/colors.ts";
 
 
 interface QuestionLayoutProps extends TransFormedCategory {
