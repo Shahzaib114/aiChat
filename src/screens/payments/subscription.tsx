@@ -16,9 +16,8 @@ import CanelSvg from "../../../assets/svgs/Cancel.js";
 import Review from "../../components/ReviewCard/Review.tsx";
 import themeColors from "../../theme/colors.ts";
 import FONTS from "../../theme/FONTS.tsx";
-import ChatSvg from "../../../assets/svgs/ChatSvg.js";
-import Vector from "../../../assets/svgs/vector.js";
 import backArrow from "../../../assets/svgs/backArrow.js";
+import ChatSvg from "../../../assets/svgs/ChatSvg.js";
 
 interface HomeProps extends IDefaultProps { }
 
@@ -26,20 +25,18 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const navigation: any = useNavigation()
     return (
         <ScrollView
-            contentContainerStyle={{ flexGrow: 1, width: responsiveScreenWidth(100), backgroundColor: 'grey', height: responsiveScreenHeight(209), }}
+            contentContainerStyle={styles.scrollViewStyle}
         >
             <ImageBackground
-                source={require('../../../assets/images/bgImg.png')}
-                style={{ width: responsiveScreenWidth(100), flexGrow: 1, position: 'absolute' }}
-                resizeMode="contain"
+                source={require('../../../assets/images/AIChat.png')}
+                style={styles.imageBackground}
+                resizeMode="cover"
             >
 
                 <SafeAreaView style={{ height: responsiveScreenHeight(128.9), }}>
                     <View style={styles.top}>
                         <TouchableOpacity style={styles.toptouchable}>
                             <SvgXml xml={backArrow} width="60%" height="60%" />
-
-                            {/* <Image source={require('../../../../assets/images/Vector.png')} style={styles.image} /> */}
                         </TouchableOpacity>
                         <Text style={styles.toptext}>
                             Subscription
@@ -158,7 +155,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     </View>
 
                     <View style={styles.buttonview}>
-                        <ButtonComponent text="Continue" onPress={() => navigation.navigate('CardDetails')} />
+                        <ButtonComponent text="Continue" onPress={() => navigation.navigate('Offer')} />
                         <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
                     </View>
                     <View style={{ margin: "5%" }}>
@@ -177,12 +174,19 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
 }
 
 const styles = StyleSheet.create({
+    scrollViewStyle: {
+        flexGrow: 1,
+        width: responsiveScreenWidth(100),
+        backgroundColor: 'grey',
+        height: responsiveScreenHeight(209)
+    },
     container: {
         backgroundColor: 'red',
         overflow: 'hidden'
     },
     imageBackground: {
-        flex: 1,
+        width: responsiveScreenWidth(100),
+        flexGrow: 1,
     },
     top: {
         flexDirection: "row",

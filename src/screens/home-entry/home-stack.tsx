@@ -1,7 +1,7 @@
-import React, {FC} from "react";
-import {StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../utils/types.ts";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import React, { FC } from "react";
+import { StyleSheet, View } from "react-native";
+import { IDefaultProps } from "../../utils/types.ts";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "./home/home.tsx";
 import BottomNavigationTab from "../../components/bottom-navigation-tab/bottom-navigation-tab.tsx";
 import HomeHeader from "./home/components/home-header.tsx";
@@ -48,6 +48,7 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
             <Tab.Screen name="history" component={Home}/>
             <Tab.Screen name="plans" component={Subscription}/>
             <Tab.Screen name="settings" component={Home}/>
+
 
         </Tab.Navigator>
     )

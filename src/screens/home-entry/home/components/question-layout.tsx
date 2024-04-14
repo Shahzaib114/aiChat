@@ -16,15 +16,9 @@ const QuestionLayout: FC<QuestionLayoutProps> = ({...props}) => {
             {
                 props.data.map((item, index) => {
                     return <Text
-                        style={{
-                            color: "white",
-                            borderRadius:10,
-                            paddingHorizontal: 15,
-                            fontSize:16,
-                            marginTop: 10,
-                            paddingVertical: 15,
-                            backgroundColor: themeColors.blackLight,
-                        }}
+                        style={
+                           styles.text2
+                        }
                         key={index}>{index+1}. {item}</Text>
                 })
             }
@@ -43,6 +37,15 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
         fontWeight: "700",
         color: "white",
         textTransform: "capitalize"
+    },
+    text2:{
+        color: "white",
+        borderRadius:10,
+        paddingHorizontal: 15,
+        fontSize:16,
+        marginTop: 10,
+        paddingVertical: 15,
+        backgroundColor: themeColors.blackLight,
     }
 })
 
