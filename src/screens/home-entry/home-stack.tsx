@@ -27,7 +27,7 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                     headerShown: false,
                     tabBarIcon: ({focused, color, size}) => BottomNavigationTab({route, focused, color, size}),
                     tabBarShowLabel: false,
-                    tabBarStyle: {
+                    tabBarStyle : {
                         height: 60,
                         backgroundColor: themeColors.black,
                         borderTopWidth: 0,
