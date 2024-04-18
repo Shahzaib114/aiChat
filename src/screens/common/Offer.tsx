@@ -1,10 +1,14 @@
 import {
-  ImageBackground, SafeAreaView, StyleSheet,
+  ImageBackground,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
   Text,
   View,
   ScrollView
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import OfferTop from "../../../assets/svgs/offerTop";
@@ -17,36 +21,10 @@ import themeColors from "../../theme/colors";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import { TouchableOpacity } from "react-native";
 import Point from "../../components/point/Point";
-import Purchases from 'react-native-purchases';
 
 const Offer = () => {
-  const [discountedProduct, setDiscountedProduct] = useState<any>()
 
-  useEffect(() => {
-    getInAppProducts()
-  }, [])
-  const handlePurchase = async (selectedProduct: any) => {
-    try {
-      const purchasing = await Purchases.purchasePackage(selectedProduct);
-      console.log('purchased', purchasing)
-    } catch (e) {
-      console.log('go error in offering', e)
-    }
-  };
-
-  const getInAppProducts = async () => {
-    try {
-      const offerings = await Purchases.getOfferings();
-      if (offerings.all !== null) {
-        // Display packages for sale
-        console.log('Discounted Offer', JSON.stringify(offerings.all?.Discounted))
-        setDiscountedProduct(offerings.all?.Discounted?.availablePackages[0])
-      }
-    } catch (e) {
-      console.log('go error in offering', e)
-    }
-  }
-
+  
   return (
     <ImageBackground
       source={require("../../../assets/images/bg.png")}
@@ -116,7 +94,7 @@ const Offer = () => {
                     styles.view6text3
                   }
                 >
-                  {discountedProduct?.product?.description}
+                  $17.50 per year
                 </Text>
                 <Text
                   style={
@@ -137,7 +115,7 @@ const Offer = () => {
 
               <TouchableOpacity
                 style={styles.btnStyle}
-                onPress={() => { handlePurchase(discountedProduct) }}
+                onPress={() => { }}
               >
                 <Text
                   style={styles.takeOfferTxt}
