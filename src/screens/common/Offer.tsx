@@ -23,106 +23,106 @@ import { TouchableOpacity } from "react-native";
 import Point from "../../components/point/Point";
 
 const Offer = () => {
+
+  
   return (
     <ImageBackground
       source={require("../../../assets/images/bg.png")}
-      style={{ flex: 1 }}
+      style={{ flex: 1, justifyContent: 'space-between' }}
       resizeMode="cover"
     >
       <SafeAreaView
         style={styles.safeareaview}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ flex: 1 }}>
-            <View
-              style={styles.view2}
-            >
-              <Entypo onPress={() => { }} name="cross" size={30} color="white" />
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
+          <View
+            style={styles.view2}
+          >
+            <Entypo onPress={() => { }} name="cross" size={30} color="white" />
+          </View>
+
+          <View style={styles.view3}>
+            <OfferTop text={`This is Just for`} off={"You!"} />
+            <OfferCenter heading={"Special Offer"} off={"-50%"} />
+            <View style={styles.view4}>
+              <Point
+                Icon={<AntDesign name="star" size={24} color="yellow" style={styles.iconStyle} />}
+                color={"white"}
+                text={"Unlimited chat messages"}
+              />
+              <Point
+                Icon={<Rocket style={styles.iconStyle} />}
+                color={"white"}
+                text={"Improved Answers AI"}
+              />
+              <Point
+                Icon={<PartyPopper size={14} style={styles.iconStyle} />}
+                color={"white"}
+                text={
+                  <Text>
+                    No <Text style={{ color: themeColors.red }}>ADS</Text> in the app
+                  </Text>
+                }
+              />
+              <Point
+                Icon={<RobotHead style={styles.iconStyle} />}
+                color={"white"}
+                text={
+                  <Text style={{ color: "white", fontFamily: FONTS.Manrope_Regular }}>
+                    Powered by{" "}
+                    <Text style={{ color: "lightgreen", fontFamily: FONTS.Manrope_Bold }}>ChatGPT 4</Text>
+                  </Text>
+                }
+              />
             </View>
 
-            <View style={styles.view3}>
-              <OfferTop text={`This is Just for`} off={"You!"} />
-              <OfferCenter heading={"Special Offer"} off={"-50%"} />
-              <View style={styles.view4}>
-                <Point
-                  Icon={<AntDesign name="star" size={24} color="yellow" style={styles.iconStyle} />}
-                  color={"white"}
-                  text={"Unlimited chat messages"}
-                />
-                <Point
-                  Icon={<Rocket style={styles.iconStyle} />}
-                  color={"white"}
-                  text={"Improved Answers AI"}
-                />
-                <Point
-                  Icon={<PartyPopper size={14} style={styles.iconStyle} />}
-                  color={"white"}
-                  text={
-                    <Text>
-                      No <Text style={{ color: themeColors.red }}>ADS</Text> in the app
-                    </Text>
-                  }
-                />
-                <Point
-                  Icon={<RobotHead style={styles.iconStyle} />}
-                  color={"white"}
-                  text={
-                    <Text style={{ color: "white", fontFamily: FONTS.Manrope_Regular }}>
-                      Powered by{" "}
-                      <Text style={{ color: "lightgreen", fontFamily: FONTS.Manrope_Bold }}>ChatGPT 4</Text>
-                    </Text>
-                  }
-                />
-              </View>
-
-              <View style={styles.view5}>
-                <View style={styles.view6} >
-                  <Text
-                    style={styles.view6text1}
-                  >
-                    Only{" "}
-                    <Text
-                      style={
-                        styles.view6text2
-                      }
-                    >
-                      $34.99
-                    </Text>
-                  </Text>
-                  <Text
-                    style={
-                      styles.view6text3
-                    }
-                  >
-                    $17.50 per year
-                  </Text>
-                  <Text
-                    style={
-                      styles.view6text4
-                    }
-                  >
-                    (Less than US$0.05 per day)
-                  </Text>
-                </View>
-
-                <View
-                  style={styles.view7}>
-                  <Text
-                    style={styles.view7text}>
-                    Automatically renewable. Cancel whenever you want.
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.btnStyle}
-                  onPress={() => { }}
+            <View style={styles.view5}>
+              <View style={styles.view6} >
+                <Text
+                  style={styles.view6text1}
                 >
+                  Only{" "}
                   <Text
-                    style={styles.takeOfferTxt}
+                    style={
+                      styles.view6text2
+                    }
                   >
-                    Take this Offer
+                    $34.99
                   </Text>
-                </TouchableOpacity>
+                </Text>
+                <Text
+                  style={
+                    styles.view6text3
+                  }
+                >
+                  $17.50 per year
+                </Text>
+                <Text
+                  style={
+                    styles.view6text4
+                  }
+                >
+                  (Less than US$0.05 per day)
+                </Text>
               </View>
+
+              <View
+                style={styles.view7}>
+                <Text
+                  style={styles.view7text}>
+                  Automatically renewable. Cancel whenever you want.
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.btnStyle}
+                onPress={() => { }}
+              >
+                <Text
+                  style={styles.takeOfferTxt}
+                >
+                  Take this Offer
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -152,11 +152,9 @@ const styles = StyleSheet.create({
     margin: responsiveFontSize(2)
   },
   safeareaview: {
-    flex: 1,
-    alignItems: "center",
-    marginTop: Platform.OS === "android" ? 10 : 0,
-    gap: 20,
-    marginHorizontal: 20,
+    flexGrow: 1,
+    width: '100%',
+    padding: 10,
   },
   view2: {
     width: "100%",
@@ -164,9 +162,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   view3: {
-    flex: 1,
     alignItems: "center",
-    gap: 10, width: "100%"
+    gap: 10,
+    width: "100%"
   },
   view4: {
     gap: 10,
