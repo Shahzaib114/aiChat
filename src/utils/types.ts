@@ -8,3 +8,10 @@ export interface IDefaultProps {
 
 }
 
+
+export  interface IMessage {
+    id: string;
+    text: string;
+    createdAt: Date;
+    user: string;
+}
