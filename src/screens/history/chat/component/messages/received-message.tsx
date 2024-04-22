@@ -29,6 +29,7 @@ const ReceivedMessage: FC<ReceivedMessageProps> = ({...props}) => {
         <View style={styles.container}>
             <View style={{
                 maxWidth: "70%",
+                paddingRight: 10,
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
                 gap: 5,

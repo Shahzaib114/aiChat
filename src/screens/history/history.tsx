@@ -28,10 +28,7 @@ const HistoryScreen: FC<HistoryScreenProps> = ({...props}) => {
         >
             <Stack.Screen
                 name={'inbox'}
-                options={{
-                    headerShown: true,
-                    header: () => <InBoxHeader/>
-                }}
+
                 component={InBox}/>
             <Stack.Screen
                 name={'chat'}

@@ -4,13 +4,14 @@ import {IDefaultProps} from "../../../../utils/types.ts";
 import themeColors from "../../../../theme/colors.ts";
 import SvgImport from "../../../../utils/import-svg.tsx";
 import LeftIcon from "../../../../components/icons/left.tsx";
+import {useNavigation} from "@react-navigation/native";
 
 interface InBoxHeaderProps extends IDefaultProps {
-
+    onClearChats?: () => void
 }
 
 const InBoxHeader: FC<InBoxHeaderProps> = ({...props}) => {
-
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <View style={{
@@ -19,13 +20,21 @@ const InBoxHeader: FC<InBoxHeaderProps> = ({...props}) => {
                 alignItems: 'center',
                 gap: 10,
             }}>
+                <Pressable
+                    onPress={() => {
+                        navigation.goBack()
+                    }}
+                >
 
-                <SvgImport svg={LeftIcon}/>
+                    <SvgImport svg={LeftIcon}/>
+                </Pressable>
                 <Text style={styles.text}>
                     Chats History
                 </Text>
 
-                <Pressable>
+                <Pressable
+                    onPress={props.onClearChats}
+                >
                     <Text style={{
                         color: themeColors.red,
                         fontSize: 18,

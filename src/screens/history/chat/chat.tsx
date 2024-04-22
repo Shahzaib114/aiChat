@@ -22,6 +22,8 @@ import {GPT3} from "../../../utils/gpt-models.ts";
 import {ITabsItem} from "../../../components/tabs/types.ts";
 import AvailableModels from "./variables/available-models.tsx";
 import TypingAnimation from "../../../components/typing-animation/typing-animation.tsx";
+import useSubscription from "../../../hooks/useSubscription.ts";
+import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
 
 
 interface ChatScreenProps extends IDefaultProps {
@@ -34,20 +36,22 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
     const user = session.user;
     // @ts-ignore
     const inboxRef = props?.route?.params?.inboxRef;
+    // @ts-ignore
+    const startGettingResponseParams = props?.route?.params?.startGettingResponse;
     const [chat, actions] = useChat(inboxRef);
     const flatListRef = useRef<FlatList>(null);
-    const [startGettingResponse, setStartGettingResponse] = React.useState(false);
+    const [startGettingResponse, setStartGettingResponse] = React.useState(!!startGettingResponseParams);
     const [gettingResponse, setGettingResponse] = React.useState(false);
     const [gptModel, setGptModel] = React.useState<ITabsItem>(AvailableModels[0]);
+    const [subscription, subActions] = useSubscription();
+    const buySubscriptionPopup = React.useRef<BuySubscriptionPopup>(null);
 
     function getResponse() {
         setGettingResponse(true)
-        gptCompletions(IMessageToGptMessages(chat.messages || []) || [], gptModel.value).then((response) => {
+        gptCompletions(IMessageToGptMessages(actions.getMessagesWithGreeting()), gptModel.value, chat.prompt).then((response) => {
             actions.addGptMessage(response)
         }).catch(err => {
-            console.log(err)
         }).finally(() => {
-
         })
     }
 
@@ -60,24 +64,38 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
         if (chat?.messages && chat?.messages?.length > 0) {
             if (chat.messages[chat.messages.length - 1].user === user && startGettingResponse && !gettingResponse) {
                 getResponse()
-            }else {
+            } else {
                 setGettingResponse(false)
             }
         }
 
+
     }, [chat.messages]);
 
+    useEffect(() => {
+        if (buySubscriptionPopup.current && !subActions.hasActiveSubscription()) {
+            buySubscriptionPopup.current.showDailyLimit()
+        }
+    }, [inboxRef]);
 
     return (
         <View style={styles.container}>
+            <BuySubscriptionPopup
+                ref={buySubscriptionPopup}
+            />
             <View style={{width: "100%"}}>
                 <ChatScreenHeader
                     title={chat?.prompt?.title || "Chat"}
                 />
-                <NotificationBar
-                    message={"25 daily Messages Remaining in free trial."}
-                    variant={"info"}
-                />
+                {
+                    !subActions.hasActiveSubscription() && <NotificationBar
+                        onClick={() => {
+                            buySubscriptionPopup.current?.showDailyLimit()
+                        }}
+                        message={"25 daily Messages Remaining in free trial."}
+                        variant={subActions.hasDailyQuota() ? "info" : "error"}
+                    />
+                }
                 <View style={{
                     width: "100%",
                     paddingVertical: 10,
@@ -106,7 +124,7 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                     paddingHorizontal: 10,
                     gap: 30,
                 }}
-                data={chat.messages || []}
+                data={actions.getMessagesWithGreeting()}
                 renderItem={({item, index}) => {
                     if (item.user === user) {
                         return (

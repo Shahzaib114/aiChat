@@ -8,6 +8,7 @@ import {SYSTEM_ROLE, USER_ROLE} from "../utils/roles.ts";
 interface IActions {
     sendMessage: (message: string) => void;
     addGptMessage: (message: string) => void;
+    getMessagesWithGreeting: () => IMessage[];
 }
 
 export default function useChat(inboxRef: string): [IChat, IActions] {
@@ -41,10 +42,28 @@ export default function useChat(inboxRef: string): [IChat, IActions] {
         addMessage(message, SYSTEM_ROLE, SYSTEM_ROLE);
     }
 
+    function getMessagesWithGreeting():IMessage[] {
+        let messages: IMessage[] = chat.messages || [];
+        let lastMessage = messages?.[0];
+        if (lastMessage?.role === SYSTEM_ROLE) {
+            return messages;
+        }
+        return [
+            {
+                id: Date.now().toString(),
+                text: "Hello, how can I help you?",
+                role: SYSTEM_ROLE,
+                createdAt: formateDateTo12HoursTime(new Date()),
+                user: SYSTEM_ROLE
+            },
+            ...messages
+        ]
+    }
 
     const actions: IActions = {
         sendMessage: sendMessage,
         addGptMessage: addGptMessage,
+        getMessagesWithGreeting: getMessagesWithGreeting
     }
 
     function snapShotToChat(snapshot: any) {
@@ -53,6 +72,8 @@ export default function useChat(inboxRef: string): [IChat, IActions] {
             setChat(data);
         }
     }
+
+
 
     useEffect(() => {
         // setChat({} as IChat)

@@ -39,7 +39,7 @@ const ChatInput: FC<ChatInputProps> = ({...props}) => {
             setType("voice")
             // props.onSend?.(message)
             // setMessage("")
-        }else {
+        } else {
             setType("default")
         }
 
@@ -58,13 +58,16 @@ const ChatInput: FC<ChatInputProps> = ({...props}) => {
                     flex: 1,
                     color: themeColors.white,
                     fontWeight: "400",
+                    paddingRight: InputHeight || 0,
+
                     fontSize: 13,
                     fontFamily: "Manrope",
                 }}
+
                 value={message}
                 onChangeText={(text) => setMessage(text)}
                 placeholder={"Ask me whatever you want..."}
-                placeholderTextColor={themeColors.white}
+                placeholderTextColor={themeColors.white+"80"}
                 {...props}
             />
 

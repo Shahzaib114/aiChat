@@ -30,3 +30,10 @@ export interface  IGptMessage {
     role: string;
     content: string;
 }
+
+export interface  ISubscription {
+    status: "active" | "inactive" | undefined;
+    startDate?: number;
+    subscriptionType?:any,
+
+}

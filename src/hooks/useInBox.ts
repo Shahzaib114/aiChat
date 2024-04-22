@@ -6,7 +6,13 @@ import {IChat} from "../utils/types.ts";
 import {formateDateTo12HoursTime} from "../utils/formate-date.ts";
 
 
-export function useInBox(): [InBoxItemProps[]] {
+interface IActions {
+    deleteInbox: (inboxRef: string) => void;
+    clearAllChat: () => void;
+    newChat: (navigation: any) => void;
+}
+
+export function useInBox(): [InBoxItemProps[], IActions] {
     const [inbox, setInBox] = useState<InBoxItemProps[]>([]);
     const [session] = useSession();
 
@@ -28,17 +34,49 @@ export function useInBox(): [InBoxItemProps[]] {
                 time = formateDateTo12HoursTime(time)
             }
             inboxData.push({
+                tid: item.messages?.[item.messages.length - 1]?.id || "",
                 title: myTitle,
                 totalMessages: item.messages?.length || 0,
                 time: time,
                 inboxRef: key
             })
         }
+        // sort by id
+        inboxData.sort((a, b) => {
+            if (!a?.tid || !b?.tid) return 0;
+            return parseInt(b?.tid) - parseInt(a?.tid)
+        })
 
         setInBox(inboxData);
 
     }
 
+    function deleteInbox(inboxRef: string) {
+        return database().ref(`users/${session?.user}/inbox/${inboxRef}`).remove();
+    }
+
+    function clearAllChat() {
+        return database().ref(`users/${session?.user}/inbox`).remove();
+    }
+    function newChat(navigation: any) {
+            let refInbox = database().ref(`users/${session?.user}/inbox`);
+            let id = refInbox.push().key;
+            if (!id) return;
+            refInbox.child(id).set({
+                id: id,
+                prompt: undefined,
+                messages: [],
+            });
+
+            // @ts-ignore
+            navigation.navigate("history", {
+                screen: "chat",
+                params: {
+                    inboxRef: id
+                }
+            });
+
+    }
     useEffect(() => {
             const ref = database().ref(`users/${session?.user}/inbox`);
             ref.on('value', mySnapshot);
@@ -49,6 +87,12 @@ export function useInBox(): [InBoxItemProps[]] {
         }
         , [])
 
+    const actions: IActions = {
+        deleteInbox: deleteInbox,
+        clearAllChat: clearAllChat,
+        newChat: newChat
+    }
 
-    return [inbox];
+
+    return [inbox, actions];
 }

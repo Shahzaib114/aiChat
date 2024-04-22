@@ -8,6 +8,7 @@ import TopicCardLayout from "./components/topic-card.tsx";
 import QuestionLayout from "./components/question-layout.tsx";
 
 import useCategories from "../../hooks/useCategories.ts";
+import HomeInput from "./components/home-input.tsx";
 
 interface HomeProps extends IDefaultProps {
 
@@ -87,6 +88,7 @@ const Home: FC<HomeProps> = ({...props}) => {
                       keyExtractor={(item) => item.title}
                       showsVerticalScrollIndicator={false}
             />
+            <HomeInput />
         </View>
     )
 }

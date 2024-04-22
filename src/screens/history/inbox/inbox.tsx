@@ -14,7 +14,7 @@ interface InBoxProps extends IDefaultProps {
 }
 
 const InBox: FC<InBoxProps> = ({...props}) => {
-    const [inboxData] = useInBox();
+    const [inboxData, actions] = useInBox();
     const navigation = useNavigation();
 
     function onItemClick(item: InBoxItemProps) {
@@ -27,16 +27,29 @@ const InBox: FC<InBoxProps> = ({...props}) => {
         })
     }
 
+
     return (
         <View style={styles.container}>
+            <View style={{width: "100%"}}>
+                <InBoxHeader
+                    onClearChats={() => {
+                        actions.clearAllChat()
+                    }}
+                />
+            </View>
             <FlatList data={inboxData}
                       renderItem={
                           ({item, index}) => <InBoxItem
-                              onPress={()=>{
+                              onPress={() => {
                                   onItemClick(item)
                               }}
+                              onPressDelete={() => {
+                                  if (item.inboxRef)
+                                      actions.deleteInbox(item.inboxRef)
+
+                              }}
                               key={index} title={item.title}
-                                                        totalMessages={item.totalMessages} time={item.time}/>
+                              totalMessages={item.totalMessages} time={item.time}/>
                       }
                       style={{width: "100%"}}
                       ListFooterComponent={() => (
@@ -48,7 +61,11 @@ const InBox: FC<InBoxProps> = ({...props}) => {
 
                           }}>
 
-                              <Pressable style={styles.button}>
+                              <Pressable
+                                  onPress={() => {
+                                      actions.newChat(navigation)
+                                  }}
+                                  style={styles.button}>
                                   <Text style={styles.text}>+ New Chat</Text>
                               </Pressable>
                           </View>
