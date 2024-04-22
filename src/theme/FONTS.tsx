@@ -7,4 +7,5 @@ export default FONTS = {
     Manrope_Light: 'Manrope-Light.ttf',
     Manrope_SemiBold: 'Manrope-SemiBold.ttf',
     Manrope_Bold: 'Manrope-Bold.ttf',
+    Manrope: 'Manrope-Medium',
 }

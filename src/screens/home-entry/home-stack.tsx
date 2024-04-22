@@ -27,7 +27,7 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                     headerShown: false,
                     tabBarIcon: ({focused, color, size}) => BottomNavigationTab({route, focused, color, size}),
                     tabBarShowLabel: false,
-                    tabBarStyle : {
+                    tabBarStyle: {
                         height: 60,
                         backgroundColor: themeColors.black,
                         borderTopWidth: 0,
@@ -50,7 +50,6 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                         }}
                         component={Home}/>
             <Tab.Screen name="history"
-
                         component={HistoryScreen}/>
 
             <Tab.Screen name="plans" component={Subscription}/>

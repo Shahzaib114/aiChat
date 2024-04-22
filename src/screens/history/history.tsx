@@ -1,19 +1,14 @@
-
-
-
-
-import React, {FC, useEffect} from "react";
-import {StyleSheet, Text, View} from "react-native";
+import React, {FC} from "react";
+import {StyleSheet} from "react-native";
 import {IDefaultProps} from "../../utils/types.ts";
-import OnboardingStack from "../onboarding/onboarding-stack.tsx";
-import HomeStack from "../home-entry/home-stack.tsx";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import InBoxHeader from "./inbox/components/inbox-header.tsx";
 import InBox from "./inbox/inbox.tsx";
 import ChatScreen from "./chat/chat.tsx";
-import {useNavigation} from "@react-navigation/native";
+import {StackParamList} from "./types.ts";
 
-const Stack = createNativeStackNavigator();
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 interface HistoryScreenProps extends IDefaultProps {
 
@@ -25,7 +20,9 @@ const HistoryScreen: FC<HistoryScreenProps> = ({...props}) => {
     return (
         <Stack.Navigator
             screenOptions={{
-                headerShown: false
+                headerShown: false,
+
+
             }}
             initialRouteName={'inbox'}
         >
@@ -38,9 +35,10 @@ const HistoryScreen: FC<HistoryScreenProps> = ({...props}) => {
                 component={InBox}/>
             <Stack.Screen
                 name={'chat'}
-                options={{
-
+                initialParams={{
+                    inboxRef: "-1"
                 }}
+                options={{}}
                 component={ChatScreen}/>
         </Stack.Navigator>
     )

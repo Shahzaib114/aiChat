@@ -1,28 +1,36 @@
 import React, {FC} from "react";
-import {Dimensions, FlatList, Image, StyleSheet, Text, View} from "react-native";
+import {Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View} from "react-native";
 import {prompt, TransFormedCategory} from "../variables/types.ts";
 import {IDefaultProps} from "../../../utils/types.ts";
 import themeColors from "../../../theme/colors.ts";
+import {useNavigation} from "@react-navigation/native";
+import database from "@react-native-firebase/database";
+import useSession from "../../../hooks/useSession.ts";
 
 interface TopicCardProps extends IDefaultProps, prompt {
-
+    variant?: "grid" | "list",
+    onPress?: () => void
 }
 
 const TopicCard: FC<TopicCardProps> = ({...props}) => {
     const size = Dimensions.get('window').width * 0.4;
     return (
-        <View style={{
-            backgroundColor: props.backgroundColor,
-            width: size,
-            height: Dimensions.get('window').width * 0.4,
-            gap: 10,
-            borderRadius: 25,
-            paddingHorizontal: 10,
-            paddingVertical: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            ...props.style
-        }}>
+        <Pressable
+            onPress={props.onPress}
+
+            style={{
+                backgroundColor: props.backgroundColor,
+                width: props.variant !== "grid" ? size : null,
+                flex: props.variant === "grid" ? 1 : null,
+                height: Dimensions.get('window').width * 0.4,
+                gap: 10,
+                borderRadius: 25,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                ...props.style
+            }}>
 
             <Image
                 source={{
@@ -39,7 +47,7 @@ const TopicCard: FC<TopicCardProps> = ({...props}) => {
                 {props.title}
             </Text>
 
-        </View>
+        </Pressable>
     )
 
 }
@@ -50,15 +58,39 @@ interface TopicCardLayoutProps extends TransFormedCategory {
 }
 
 const TopicCardLayout: FC<TopicCardLayoutProps> = ({...props}) => {
+    const navigation = useNavigation();
+    const [session] = useSession();
+
+    function onCardClick(promptData: prompt) {
+        let refInbox = database().ref(`users/${session?.user}/inbox`);
+        let id = refInbox.push().key;
+        if (!id) return;
+        refInbox.child(id).set({
+            id: id,
+            prompt: promptData,
+            messages: [],
+        });
+
+        // @ts-ignore
+        navigation.navigate("history", {
+            screen: "chat",
+            params: {
+                inboxRef: id
+            }
+        });
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.text}>{props.title}</Text>
             {props.isSelected ? <FlatList data={props.data}
                                           renderItem={({item, index}) =>
                                               <TopicCard
+                                                  onPress={() => onCardClick(item)}
+                                                  variant={"grid"}
                                                   style={{
-                                                      marginHorizontal: index % 2 === 0 ? 0 : 20,
-                                                      width: props?.data.length % 2 !== 0 && index === props.data.length - 1 ? "100%" : Dimensions.get('window').width * 0.4
+
+                                                      marginHorizontal: 5,
 
                                                   }}
 
@@ -78,7 +110,9 @@ const TopicCardLayout: FC<TopicCardLayoutProps> = ({...props}) => {
                                           showsVerticalScrollIndicator={false}
             /> : <FlatList data={props.data}
                            renderItem={({item, index}) =>
-                               <TopicCard {...item} key={index}/>
+                               <TopicCard
+                                   onPress={() => onCardClick(item)}
+                                   {...item} key={index}/>
                            }
                            ItemSeparatorComponent={() => <View style={{
                                width: 20

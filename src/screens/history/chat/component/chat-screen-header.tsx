@@ -5,13 +5,14 @@ import themeColors from "../../../../theme/colors.ts";
 import SvgImport from "../../../../utils/import-svg.tsx";
 import LeftIcon from "../../../../components/icons/left.tsx";
 import deleteIcon from "../../../../../assets/svgs/deleteIcon.js";
+import {useNavigation} from "@react-navigation/native";
 
 interface ChatScreenHeaderProps extends IDefaultProps {
-
+    title?: string
 }
 
 const ChatScreenHeader: FC<ChatScreenHeaderProps> = ({...props}) => {
-
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <View style={{
@@ -21,9 +22,17 @@ const ChatScreenHeader: FC<ChatScreenHeaderProps> = ({...props}) => {
                 gap: 10,
             }}>
 
-                <SvgImport svg={LeftIcon}/>
+                <Pressable
+                    onPress={() => {
+                        // @ts-ignore
+                        navigation.goBack();
+                    }}
+                >
+
+                    <SvgImport svg={LeftIcon}/>
+                </Pressable>
                 <Text style={styles.text}>
-                    New Chat
+                    {props.title}
                 </Text>
 
                 <SvgImport svg={deleteIcon} style={{marginLeft: 6}}/>

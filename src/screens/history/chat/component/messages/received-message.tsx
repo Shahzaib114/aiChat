@@ -7,7 +7,7 @@ import copy from "../../../../../../assets/svgs/copy.js";
 import share from "../../../../../../assets/svgs/share.js";
 import bot from "../../../../../../assets/svgs/bot.js";
 import speaker from "../../../../../../assets/svgs/speakr.js";
-
+import {formateDateTo12HoursTime} from "../../../../../utils/formate-date.ts";
 
 
 interface ReceivedMessageProps extends IDefaultProps, IMessage {
@@ -17,9 +17,12 @@ interface ReceivedMessageProps extends IDefaultProps, IMessage {
 const ReceivedMessage: FC<ReceivedMessageProps> = ({...props}) => {
 
     function getFormattedTime() {
-        return `${props.createdAt.getHours() % 12}:${props.createdAt.getMinutes() > 9 ? props.createdAt.getMinutes() : `0${props.createdAt.getMinutes()}`} ${
-            props.createdAt.getHours() > 12 ? "PM" : "AM"
-        }`
+        if (typeof props.createdAt === "string") {
+            return props.createdAt
+        }
+        if (!props.createdAt)
+            return ""
+        return formateDateTo12HoursTime(props.createdAt)
     }
 
     return (
@@ -69,7 +72,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     },
     text: {
         fontSize: 14,
-
+        marginRight: 5,
         fontWeight: "500",
         color: themeColors.black,
         fontFamily: "Manrope",

@@ -11,16 +11,15 @@ export interface InBoxItemProps extends IDefaultProps {
     title: string,
     totalMessages: number,
     time: string,
+    inboxRef?: string,
+    onPress?: () => void,
 }
 
 const InBoxItem: FC<InBoxItemProps> = ({...props}) => {
     const navigation = useNavigation();
     return (
         <Pressable
-            onPress={() => {
-                // @ts-ignore
-                navigation.navigate("chat")
-            }}
+            onPress={props.onPress}
 
             style={styles.container}>
             <View style={{
