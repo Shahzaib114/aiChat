@@ -5,11 +5,14 @@ import DailyLimitView from "./daily-limit-view.tsx";
 import BuySubscriptionView from "./buy-subscription-view.tsx";
 import {Animated} from "react-native";
 
-type BuySubscriptionPopupProps = {}
+type BuySubscriptionPopupProps = {
+    onWatch?: () => void
+}
 
 type BuySubscriptionPopupState = {
     visible: boolean,
-    view: "daily-limit" | "subscription"
+    view: "daily-limit" | "subscription",
+
 }
 
 
@@ -74,9 +77,17 @@ class BuySubscriptionPopup extends Component<BuySubscriptionPopupProps, BuySubsc
                         {
                             this.state.view === "subscription" && <BuySubscriptionView
                                 onCancel={() => {
+                                    this.close()
+                                }}
+                                closePopUp={() => {
+                                    this.close()
                                 }}
                                 onWatch={() => {
+                                    this.props.onWatch?.()
+                                    console.log("this is called")
+                                    this.close()
                                 }}
+
                             />
                         }
                     </Animated.View>

@@ -6,15 +6,18 @@ import starts from "../../../assets/svgs/starts.js";
 import {FREE_DAIL_MESSAGE_LIMIT} from "../../utils/app-config.ts";
 import themeColors from "../../theme/colors.ts";
 import add from "../../../assets/svgs/add.js";
+import useRewardedAdd from "../../google-adds/useRewardedAdd.ts";
 
 
 interface BuySubscriptionViewProps extends IDefaultProps {
     onWatch?: () => void
     onCancel?: () => void
+    closePopUp?: () => void
 }
 
 const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
-
+    const [add_loaded, actions] = useRewardedAdd(props.onWatch || (() => {
+    }))
     return (
         <View style={styles.container}>
 
@@ -42,7 +45,12 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
                     </Text>
                 </Pressable>
                 <Pressable
-                    onPress={props.onWatch}
+                    onPress={() => {
+                        if (add_loaded) {
+                            actions.show()
+                            props.closePopUp?.()
+                        }
+                    }}
                     style={[styles.btn, {
                         backgroundColor: themeColors.primary,
                     }]}
@@ -51,7 +59,7 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
                     <Text style={[styles.buttonText]}>
                         Watch Ad
                     </Text>
-                    <SvgImport svg={add} />
+                    <SvgImport svg={add}/>
                 </Pressable>
 
             </View>

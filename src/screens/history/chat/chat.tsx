@@ -74,13 +74,20 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
 
     useEffect(() => {
         if (buySubscriptionPopup.current && !subActions.hasActiveSubscription()) {
-            buySubscriptionPopup.current.showDailyLimit()
+            if (!subActions.hasDailyQuota())
+                buySubscriptionPopup.current.showBuySubscription()
+            else
+                buySubscriptionPopup.current.showDailyLimit()
         }
     }, [inboxRef]);
 
     return (
         <View style={styles.container}>
             <BuySubscriptionPopup
+                onWatch={() => {
+                    subActions?.dailyMessagesActions?.decrement?.()
+                    console.log("watched")
+                }}
                 ref={buySubscriptionPopup}
             />
             <View style={{width: "100%"}}>
@@ -92,7 +99,11 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                         onClick={() => {
                             buySubscriptionPopup.current?.showDailyLimit()
                         }}
-                        message={"25 daily Messages Remaining in free trial."}
+                        message={
+                            subActions.hasDailyQuota() ?
+                                `You have ${subActions.getRemainingMessages()} daily messages remaining. in free tier`
+                                : "You have used all the available daily messages"
+                        }
                         variant={subActions.hasDailyQuota() ? "info" : "error"}
                     />
                 }
@@ -158,6 +169,7 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                     disabled={gettingResponse}
                     onSend={(message) => {
                         actions.sendMessage(message)
+                        subActions.dailyMessagesActions.increment?.()
                         if (!startGettingResponse)
                             setStartGettingResponse(true);
 
