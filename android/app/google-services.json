@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "369948763061",
+    "firebase_url": "https://chatbot-e0ca6-default-rtdb.firebaseio.com",
+    "project_id": "chatbot-e0ca6",
+    "storage_bucket": "chatbot-e0ca6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369948763061:android:62c5efb5ef81839e6c2ffc",
+        "android_client_info": {
+          "package_name": "com.abdullah.mumtaz65.AICHAT"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH4xDBzb0OcC7q59GD56tSBPFspKle9so"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369948763061:android:e62c625b8f79db376c2ffc",
+        "android_client_info": {
+          "package_name": "com.aichat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH4xDBzb0OcC7q59GD56tSBPFspKle9so"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369948763061:android:396bfdb8d7f7805e6c2ffc",
+        "android_client_info": {
+          "package_name": "com.lunatech.AICHAT"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH4xDBzb0OcC7q59GD56tSBPFspKle9so"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

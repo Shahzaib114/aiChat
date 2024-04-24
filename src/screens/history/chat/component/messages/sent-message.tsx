@@ -5,6 +5,7 @@ import themeColors from "../../../../../theme/colors.ts";
 import SvgImport from "../../../../../utils/import-svg.tsx";
 import copy from "../../../../../../assets/svgs/copy.js";
 import share from "../../../../../../assets/svgs/share.js";
+import {formateDateTo12HoursTime} from "../../../../../utils/formate-date.ts";
 
 
 interface SentMessageProps extends IDefaultProps, IMessage {
@@ -14,9 +15,12 @@ interface SentMessageProps extends IDefaultProps, IMessage {
 const SentMessage: FC<SentMessageProps> = ({...props}) => {
 
     function getFormattedTime() {
-        return `${props.createdAt.getHours() % 12}:${props.createdAt.getMinutes() > 9 ? props.createdAt.getMinutes() : `0${props.createdAt.getMinutes()}`} ${
-            props.createdAt.getHours() > 12 ? "PM" : "AM"
-        }`
+        if (typeof props.createdAt === "string") {
+            return props.createdAt
+        }
+        if (!props.createdAt)
+            return ""
+        return formateDateTo12HoursTime(props.createdAt)
     }
 
     return (
@@ -33,6 +37,7 @@ const SentMessage: FC<SentMessageProps> = ({...props}) => {
                 <View style={{
                     flexDirection: "row",
                     gap: 10,
+                    paddingLeft: 10,
                     justifyContent: "center",
                     alignItems: "center",
                 }}>
@@ -63,7 +68,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     },
     text: {
         fontSize: 14,
-
+        minWidth: 120,
         fontWeight: "500",
         borderRadius: 12,
         borderTopRightRadius: 0,

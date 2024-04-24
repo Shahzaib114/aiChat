@@ -14,6 +14,7 @@ import {IDefaultProps} from "../../utils/types.ts";
 import onboardingSteps from "./variables/onboardin-steps.ts";
 import Steps from "../../components/steps/steps.tsx";
 import {useNavigation} from "@react-navigation/native";
+import themeColors from "../../theme/colors.ts";
 
 
 interface FirstOnboardingScreenProps extends IDefaultProps {
@@ -23,6 +24,8 @@ interface FirstOnboardingScreenProps extends IDefaultProps {
 const OnboardingScreen: FC<FirstOnboardingScreenProps> = ({...props}) => {
     const [state, setState] = useState<number>(0);
     const navigation = useNavigation();
+
+
     return (
         <ImageBackground
             source={onboardingSteps[state].background}
@@ -42,7 +45,11 @@ const OnboardingScreen: FC<FirstOnboardingScreenProps> = ({...props}) => {
                     />
 
                     <Text style={styles.heading}>
-                        {onboardingSteps[state].heading}
+                        <Text style={[{
+                            color: themeColors.primary
+                        }]}>
+                            {onboardingSteps[state]?.greenText}
+                        </Text> {onboardingSteps[state].heading}
                     </Text>
                     <Text style={styles.text}>
                         {onboardingSteps[state].text}
@@ -76,6 +83,7 @@ const OnboardingScreen: FC<FirstOnboardingScreenProps> = ({...props}) => {
                     <Text style={styles.buttonText}>
                         Continue
                     </Text>
+
                 </Pressable>
 
             </SafeAreaView>
@@ -90,7 +98,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     button: {
         backgroundColor: 'white',
         padding: 10,
-        paddingVertical: 12,
+        paddingVertical: 17,
         borderRadius: 100,
         margin: 10,
         alignItems: 'center',
@@ -121,6 +129,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         fontWeight: '300',
+        fontFamily: 'Manrope'
 
     },
     imageStyle: {

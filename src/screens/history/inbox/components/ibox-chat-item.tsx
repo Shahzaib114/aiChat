@@ -8,19 +8,21 @@ import {useNavigation} from "@react-navigation/native";
 
 
 export interface InBoxItemProps extends IDefaultProps {
+    tid?: string,
+    id?: string,
     title: string,
     totalMessages: number,
     time: string,
+    inboxRef?: string,
+    onPress?: () => void,
+    onPressDelete?: () => void,
 }
 
 const InBoxItem: FC<InBoxItemProps> = ({...props}) => {
     const navigation = useNavigation();
     return (
         <Pressable
-            onPress={() => {
-                // @ts-ignore
-                navigation.navigate("chat")
-            }}
+            onPress={props.onPress}
 
             style={styles.container}>
             <View style={{
@@ -32,7 +34,14 @@ const InBoxItem: FC<InBoxItemProps> = ({...props}) => {
                 <Text style={styles.text}>
                     {props.title}
                 </Text>
-                <SvgImport svg={deleteIcon} style={{marginLeft: 6}}/>
+
+                <Pressable
+                    onPress={props.onPressDelete}
+                >
+                    <SvgImport svg={deleteIcon}
+                               style={{marginLeft: 6}}/>
+
+                </Pressable>
 
             </View>
             <View style={{

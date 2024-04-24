@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet} from "react-native";
+import {prompt} from "../screens/home/variables/types.ts";
 
 
 export interface IDefaultProps {
@@ -9,9 +10,30 @@ export interface IDefaultProps {
 }
 
 
-export  interface IMessage {
+export interface IMessage {
     id: string;
     text: string;
-    createdAt: Date;
+    role?: string;
+    createdAt: Date | string;
     user: string;
+}
+
+
+export interface IChat {
+    id?: string;
+    messages?: IMessage[];
+    prompt?: prompt;
+}
+
+
+export interface  IGptMessage {
+    role: string;
+    content: string;
+}
+
+export interface  ISubscription {
+    status: "active" | "inactive" | undefined;
+    startDate?: number;
+    subscriptionType?:any,
+
 }

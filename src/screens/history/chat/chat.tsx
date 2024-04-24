@@ -12,8 +12,18 @@ import NotificationBar from "./component/notification-bar/notification-bar.tsx";
 import SuggestionComponent from "./component/suggestion/suggestion.tsx";
 import Sugesstions from "./component/suggestion/sugesstions.ts";
 import SentMessage from "./component/messages/sent-message.tsx";
-import message, {DummyMessages} from "./component/messages/variables/messages.ts";
 import ReceivedMessage from "./component/messages/received-message.tsx";
+import useHiddenTabs from "../../../hooks/useHiddenTabs.ts";
+import useChat from "../../../hooks/useChat.ts";
+import useSession from "../../../hooks/useSession.ts";
+import {gptCompletions} from "../../../apis/axios-config.ts";
+import {IMessageToGptMessages} from "../../../utils/utils.ts";
+import {GPT3} from "../../../utils/gpt-models.ts";
+import {ITabsItem} from "../../../components/tabs/types.ts";
+import AvailableModels from "./variables/available-models.tsx";
+import TypingAnimation from "../../../components/typing-animation/typing-animation.tsx";
+import useSubscription from "../../../hooks/useSubscription.ts";
+import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
 
 
 interface ChatScreenProps extends IDefaultProps {
@@ -21,55 +31,111 @@ interface ChatScreenProps extends IDefaultProps {
 }
 
 const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
-    const navigation = useNavigation();
+    useHiddenTabs()
+    const [session] = useSession();
+    const user = session.user;
+    // @ts-ignore
+    const inboxRef = props?.route?.params?.inboxRef;
+    // @ts-ignore
+    const startGettingResponseParams = props?.route?.params?.startGettingResponse;
+    const [chat, actions] = useChat(inboxRef);
+    const flatListRef = useRef<FlatList>(null);
+    const [startGettingResponse, setStartGettingResponse] = React.useState(!!startGettingResponseParams);
+    const [gettingResponse, setGettingResponse] = React.useState(false);
+    const [gptModel, setGptModel] = React.useState<ITabsItem>(AvailableModels[0]);
+    const [subscription, subActions] = useSubscription();
+    const buySubscriptionPopup = React.useRef<BuySubscriptionPopup>(null);
+
+    function getResponse() {
+        setGettingResponse(true)
+        gptCompletions(IMessageToGptMessages(actions.getMessagesWithGreeting()), gptModel.value, chat.prompt).then((response) => {
+            actions.addGptMessage(response)
+        }).catch(err => {
+        }).finally(() => {
+        })
+    }
+
     useEffect(() => {
-        navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
-        return () => navigation.getParent()?.setOptions({
-            tabBarStyle: {
-                height: 60,
-                backgroundColor: themeColors.black,
-                borderTopWidth: 0,
+        if (chat?.messages)
+            flatListRef.current?.scrollToIndex({
+                animated: true,
+                index: chat.messages.length - 1
+            })
+        if (chat?.messages && chat?.messages?.length > 0) {
+            if (chat.messages[chat.messages.length - 1].user === user && startGettingResponse && !gettingResponse) {
+                getResponse()
+            } else {
+                setGettingResponse(false)
             }
-        });
+        }
 
-    }, [navigation]);
 
-    const user = "user1"
+    }, [chat.messages]);
+
+    useEffect(() => {
+        if (buySubscriptionPopup.current && !subActions.hasActiveSubscription()) {
+            if (!subActions.hasDailyQuota())
+                buySubscriptionPopup.current.showBuySubscription()
+            else
+                buySubscriptionPopup.current.showDailyLimit()
+        }
+    }, [inboxRef]);
 
     return (
         <View style={styles.container}>
+            <BuySubscriptionPopup
+                onWatch={() => {
+                    subActions?.dailyMessagesActions?.decrement?.()
+                    console.log("watched")
+                }}
+                ref={buySubscriptionPopup}
+            />
             <View style={{width: "100%"}}>
-                <ChatScreenHeader/>
-                <NotificationBar
-                    message={"25 daily Messages Remaining in free trial."}
-                    variant={"info"}
+                <ChatScreenHeader
+                    title={chat?.prompt?.title || "Chat"}
                 />
+                {
+                    !subActions.hasActiveSubscription() && <NotificationBar
+                        onClick={() => {
+                            buySubscriptionPopup.current?.showDailyLimit()
+                        }}
+                        message={
+                            subActions.hasDailyQuota() ?
+                                `You have ${subActions.getRemainingMessages()} daily messages remaining. in free tier`
+                                : "You have used all the available daily messages"
+                        }
+                        variant={subActions.hasDailyQuota() ? "info" : "error"}
+                    />
+                }
                 <View style={{
                     width: "100%",
                     paddingVertical: 10,
                     paddingHorizontal: 40,
 
                 }}>
-                    <Tabs items={[
-                        {
-                            label: "Chat GPT 3",
-                            value: "chat-gpt 3"
-                        }, {
-                            label: "Chat GPT 4",
-                            value: "chat-gpt 4",
-                            Icon: <SvgImport svg={crown}/>
-                        }
-                    ]}/>
+                    <Tabs
+                        selected={gptModel}
+                        onChange={(value) => {
+                            setGptModel(value)
+                        }}
+                        items={AvailableModels}/>
                 </View>
             </View>
             <FlatList
+                ref={flatListRef}
                 ListHeaderComponent={<SuggestionComponent suggestions={Sugesstions}/>}
-
+                ListFooterComponent={gettingResponse ? <TypingAnimation/> : <></>}
+                onScrollToIndexFailed={(info) => {
+                    const wait = new Promise(resolve => setTimeout(resolve, 50));
+                    wait.then(() => {
+                        flatListRef.current?.scrollToIndex({index: info.index});
+                    });
+                }}
                 contentContainerStyle={{
                     paddingHorizontal: 10,
                     gap: 30,
                 }}
-                data={DummyMessages}
+                data={actions.getMessagesWithGreeting()}
                 renderItem={({item, index}) => {
                     if (item.user === user) {
                         return (
@@ -99,7 +165,16 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-                <ChatInput/>
+                <ChatInput
+                    disabled={gettingResponse}
+                    onSend={(message) => {
+                        actions.sendMessage(message)
+                        subActions.dailyMessagesActions.increment?.()
+                        if (!startGettingResponse)
+                            setStartGettingResponse(true);
+
+                    }}
+                />
             </View>
         </View>
     )
