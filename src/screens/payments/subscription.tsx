@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { FC, useEffect, useState } from "react";
+import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from "react-native-responsive-dimensions";
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from "@react-navigation/native";
@@ -18,10 +18,39 @@ import themeColors from "../../theme/colors.ts";
 import FONTS from "../../theme/FONTS.tsx";
 import backArrow from "../../../assets/svgs/backArrow.js";
 import ChatSvg from "../../../assets/svgs/ChatSvg.js";
+import Purchases from 'react-native-purchases';
 
 interface HomeProps extends IDefaultProps { }
 
 const Subscription: FC<HomeProps> = ({ ...props }) => {
+    const [allProducts, setAllProducts] = useState<any>()
+
+    useEffect(() => {
+        getInAppProducts()
+    }, [])
+
+    const handlePurchase = async (selectedProduct: any) => {
+        try {
+            const purchasing = await Purchases.purchasePackage(selectedProduct);
+            console.log('purchased', purchasing)
+        } catch (e) {
+            console.log('go error in offering', e)
+        }
+    };
+
+    const getInAppProducts = async () => {
+        try {
+            const offerings = await Purchases.getOfferings();
+            if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
+                // Display packages for sale
+                console.log('offeffvvrings', JSON.stringify(offerings.current?.availablePackages))
+                setAllProducts(offerings.current?.availablePackages)
+            }
+        } catch (e) {
+            console.log('go error in offering', e)
+        }
+    }
+
     const navigation: any = useNavigation()
     return (
         <ScrollView
@@ -131,12 +160,21 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     </View>
 
                     <View style={styles.card}>
-                        <Card
-                            text='ChatGPT 3'
-                            description="Free"
-                            purchased={true}
-                        />
-                        <Card
+                        {allProducts?.map((item: any, index: number) => {
+                            return (
+                                <React.Fragment key={index}>
+                                    <Card
+                                        text='ChatGPT 3'
+                                        description="34.99$"
+                                        smallDesc="/Week"
+                                        purchased={false}
+                                        handleCardPress={() => { handlePurchase(item) }}
+                                    />
+                                </React.Fragment>
+                            )
+                        })}
+
+                        {/* <Card
                             text='Annual Access'
                             description="34.99$"
                             smallDesc="/Week"
@@ -146,12 +184,13 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             text='ChatGPT 4'
                             description="9$"
                             smallDesc="/Month"
+                            purchased={true}
                         />
                         <Card
                             text='ChatGPT 4'
                             description="45$"
                             smallDesc="/Year"
-                        />
+                        /> */}
                     </View>
 
                     <View style={styles.buttonview}>

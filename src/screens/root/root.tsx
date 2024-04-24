@@ -6,12 +6,15 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeStack from "../home-entry/home-stack.tsx";
 import themeColors from "../../theme/colors.ts";
 import Offer from "../common/Offer.tsx";
+import Purchases from 'react-native-purchases';
 
 
 const Stack = createNativeStackNavigator();
 
 
 export default function Root() {
+    Purchases.configure({ apiKey: 'goog_DbsmqjKJErmJRYilobSziDRYfsf' });
+
     return (
         <View style={{ flex: 1, backgroundColor: themeColors.black }}>
             <NavigationContainer>
