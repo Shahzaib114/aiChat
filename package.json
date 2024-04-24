@@ -1,5 +1,5 @@
 {
-  "name": "aiChat",
+  "name": "aichat",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -26,6 +26,7 @@
     "react-native": "0.73.6",
     "react-native-audio-recorder-player": "^3.6.7",
     "react-native-iap": "^12.13.1",
+    "react-native-purchases": "^7.26.2",
     "react-native-responsive-dimensions": "^3.1.1",
     "react-native-safe-area-context": "^4.9.0",
     "react-native-screens": "^3.30.1",

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "aiChat.app"
-               BlueprintName = "aiChat"
-               ReferencedContainer = "container:aiChat.xcodeproj">
+               BuildableName = "aichat.app"
+               BlueprintName = "aichat"
+               ReferencedContainer = "container:aichat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "aiChatTests.xctest"
-               BlueprintName = "aiChatTests"
-               ReferencedContainer = "container:aiChat.xcodeproj">
+               BuildableName = "aichatTests.xctest"
+               BlueprintName = "aichatTests"
+               ReferencedContainer = "container:aichat.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "aiChat.app"
-            BlueprintName = "aiChat"
-            ReferencedContainer = "container:aiChat.xcodeproj">
+            BuildableName = "aichat.app"
+            BlueprintName = "aichat"
+            ReferencedContainer = "container:aichat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "aiChat.app"
-            BlueprintName = "aiChat"
-            ReferencedContainer = "container:aiChat.xcodeproj">
+            BuildableName = "aichat.app"
+            BlueprintName = "aichat"
+            ReferencedContainer = "container:aichat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

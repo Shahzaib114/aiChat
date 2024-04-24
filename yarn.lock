@@ -2011,6 +2011,11 @@
   dependencies:
     nanoid "^3.1.23"
 
+"@revenuecat/purchases-typescript-internal@10.4.1":
+  version "10.4.1"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-10.4.1.tgz#ff9272e4d2cd8a92b70c0ecb2f0e0d84ec17c65b"
+  integrity sha512-RaN4dAhsieV+oLJNJEd7Am05qpBuhyzigIaOjgTWJtyonYKDqeNmvKkWoDG4obN2ONbIzShfFXaBnReBa5GuhQ==
+
 "@sideway/address@^4.1.5":
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/@sideway/address/-/address-4.1.5.tgz#4bc149a0076623ced99ca8208ba780d65a99b9d5"
@@ -5930,6 +5935,13 @@ react-native-iap@^12.13.1:
   integrity sha512-vR2OhtynstRmh7qvW/XmTyjnuvYXJN45ZTA4+h6Z2lWzyRNoLlUuUUIgAclToj/VpC48zUPbIqfSTVW0xpG9ag==
   dependencies:
     "@expo/config-plugins" "^7.8.4"
+
+react-native-purchases@^7.26.2:
+  version "7.26.2"
+  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-7.26.2.tgz#c55966986ee88c357549f52c2d295b39d912c1fb"
+  integrity sha512-s87KGiRnjZyZlspXVrq9Kfqhgf9wZodHorapgX8+JjKcYEJQNFKvedLvH5zwIh/Xw/JNU5VCnDwik3k/ZIbnuA==
+  dependencies:
+    "@revenuecat/purchases-typescript-internal" "10.4.1"
 
 react-native-responsive-dimensions@^3.1.1:
   version "3.1.1"
