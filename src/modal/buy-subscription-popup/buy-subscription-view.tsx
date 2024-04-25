@@ -7,17 +7,21 @@ import {FREE_DAIL_MESSAGE_LIMIT} from "../../utils/app-config.ts";
 import themeColors from "../../theme/colors.ts";
 import add from "../../../assets/svgs/add.js";
 import useRewardedAdd from "../../google-adds/useRewardedAdd.ts";
+import {useNavigation} from "@react-navigation/native";
 
 
 interface BuySubscriptionViewProps extends IDefaultProps {
     onWatch?: () => void
     onCancel?: () => void
     closePopUp?: () => void
+
 }
 
 const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
     const [add_loaded, actions] = useRewardedAdd(props.onWatch || (() => {
     }))
+
+    const navigate = useNavigation()
     return (
         <View style={styles.container}>
 
@@ -34,14 +38,18 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
                 gap: 20
             }}>
                 <Pressable
-                    onPress={props.onCancel}
+                    onPress={()=>{
+                        // @ts-ignore
+                        navigate.navigate('plans')
+                        props.closePopUp?.()
+                    }}
                     style={[styles.btn, {
                         backgroundColor: "#2B2B2B",
                     }]}
                 >
 
                     <Text style={[styles.buttonText]}>
-                        Cancel
+                        Subscribe
                     </Text>
                 </Pressable>
                 <Pressable

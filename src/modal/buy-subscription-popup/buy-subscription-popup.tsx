@@ -76,9 +76,7 @@ class BuySubscriptionPopup extends Component<BuySubscriptionPopupProps, BuySubsc
                         />}
                         {
                             this.state.view === "subscription" && <BuySubscriptionView
-                                onCancel={() => {
-                                    this.close()
-                                }}
+
                                 closePopUp={() => {
                                     this.close()
                                 }}

@@ -15,25 +15,22 @@ const TabsHeight = 60;
 
 const Tabs: FC<TabsProps> = ({...props}) => {
     const [selectedItem, setSelectedItem] = React.useState<ITabsItem>(props.selected || props.items[0])
-    const isFirstRender = useRef(true);
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-        props.onChange && props.onChange(selectedItem)
 
-    }, [selectedItem])
+
+    let mySelected = props.selected || selectedItem;
     return (
         <View style={styles.container}>
             {props.items.map((item, index) => {
                 const Icon = item.Icon;
                 return (
                     <Pressable
-                        onPress={() => setSelectedItem(item)}
+                        onPress={() => {
+                            setSelectedItem(item)
+                            props.onChange && props.onChange(item)
+                        }}
                         key={index} style={{
                         ...styles.tab,
-                        backgroundColor: selectedItem.value === item.value ? themeColors.primary : themeColors.transparent,
+                        backgroundColor: mySelected.value === item.value ? themeColors.primary : themeColors.transparent,
                     }}>
                         {
 

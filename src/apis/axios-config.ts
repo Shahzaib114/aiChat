@@ -4,6 +4,7 @@ import {GPT_KEY} from "../utils/app-config.ts";
 import {IGptMessage} from "../utils/types.ts";
 import {AvailableModels, GPT4} from "../utils/gpt-models.ts";
 import {prompt} from "../screens/home/variables/types.ts";
+import DEVICE_LANGUAGE from "../utils/get-device-language.ts";
 
 
 export const gptInstance = axios.create({
@@ -15,7 +16,9 @@ export const gptInstance = axios.create({
 });
 
 export const gptCompletions = async (messages: IGptMessage[], model: string, customPrompt: prompt | undefined): Promise<string> => {
-    let messagesCopy = [...messages]
+    let messagesCopy = [ ...messages]
+
+    console.log(DEVICE_LANGUAGE)
     if (model === GPT4) {
         messagesCopy = [{
             role: "system",
@@ -32,6 +35,16 @@ export const gptCompletions = async (messages: IGptMessage[], model: string, cus
             `
         }, ...messagesCopy]
     }
+
+    messagesCopy= [
+        {
+            "role": "user",
+            "content": `you have to reply me in this ${DEVICE_LANGUAGE} language. I can understand only ${DEVICE_LANGUAGE} language.`
+        },
+        ...messagesCopy
+    ]
+
+
     return new Promise((resolve, reject) => {
         gptInstance.post(`/completions`, {
             messages: messagesCopy,

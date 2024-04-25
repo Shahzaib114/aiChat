@@ -18,17 +18,21 @@ import useChat from "../../../hooks/useChat.ts";
 import useSession from "../../../hooks/useSession.ts";
 import {gptCompletions} from "../../../apis/axios-config.ts";
 import {IMessageToGptMessages} from "../../../utils/utils.ts";
-import {GPT3} from "../../../utils/gpt-models.ts";
+import {GPT3, GPT4} from "../../../utils/gpt-models.ts";
 import {ITabsItem} from "../../../components/tabs/types.ts";
 import AvailableModels from "./variables/available-models.tsx";
 import TypingAnimation from "../../../components/typing-animation/typing-animation.tsx";
 import useSubscription from "../../../hooks/useSubscription.ts";
 import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
+import UpgradeToPremiumToast from "./component/upgrade-to-premium-toast/upgrade-to-premium-toast.tsx";
+import {getDeviceLanguage} from "../../../utils/get-device-language.ts";
 
 
 interface ChatScreenProps extends IDefaultProps {
 
 }
+
+
 
 const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
     useHiddenTabs()
@@ -97,7 +101,7 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 {
                     !subActions.hasActiveSubscription() && <NotificationBar
                         onClick={() => {
-                            buySubscriptionPopup.current?.showDailyLimit()
+                            buySubscriptionPopup.current?.showBuySubscription()
                         }}
                         message={
                             subActions.hasDailyQuota() ?
@@ -116,7 +120,13 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                     <Tabs
                         selected={gptModel}
                         onChange={(value) => {
-                            setGptModel(value)
+                            if (value.value === GPT4 && !subActions.hasActiveSubscription()) {
+                                buySubscriptionPopup.current?.showBuySubscription()
+                                return
+                            }
+                            {
+                                setGptModel(value)
+                            }
                         }}
                         items={AvailableModels}/>
                 </View>
@@ -165,16 +175,18 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-                <ChatInput
-                    disabled={gettingResponse}
-                    onSend={(message) => {
-                        actions.sendMessage(message)
-                        subActions.dailyMessagesActions.increment?.()
-                        if (!startGettingResponse)
-                            setStartGettingResponse(true);
+                {!subActions.hasActiveSubscription() && !subActions.hasDailyQuota() ? <UpgradeToPremiumToast/> :
+                    <ChatInput
+                        disabled={gettingResponse}
+                        onSend={(message) => {
+                            actions.sendMessage(message)
+                            subActions.dailyMessagesActions.increment?.()
+                            if (!startGettingResponse)
+                                setStartGettingResponse(true);
 
-                    }}
-                />
+                        }}
+                    />
+                }
             </View>
         </View>
     )
