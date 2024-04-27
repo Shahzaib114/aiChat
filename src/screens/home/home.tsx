@@ -10,6 +10,7 @@ import QuestionLayout from "./components/question-layout.tsx";
 import useCategories from "../../hooks/useCategories.ts";
 import HomeInput from "./components/home-input.tsx";
 import HomeSkeletonAnimation from "../../components/skeleton-anim/home-skeleton-anim/home-skeleton-anim.tsx";
+import TabSkeletonAnim from "../../components/skeleton-anim/home-skeleton-anim/tab-skeleton-anim.tsx";
 
 interface HomeProps extends IDefaultProps {
 
@@ -21,6 +22,7 @@ const Home: FC<HomeProps> = ({...props}) => {
 
 
     function extractKeys(): tabProps[] {
+
         let tabData: tabProps[] = Object.keys(data).map((key: string, index: number) => {
             return {text: key, id: index + 1};
         });
@@ -67,6 +69,10 @@ const Home: FC<HomeProps> = ({...props}) => {
         <View style={styles.container}>
             <View style={{marginVertical: 10}}>
                 <FlatList data={extractKeys()}
+                          contentContainerStyle={{
+
+                          }}
+                          ListHeaderComponent={<TabSkeletonAnim loading={loading}/>}
                           renderItem={({item}) => <TabComponent
                               isSelected={selectedTab === item.id}
                               onPress={() => setSelectedTab(item.id)}
@@ -76,14 +82,8 @@ const Home: FC<HomeProps> = ({...props}) => {
                           showsHorizontalScrollIndicator={false}
                 />
             </View>
-            <FlatList data={TransFormData()}
-                      ListHeaderComponent={
-                          <>
-                              {
-                                  loading && <HomeSkeletonAnimation/>
-                              }
-                          </>
-                      }
+            <FlatList data={TransFormData() as TransFormedCategory[]}
+                      ListEmptyComponent={<HomeSkeletonAnimation loading={loading}/>}
                       renderItem={({item}) => <GetCategoryComponent
                           {...item}
                       />}
@@ -95,7 +95,7 @@ const Home: FC<HomeProps> = ({...props}) => {
                       keyExtractor={(item) => item.title}
                       showsVerticalScrollIndicator={false}
             />
-            <HomeInput/>
+            {!loading && <HomeInput/>}
         </View>
     )
 }

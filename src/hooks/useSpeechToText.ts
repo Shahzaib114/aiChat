@@ -2,6 +2,7 @@ import Voice, {SpeechErrorEvent} from '@react-native-voice/voice';
 import {useEffect, useState} from "react";
 import {SpeechResultsEvent} from "@react-native-voice/voice/src/VoiceModuleTypes.ts";
 import DEVICE_LANGUAGE from "../utils/get-device-language.ts";
+import {gptInstance} from "../apis/axios-config.ts";
 
 interface SpeechToTextActions {
     start: () => void;
@@ -10,8 +11,19 @@ interface SpeechToTextActions {
 }
 
 
-export default function useSpeechToText(onResult: (result: string) => void, onError: (e: SpeechErrorEvent) => void): [boolean, SpeechToTextActions] {
+export default function useSpeechToText(onResult: (result: string) => void, onError: (e: SpeechErrorEvent) => void): [boolean, boolean, SpeechToTextActions] {
     const [converting, setConverting] = useState<boolean>(false);
+    const [startedRecording, setStartedRecording] = useState<boolean>(false);
+    const [isViewUnMounted,setIsViewUnMounted] = useState(false);
+
+
+    function convertSpeechToText(){
+        setConverting(true)
+        setTimeout(() => {
+            setConverting(false);
+            onResult("hello this is a test")
+        }, 2000);
+    }
 
     function onSpeechResults(e: SpeechResultsEvent) {
         setConverting(false)
@@ -30,23 +42,24 @@ export default function useSpeechToText(onResult: (result: string) => void, onEr
     }
 
     function stop() {
-        setConverting(false);
-        Voice.stop();
+        setStartedRecording(false);
+        convertSpeechToText()
     }
 
     function start() {
-        setConverting(true);
-        Voice.start(DEVICE_LANGUAGE);
+        setStartedRecording(true);
+
     }
 
     useEffect(() => {
 
         Voice.onSpeechResults = onSpeechResults;
         Voice.onSpeechError = onSpeechError;
-
+        setIsViewUnMounted(false)
         return () => {
             console.log('Voice removed');
             Voice.destroy().then(Voice.removeAllListeners);
+            setIsViewUnMounted(true)
         }
 
     }, []);
@@ -58,5 +71,5 @@ export default function useSpeechToText(onResult: (result: string) => void, onEr
 
     } as SpeechToTextActions;
 
-    return [converting, actions];
+    return [startedRecording, converting, actions];
 }

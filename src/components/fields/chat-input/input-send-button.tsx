@@ -19,7 +19,7 @@ export type InputSendButtonProps = IDefaultProps & PressableProps & {
 }
 
 const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => {
-    const [convertingSpeechToText, speechActions] = useSpeechToText((text) => {
+    const [startedRecording, processingSpeech, speechActions] = useSpeechToText((text) => {
         props.onSpeechToText?.(text)
         props.setType?.("text")
 
@@ -29,10 +29,10 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
 
 
     useEffect(() => {
-        if (type === "voice" && !convertingSpeechToText) {
+        if (type === "voice" && !startedRecording) {
             speechActions.start()
         }
-        if (type !== "voice" && convertingSpeechToText) {
+        if (type !== "voice" && startedRecording) {
             speechActions.stop()
         }
 
@@ -46,7 +46,7 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
             borderRadius: 1000,
             flexDirection: "row",
             backgroundColor: themeColors.blackLight,
-            width: type === "voice" ? "95%" : "auto",
+            width: type === "voice" || processingSpeech  ? "95%" : "auto",
         }}>
             <View
                 style={{
@@ -60,7 +60,7 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
                     style={{
                         flexDirection: "row",
                         alignItems: "center",
-                        display: type === "voice" ? "flex" : "none",
+                        display: type === "voice" || processingSpeech ? "flex" : "none",
                         flex: 1,
 
                     }}
@@ -76,7 +76,7 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
                         }}
                     >
                         {
-                            "Listening..."
+                            processingSpeech ? "Processing Your speech" : "Listening..."
                         }                    </Text>
                     <LottieView
                         source={require("../../../../assets/anim/wave.json")}
@@ -92,7 +92,7 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
                 <Pressable
                     {...props}
 
-                    disabled={props.disabled}
+                    disabled={props.disabled || processingSpeech}
                     style={{
                         width: height,
                         height: height,
@@ -100,18 +100,20 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
                         borderRadius: 1000,
                         justifyContent: "center",
                         alignItems: "center",
-                        backgroundColor: type === "voice" ? themeColors.red : themeColors.primary,
+                        backgroundColor: type === "voice" || processingSpeech ? themeColors.red : themeColors.primary,
                     }}>
-                    {type === "default" && <SvgImport svg={mic}/>}
-                    {type === "text" && <SvgImport svg={send}/>}
-                    {type === "voice" ? true ? <SvgImport svg={box}/> :
+                    {type === "default" && !processingSpeech && <SvgImport svg={mic}/>}
+                    {type === "text" && !processingSpeech && <SvgImport svg={send}/>}
+                    {type === "voice" && !processingSpeech && <SvgImport svg={box}/>}
+                    {
+                        processingSpeech &&
                         <ActivityIndicator
                             style={{
                                 width: 10,
                                 height: 10
                             }}
                             color={'white'}
-                        /> : null
+                        />
                     }
 
                 </Pressable>
