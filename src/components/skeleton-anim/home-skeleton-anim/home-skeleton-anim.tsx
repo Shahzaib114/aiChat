@@ -6,16 +6,20 @@ import themeColors from "../../../theme/colors.ts";
 
 
 interface HomeSkeletonAnimationProps extends IDefaultProps {
-
+    loading?: boolean
 }
 
 const HomeSkeletonAnimation: FC<HomeSkeletonAnimationProps> = ({...props}) => {
     const height: number = Dimensions.get('window').width / 3;
+
+    if (!props.loading) {
+        return null
+    }
     return (
         <View style={{
             flex: 1,
             padding: 10,
-            paddingBottom: 180,
+
 
 
         }}>
