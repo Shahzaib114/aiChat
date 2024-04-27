@@ -58,6 +58,10 @@ class BuySubscriptionPopup extends Component<BuySubscriptionPopupProps, BuySubsc
             <Modal
                 // animationType="slide"
                 transparent={true}
+                onDismiss={() => {
+                    this.close()
+                }}
+
                 visible={this.state.visible}
                 onRequestClose={() => {
                     this.close()
@@ -70,7 +74,7 @@ class BuySubscriptionPopup extends Component<BuySubscriptionPopupProps, BuySubsc
                             onCancel={() => {
                                 this.close()
                             }}
-                            onContinue={() => {
+                            closePopUp={() => {
                                 this.close()
                             }}
                         />}

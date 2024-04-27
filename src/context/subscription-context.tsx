@@ -83,7 +83,7 @@ export function SubscriptionProvider({children}: IDefaultProps) {
     }
 
     function hasActiveSubscription() {
-        return subscription.status !== "active"
+        return subscription.status === "active"
     }
 
 

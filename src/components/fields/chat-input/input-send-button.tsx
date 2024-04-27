@@ -1,5 +1,5 @@
 import React, {FC, useEffect} from "react";
-import {Pressable, PressableProps, StyleSheet, Text, View} from "react-native";
+import {ActivityIndicator, Pressable, PressableProps, StyleSheet, Text, View} from "react-native";
 import {IDefaultProps} from "../../../utils/types.ts";
 import themeColors from "../../../theme/colors.ts";
 import SvgImport from "../../../utils/import-svg.tsx";
@@ -8,15 +8,36 @@ import send from "../../../../assets/svgs/send.js";
 import box from "../../../../assets/svgs/box.js";
 import {Animated} from "react-native";
 import LottieView from "lottie-react-native";
+import useSpeechToText from "../../../hooks/useSpeechToText.ts";
+import {SpeechErrorEvent} from "@react-native-voice/voice";
 
 export type InputSendButtonProps = IDefaultProps & PressableProps & {
     type: "text" | "voice" | "default",
     height?: number,
     setType?: (type: "text" | "voice" | "default") => void,
+    onSpeechToText?: (text: string) => void
 }
 
 const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => {
+    const [convertingSpeechToText, speechActions] = useSpeechToText((text) => {
+        props.onSpeechToText?.(text)
+        props.setType?.("text")
 
+    }, (e: SpeechErrorEvent) => {
+        props.setType?.("default")
+    })
+
+
+    useEffect(() => {
+        if (type === "voice" && !convertingSpeechToText) {
+            speechActions.start()
+        }
+        if (type !== "voice" && convertingSpeechToText) {
+            speechActions.stop()
+        }
+
+
+    }, [type]);
 
     return (
         <View style={{
@@ -54,8 +75,9 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
                             opacity: 0.5,
                         }}
                     >
-                        Listening...
-                    </Text>
+                        {
+                            "Listening..."
+                        }                    </Text>
                     <LottieView
                         source={require("../../../../assets/anim/wave.json")}
                         style={{
@@ -69,6 +91,7 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
                 </View>
                 <Pressable
                     {...props}
+
                     disabled={props.disabled}
                     style={{
                         width: height,
@@ -81,7 +104,15 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
                     }}>
                     {type === "default" && <SvgImport svg={mic}/>}
                     {type === "text" && <SvgImport svg={send}/>}
-                    {type === "voice" && <SvgImport svg={box}/>}
+                    {type === "voice" ? true ? <SvgImport svg={box}/> :
+                        <ActivityIndicator
+                            style={{
+                                width: 10,
+                                height: 10
+                            }}
+                            color={'white'}
+                        /> : null
+                    }
 
                 </Pressable>
             </View>

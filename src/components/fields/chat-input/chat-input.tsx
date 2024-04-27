@@ -20,7 +20,6 @@ const ChatInput: FC<ChatInputProps> = ({...props}) => {
     const [message, setMessage] = React.useState<string>("");
     const [type, setType] = React.useState<"text" | "voice" | "default">("default");
 
-
     useEffect(() => {
         if (message.length > 0) {
             setType("text")
@@ -67,12 +66,13 @@ const ChatInput: FC<ChatInputProps> = ({...props}) => {
                 value={message}
                 onChangeText={(text) => setMessage(text)}
                 placeholder={"Ask me whatever you want..."}
-                placeholderTextColor={themeColors.white+"80"}
+                placeholderTextColor={themeColors.white + "80"}
                 {...props}
             />
 
             <InputSendButton type={type} disabled={props.disabled}
                              height={InputHeight - 7}
+                             onSpeechToText={(text) => setMessage(text)}
                              setType={setType}
                              onPress={handleButton}/>
         </View>

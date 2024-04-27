@@ -26,6 +26,7 @@ export default function useRewardedAdd(onWatch: () => void): [boolean, RewardedA
             RewardedAdEventType.EARNED_REWARD,
             (reward) => {
                 onWatch?.()
+                setLoaded(false)
                 rewardedAdd.load();
             }
         );
@@ -34,9 +35,9 @@ export default function useRewardedAdd(onWatch: () => void): [boolean, RewardedA
         rewardedAdd.load();
 
         return () => {
-            // console.log('Ad removed');
-            // unsubscribeLoaded();
-            // unsubscribeEarned();
+            console.log('Ad removed');
+            unsubscribeLoaded();
+            unsubscribeEarned();
         };
     }, []);
 

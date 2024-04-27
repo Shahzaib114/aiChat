@@ -26,12 +26,12 @@ import useSubscription from "../../../hooks/useSubscription.ts";
 import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
 import UpgradeToPremiumToast from "./component/upgrade-to-premium-toast/upgrade-to-premium-toast.tsx";
 import {getDeviceLanguage} from "../../../utils/get-device-language.ts";
+import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
 
 
 interface ChatScreenProps extends IDefaultProps {
 
 }
-
 
 
 const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
@@ -89,7 +89,10 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
         <View style={styles.container}>
             <BuySubscriptionPopup
                 onWatch={() => {
-                    subActions?.dailyMessagesActions?.decrement?.()
+                    subActions?.dailyMessagesActions?.custom?.(
+                        subActions.todayMessages > FREE_DAIL_MESSAGE_LIMIT ?
+                            FREE_DAIL_MESSAGE_LIMIT - 1 : subActions.todayMessages - 1
+                    )
                     console.log("watched")
                 }}
                 ref={buySubscriptionPopup}

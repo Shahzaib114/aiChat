@@ -5,14 +5,16 @@ import SvgImport from "../../utils/import-svg.tsx";
 import starts from "../../../assets/svgs/starts.js";
 import {FREE_DAIL_MESSAGE_LIMIT} from "../../utils/app-config.ts";
 import themeColors from "../../theme/colors.ts";
+import {useNavigation} from "@react-navigation/native";
 
 
 interface DailyLimitViewProps extends IDefaultProps {
-    onContinue?: () => void
+    closePopUp?: () => void
     onCancel?: () => void
 }
 
 const DailyLimitView: FC<DailyLimitViewProps> = ({...props}) => {
+    const navigate = useNavigation()
 
     return (
         <View style={styles.container}>
@@ -39,7 +41,12 @@ const DailyLimitView: FC<DailyLimitViewProps> = ({...props}) => {
                     </Text>
                 </Pressable>
                 <Pressable
-                    onPress={props.onContinue}
+                    onPress={()=>{
+                        // @ts-ignore
+                        navigate.navigate('plans')
+                        props.closePopUp?.()
+
+                    }}
                     style={[styles.btn, {
                         backgroundColor: themeColors.primary,
                     }]}

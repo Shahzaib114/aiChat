@@ -9,15 +9,15 @@ import QuestionLayout from "./components/question-layout.tsx";
 
 import useCategories from "../../hooks/useCategories.ts";
 import HomeInput from "./components/home-input.tsx";
+import HomeSkeletonAnimation from "../../components/skeleton-anim/home-skeleton-anim/home-skeleton-anim.tsx";
 
 interface HomeProps extends IDefaultProps {
 
 }
 
 const Home: FC<HomeProps> = ({...props}) => {
-    const [data,loading]  = useCategories();
+    const [data, loading] = useCategories();
     const [selectedTab, setSelectedTab] = React.useState<number>(0);
-
 
 
     function extractKeys(): tabProps[] {
@@ -77,18 +77,25 @@ const Home: FC<HomeProps> = ({...props}) => {
                 />
             </View>
             <FlatList data={TransFormData()}
+                      ListHeaderComponent={
+                          <>
+                              {
+                                  loading && <HomeSkeletonAnimation/>
+                              }
+                          </>
+                      }
                       renderItem={({item}) => <GetCategoryComponent
                           {...item}
                       />}
                       contentContainerStyle={{
-                          paddingBottom:20
+                          paddingBottom: 20
                       }}
                       ItemSeparatorComponent={() => <View style={{height: 20}}/>}
 
                       keyExtractor={(item) => item.title}
                       showsVerticalScrollIndicator={false}
             />
-            <HomeInput />
+            <HomeInput/>
         </View>
     )
 }

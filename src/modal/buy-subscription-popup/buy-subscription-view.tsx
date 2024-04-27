@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
+import {ActivityIndicator, Pressable, StyleSheet, Text, View} from "react-native";
 import {IDefaultProps} from "../../utils/types.ts";
 import SvgImport from "../../utils/import-svg.tsx";
 import starts from "../../../assets/svgs/starts.js";
@@ -18,7 +18,9 @@ interface BuySubscriptionViewProps extends IDefaultProps {
 }
 
 const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
-    const [add_loaded, actions] = useRewardedAdd(props.onWatch || (() => {
+    const [add_loaded, actions] = useRewardedAdd((() => {
+        props.onWatch?.()
+        props.closePopUp?.()
     }))
 
     const navigate = useNavigation()
@@ -38,7 +40,7 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
                 gap: 20
             }}>
                 <Pressable
-                    onPress={()=>{
+                    onPress={() => {
                         // @ts-ignore
                         navigate.navigate('plans')
                         props.closePopUp?.()
@@ -52,11 +54,11 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
                         Subscribe
                     </Text>
                 </Pressable>
-                <Pressable
+                {<Pressable
                     onPress={() => {
                         if (add_loaded) {
                             actions.show()
-                            props.closePopUp?.()
+
                         }
                     }}
                     style={[styles.btn, {
@@ -67,8 +69,14 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
                     <Text style={[styles.buttonText]}>
                         Watch Ad
                     </Text>
-                    <SvgImport svg={add}/>
-                </Pressable>
+                    {!add_loaded ? <ActivityIndicator
+                        style={{
+                            width: 10,
+                            height: 10
+                        }}
+                        color={'white'}
+                    /> : <SvgImport svg={add}/>}
+                </Pressable>}
 
             </View>
         </View>
