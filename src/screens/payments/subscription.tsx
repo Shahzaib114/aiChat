@@ -41,15 +41,24 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const getInAppProducts = async () => {
         try {
             const offerings = await Purchases.getOfferings();
-            if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
-                // Display packages for sale
-                console.log('offeffvvrings', JSON.stringify(offerings.current?.availablePackages))
-                setAllProducts(offerings.current?.availablePackages)
+            if (offerings.all !== null) {
+                // console.log('offeffvvrings', JSON.stringify(offerings.all))
+                setAllProducts(offerings.all?.Standard?.availablePackages)
             }
         } catch (e) {
             console.log('go error in offering', e)
         }
     }
+
+    const extractPriceAndPeriod = (description: string) => {
+        const regex = /([\d.]+\$),\/(month|week|year)/;
+        const match = description.match(regex);
+        if (match) {
+            const [_, price, period] = match;
+            return { price, period };
+        }
+        return { price: '', period: '' };
+    };
 
     const navigation: any = useNavigation()
     return (
@@ -161,36 +170,19 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
 
                     <View style={styles.card}>
                         {allProducts?.map((item: any, index: number) => {
+                            const { price, period } = extractPriceAndPeriod(item?.product?.description)
                             return (
                                 <React.Fragment key={index}>
                                     <Card
-                                        text='ChatGPT 3'
-                                        description="34.99$"
-                                        smallDesc="/Week"
+                                        text={item?.product?.title}
+                                        description={price}
+                                        smallDesc={`/${period}`}
                                         purchased={false}
                                         handleCardPress={() => { handlePurchase(item) }}
                                     />
                                 </React.Fragment>
                             )
                         })}
-
-                        {/* <Card
-                            text='Annual Access'
-                            description="34.99$"
-                            smallDesc="/Week"
-                            save={true}
-                        />
-                        <Card
-                            text='ChatGPT 4'
-                            description="9$"
-                            smallDesc="/Month"
-                            purchased={true}
-                        />
-                        <Card
-                            text='ChatGPT 4'
-                            description="45$"
-                            smallDesc="/Year"
-                        /> */}
                     </View>
 
                     <View style={styles.buttonview}>
