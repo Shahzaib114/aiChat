@@ -1,4 +1,4 @@
-package com.aichat
+package com.abdullah.mumtaz65.AICHAT
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { FC, useEffect, useState } from "react";
+import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from "react-native-responsive-dimensions";
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from "@react-navigation/native";
@@ -18,10 +18,48 @@ import themeColors from "../../theme/colors.ts";
 import FONTS from "../../theme/FONTS.tsx";
 import backArrow from "../../../assets/svgs/backArrow.js";
 import ChatSvg from "../../../assets/svgs/ChatSvg.js";
+import Purchases from 'react-native-purchases';
 
 interface HomeProps extends IDefaultProps { }
 
 const Subscription: FC<HomeProps> = ({ ...props }) => {
+    const [allProducts, setAllProducts] = useState<any>()
+
+    useEffect(() => {
+        getInAppProducts()
+    }, [])
+
+    const handlePurchase = async (selectedProduct: any) => {
+        try {
+            const purchasing = await Purchases.purchasePackage(selectedProduct);
+            console.log('purchased', purchasing)
+        } catch (e) {
+            console.log('go error in offering', e)
+        }
+    };
+
+    const getInAppProducts = async () => {
+        try {
+            const offerings = await Purchases.getOfferings();
+            if (offerings.all !== null) {
+                // console.log('offeffvvrings', JSON.stringify(offerings.all))
+                setAllProducts(offerings.all?.Standard?.availablePackages)
+            }
+        } catch (e) {
+            console.log('go error in offering', e)
+        }
+    }
+
+    const extractPriceAndPeriod = (description: string) => {
+        const regex = /([\d.]+\$),\/(month|week|year)/;
+        const match = description.match(regex);
+        if (match) {
+            const [_, price, period] = match;
+            return { price, period };
+        }
+        return { price: '', period: '' };
+    };
+
     const navigation: any = useNavigation()
     return (
         <ScrollView
@@ -131,27 +169,20 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     </View>
 
                     <View style={styles.card}>
-                        <Card
-                            text='ChatGPT 3'
-                            description="Free"
-                            purchased={true}
-                        />
-                        <Card
-                            text='Annual Access'
-                            description="34.99$"
-                            smallDesc="/Week"
-                            save={true}
-                        />
-                        <Card
-                            text='ChatGPT 4'
-                            description="9$"
-                            smallDesc="/Month"
-                        />
-                        <Card
-                            text='ChatGPT 4'
-                            description="45$"
-                            smallDesc="/Year"
-                        />
+                        {allProducts?.map((item: any, index: number) => {
+                            const { price, period } = extractPriceAndPeriod(item?.product?.description)
+                            return (
+                                <React.Fragment key={index}>
+                                    <Card
+                                        text={item?.product?.title}
+                                        description={price}
+                                        smallDesc={`/${period}`}
+                                        purchased={false}
+                                        handleCardPress={() => { handlePurchase(item) }}
+                                    />
+                                </React.Fragment>
+                            )
+                        })}
                     </View>
 
                     <View style={styles.buttonview}>
