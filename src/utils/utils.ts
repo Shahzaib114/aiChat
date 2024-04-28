@@ -1,6 +1,6 @@
 import {IChat, IGptMessage, IMessage} from "./types.ts";
 import {USER_ROLE} from "./roles.ts";
-
+import mime from "mime";
 
 export function IMessageToGptMessages(chats: IMessage[]): IGptMessage[] {
     let messages: IGptMessage[] = chats.map((chat) => {
@@ -10,4 +10,13 @@ export function IMessageToGptMessages(chats: IMessage[]): IGptMessage[] {
         }
     })
     return messages
+}
+
+export const getUrl = (uri:string) => {
+    let file = {
+        uri: uri,
+        name: uri.split("/").pop(),
+        type: mime.getType(uri)
+    }
+    return file
 }

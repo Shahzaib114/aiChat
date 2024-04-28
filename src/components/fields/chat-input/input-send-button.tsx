@@ -23,7 +23,7 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
         props.onSpeechToText?.(text)
         props.setType?.("text")
 
-    }, (e: SpeechErrorEvent) => {
+    }, (e: string) => {
         props.setType?.("default")
     })
 
@@ -46,7 +46,7 @@ const InputSendButton: FC<InputSendButtonProps> = ({type, height, ...props}) => 
             borderRadius: 1000,
             flexDirection: "row",
             backgroundColor: themeColors.blackLight,
-            width: type === "voice" || processingSpeech  ? "95%" : "auto",
+            width: type === "voice" || processingSpeech ? "95%" : "auto",
         }}>
             <View
                 style={{
