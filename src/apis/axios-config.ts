@@ -15,6 +15,16 @@ export const gptInstance = axios.create({
     }
 });
 
+
+export const gptSpeechToTextInstance =  axios.create({
+    baseURL: "https://api.openai.com/v1/audio",
+    headers: {
+        "Content-Type": 'multipart/form-data',
+        Authorization: `Bearer ${GPT_KEY}`,
+    }
+});
+
+
 export const gptCompletions = async (messages: IGptMessage[], model: string, customPrompt: prompt | undefined): Promise<string> => {
     let messagesCopy = [ ...messages]
 
