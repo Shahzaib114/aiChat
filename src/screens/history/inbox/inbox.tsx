@@ -19,12 +19,11 @@ const InBox: FC<InBoxProps> = ({...props}) => {
 
     function onItemClick(item: InBoxItemProps) {
         // @ts-ignore
-        navigation.navigate("history", {
-            screen: "chat",
-            params: {
-                inboxRef: item.inboxRef,
-            }
-        })
+        navigation.navigate("chat", {
+            inboxRef:  item.inboxRef,
+        });
+
+
     }
 
 

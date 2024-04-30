@@ -1,14 +1,18 @@
-import {IChat, IMessage} from "../utils/types.ts";
+import {IChat, IGptMessage, IMessage} from "../utils/types.ts";
 import {useEffect, useRef, useState} from "react";
 import database from "@react-native-firebase/database";
 import useSession from "./useSession.ts";
 import {formateDateTo12HoursTime} from "../utils/formate-date.ts";
 import {SYSTEM_ROLE, USER_ROLE} from "../utils/roles.ts";
+import {gptCompletions} from "../apis/axios-config.ts";
+import {IMessageToGptMessages} from "../utils/utils.ts";
+import {GPT4} from "../utils/gpt-models.ts";
 
 interface IActions {
     sendMessage: (message: string) => void;
     addGptMessage: (message: string) => void;
     getMessagesWithGreeting: () => IMessage[];
+    retryMessage: () => void;
 }
 
 export default function useChat(inboxRef: string): [IChat, IActions] {
@@ -16,7 +20,7 @@ export default function useChat(inboxRef: string): [IChat, IActions] {
     const [session] = useSession();
     const ref = useRef(database().ref(`users/${session?.user}/inbox/${inboxRef}`));
     const oldRef = useRef(inboxRef);
-
+    const [isLoadingFirstTime, setIsLoadingFirstTime] = useState<boolean>(true);
 
     function addMessage(message: string, role: "user" | "system", user: string) {
         let messages: IMessage[] = chat.messages || [];
@@ -42,7 +46,7 @@ export default function useChat(inboxRef: string): [IChat, IActions] {
         addMessage(message, SYSTEM_ROLE, SYSTEM_ROLE);
     }
 
-    function getMessagesWithGreeting():IMessage[] {
+    function getMessagesWithGreeting(): IMessage[] {
         let messages: IMessage[] = chat.messages || [];
         let lastMessage = messages?.[0];
         if (lastMessage?.role === SYSTEM_ROLE) {
@@ -60,10 +64,19 @@ export default function useChat(inboxRef: string): [IChat, IActions] {
         ]
     }
 
+    async function retryMessage() {
+        let messages: IMessage[] = chat.messages || [];
+        messages = messages.slice(0, messages.length - 1)
+        await ref.current.update({
+            messages: messages
+        });
+    }
+
     const actions: IActions = {
         sendMessage: sendMessage,
         addGptMessage: addGptMessage,
-        getMessagesWithGreeting: getMessagesWithGreeting
+        getMessagesWithGreeting: getMessagesWithGreeting,
+        retryMessage: retryMessage
     }
 
     function snapShotToChat(snapshot: any) {
@@ -72,7 +85,6 @@ export default function useChat(inboxRef: string): [IChat, IActions] {
             setChat(data);
         }
     }
-
 
 
     useEffect(() => {

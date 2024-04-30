@@ -1,9 +1,14 @@
-import React, { FC, useEffect, useState } from "react";
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from "react-native-responsive-dimensions";
-import { SvgXml } from 'react-native-svg';
-import { useNavigation } from "@react-navigation/native";
-import { IDefaultProps } from "../../utils/types.ts";
+import React, {FC, useEffect, useState} from "react";
+import {ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {
+    responsiveFontSize,
+    responsiveScreenFontSize,
+    responsiveScreenHeight,
+    responsiveScreenWidth
+} from "react-native-responsive-dimensions";
+import {SvgXml} from 'react-native-svg';
+import {useNavigation} from "@react-navigation/native";
+import {IDefaultProps} from "../../utils/types.ts";
 import PremiumSvg from "../../../assets/svgs/Premium.js";
 import RobotSvg from "../../../assets/svgs/Robot.js";
 import CrossSvg from "../../../assets/svgs/cross.js";
@@ -19,12 +24,14 @@ import FONTS from "../../theme/FONTS.tsx";
 import backArrow from "../../../assets/svgs/backArrow.js";
 import ChatSvg from "../../../assets/svgs/ChatSvg.js";
 import Purchases from 'react-native-purchases';
+import usePlans from "../../hooks/usePlans.ts";
 
-interface HomeProps extends IDefaultProps { }
+interface HomeProps extends IDefaultProps {
+}
 
-const Subscription: FC<HomeProps> = ({ ...props }) => {
+const Subscription: FC<HomeProps> = ({...props}) => {
     const [allProducts, setAllProducts] = useState<any>()
-
+    const [plans] = usePlans();
     useEffect(() => {
         getInAppProducts()
     }, [])
@@ -55,9 +62,9 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
         const match = description.match(regex);
         if (match) {
             const [_, price, period] = match;
-            return { price, period };
+            return {price, period};
         }
-        return { price: '', period: '' };
+        return {price: '', period: ''};
     };
 
     const navigation: any = useNavigation()
@@ -71,10 +78,10 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                 resizeMode="cover"
             >
 
-                <SafeAreaView style={{ height: responsiveScreenHeight(128.9), }}>
+                <SafeAreaView style={{height: responsiveScreenHeight(128.9),}}>
                     <View style={styles.top}>
                         <TouchableOpacity style={styles.toptouchable}>
-                            <SvgXml xml={backArrow} width="60%" height="60%" />
+                            <SvgXml xml={backArrow} width="60%" height="60%"/>
                         </TouchableOpacity>
                         <Text style={styles.toptext}>
                             Subscription
@@ -93,7 +100,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             <View style={styles.thirdsvgview}>
                                 <Text style={styles.thirdsvgviewtext}>Free</Text>
                                 <View style={styles.thirdviewnested}>
-                                    <SvgXml xml={PremiumSvg} width="100%" height="100%" />
+                                    <SvgXml xml={PremiumSvg} width="100%" height="100%"/>
                                 </View>
                             </View>
                         </View>
@@ -101,17 +108,17 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         <View style={styles.fourthviewmain}>
                             <View style={styles.fourthview1}>
                                 <View style={styles.fourthview2}>
-                                    <SvgXml xml={RobotSvg} width="100%" height="100%" />
+                                    <SvgXml xml={RobotSvg} width="100%" height="100%"/>
                                 </View>
                                 <Text style={styles.fourthview2text}>Best Model AI</Text>
                             </View>
 
                             <View style={styles.fourthview3}>
                                 <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    <SvgXml xml={CrossSvg} width="100%" height="100%"/>
                                 </View>
                                 <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    <SvgXml xml={TickSvg} width="100%" height="100%"/>
                                 </View>
                             </View>
                         </View>
@@ -119,16 +126,16 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         <View style={styles.fourthviewmain}>
                             <View style={styles.fourthview1}>
                                 <View style={styles.fourthview2}>
-                                    <SvgXml xml={AdsSvg} width="100%" height="100%" />
+                                    <SvgXml xml={AdsSvg} width="100%" height="100%"/>
                                 </View>
                                 <Text style={styles.fourthview2text}>No Ads</Text>
                             </View>
                             <View style={styles.fourthview3}>
                                 <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    <SvgXml xml={CrossSvg} width="100%" height="100%"/>
                                 </View>
                                 <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    <SvgXml xml={TickSvg} width="100%" height="100%"/>
                                 </View>
                             </View>
                         </View>
@@ -136,33 +143,33 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         <View style={styles.fourthviewmain}>
                             <View style={styles.fourthview1}>
                                 <View style={styles.fourthview2}>
-                                    <SvgXml xml={ChatSvg} width="100%" height="100%" />
+                                    <SvgXml xml={ChatSvg} width="100%" height="100%"/>
                                 </View>
                                 <Text style={styles.fourthview2text}>Unlimited Msgs</Text>
                             </View>
                             <View style={styles.fourthview3}>
                                 <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    <SvgXml xml={CrossSvg} width="100%" height="100%"/>
                                 </View>
                                 <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    <SvgXml xml={TickSvg} width="100%" height="100%"/>
                                 </View>
                             </View>
                         </View>
 
-                        <View style={[styles.fourthviewmain, { borderBottomWidth: 0, }]}>
+                        <View style={[styles.fourthviewmain, {borderBottomWidth: 0,}]}>
                             <View style={styles.fourthview1}>
                                 <View style={styles.fourthview2}>
-                                    <SvgXml xml={BrainSvg} width="100%" height="100%" />
+                                    <SvgXml xml={BrainSvg} width="100%" height="100%"/>
                                 </View>
                                 <Text style={styles.fourthview2text}>Detailed Answers</Text>
                             </View>
                             <View style={styles.fourthview3}>
                                 <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    <SvgXml xml={CrossSvg} width="100%" height="100%"/>
                                 </View>
                                 <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    <SvgXml xml={TickSvg} width="100%" height="100%"/>
                                 </View>
                             </View>
                         </View>
@@ -170,7 +177,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
 
                     <View style={styles.card}>
                         {allProducts?.map((item: any, index: number) => {
-                            const { price, period } = extractPriceAndPeriod(item?.product?.description)
+                            const {price, period} = extractPriceAndPeriod(item?.product?.description)
                             return (
                                 <React.Fragment key={index}>
                                     <Card
@@ -178,7 +185,9 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                         description={price}
                                         smallDesc={`/${period}`}
                                         purchased={false}
-                                        handleCardPress={() => { handlePurchase(item) }}
+                                        handleCardPress={() => {
+                                            handlePurchase(item)
+                                        }}
                                     />
                                 </React.Fragment>
                             )
@@ -186,17 +195,17 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     </View>
 
                     <View style={styles.buttonview}>
-                        <ButtonComponent text="Continue" onPress={() => navigation.navigate('Offer')} />
-                        <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
+                        <ButtonComponent text="Continue" onPress={() => navigation.navigate('Offer')}/>
+                        <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)}/>
                     </View>
-                    <View style={{ margin: "5%" }}>
-                        <Text style={{ color: "white", fontSize: responsiveScreenFontSize(2.5) }}>
+                    <View style={{margin: "5%"}}>
+                        <Text style={{color: "white", fontSize: responsiveScreenFontSize(2.5)}}>
                             Some Reviews
                         </Text>
                     </View>
-                    <View style={{ alignItems: "center", justifyContent: "center" }}>
-                        <Review />
-                        <Review />
+                    <View style={{alignItems: "center", justifyContent: "center"}}>
+                        <Review/>
+                        <Review/>
                     </View>
                 </SafeAreaView>
             </ImageBackground>

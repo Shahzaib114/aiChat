@@ -10,6 +10,8 @@ import Home from "../home/home.tsx";
 import InBox from "../history/inbox/inbox.tsx";
 import InBoxHeader from "../history/inbox/components/inbox-header.tsx";
 import HistoryScreen from "../history/history.tsx";
+import Settings from "../settings/settings.tsx";
+import SettingScreenHeader from "../settings/component/settings-screen-header.tsx";
 
 
 const Tab = createBottomTabNavigator();
@@ -53,7 +55,12 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                         component={HistoryScreen}/>
 
             <Tab.Screen name="plans" component={Subscription}/>
-            <Tab.Screen name="settings" component={Home}/>
+            <Tab.Screen name="settings"
+                        options={{
+                            headerShown: true,
+                            header: () => <SettingScreenHeader/>
+                        }}
+                        component={Settings}/>
 
 
         </Tab.Navigator>
