@@ -48,20 +48,17 @@ export default function useSpeechToText(onResult: (result: string) => void, onEr
     }
 
     function convertSpeechToText(voiceUrl: string) {
-        console.log(voiceUrl)
+
         setConverting(true)
         let form = new FormData();
         form.append("file", getUrl(voiceUrl));
         form.append("model", "whisper-1")
         gptSpeechToTextInstance.post("/transcriptions", form)
             .then(response => {
-                console.log('Transcription:', response.data);
                 onResult(response?.data?.text || "")
             })
             .catch(error => {
-                console.log(error?.message)
-                console.log(error)
-                console.error('Error converting speech to text:', error);
+
                 setConverting(false)
                 onError("Error Converting speech to text")
             })
@@ -75,12 +72,12 @@ export default function useSpeechToText(onResult: (result: string) => void, onEr
 
 
     function stop() {
-        console.log("stop called====")
+
         setStartedRecording(false);
         audioRecorderPlayer.current?.stopRecorder().then((result) => {
                 setStartedRecording(false)
                 convertSpeechToText(url);
-                console.log("onStop=>", result)
+
             }
         )
     }
@@ -105,7 +102,7 @@ export default function useSpeechToText(onResult: (result: string) => void, onEr
         audioRecorderPlayer.current = new AudioRecorderPlayer();
 
         return () => {
-            console.log('Voice removed');
+
             audioRecorderPlayer.current?.removePlayBackListener()
             audioRecorderPlayer.current?.removeRecordBackListener()
             audioRecorderPlayer.current = undefined;

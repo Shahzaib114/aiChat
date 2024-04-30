@@ -30,13 +30,13 @@ const HistoryScreen: FC<HistoryScreenProps> = ({...props}) => {
                 name={'inbox'}
 
                 component={InBox}/>
-            <Stack.Screen
-                name={'chat'}
-                initialParams={{
-                    inboxRef: "-1"
-                }}
-                options={{}}
-                component={ChatScreen}/>
+            {/*<Stack.Screen*/}
+            {/*    name={'chat'}*/}
+            {/*    initialParams={{*/}
+            {/*        inboxRef: "-1"*/}
+            {/*    }}*/}
+            {/*    options={{}}*/}
+            {/*    component={ChatScreen}/>*/}
         </Stack.Navigator>
     )
 }

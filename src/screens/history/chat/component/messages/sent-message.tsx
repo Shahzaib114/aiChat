@@ -1,11 +1,14 @@
 import React, {FC} from "react";
-import {StyleSheet, Text, View} from "react-native";
+import {Pressable, StyleSheet, Text, View} from "react-native";
 import {IDefaultProps, IMessage} from "../../../../../utils/types.ts";
 import themeColors from "../../../../../theme/colors.ts";
 import SvgImport from "../../../../../utils/import-svg.tsx";
 import copy from "../../../../../../assets/svgs/copy.js";
 import share from "../../../../../../assets/svgs/share.js";
 import {formateDateTo12HoursTime} from "../../../../../utils/formate-date.ts";
+import shareChat from "../../../../../../assets/svgs/shareChat.js";
+import {CopyToClipboard, shareText} from "../../../../../utils/utils.ts";
+import {App_NAME} from "../../../../../utils/app-config.ts";
 
 
 interface SentMessageProps extends IDefaultProps, IMessage {
@@ -42,8 +45,19 @@ const SentMessage: FC<SentMessageProps> = ({...props}) => {
                     alignItems: "center",
                 }}>
 
-                    <SvgImport svg={copy}/>
-                    <SvgImport svg={share}/>
+                    <Pressable
+                        onPress={() => CopyToClipboard(props.text)}
+                    >
+                        <SvgImport svg={copy}/>
+                    </Pressable>
+
+                    <Pressable
+                        onPress={() => shareText(
+                            `This message comes from ${App_NAME} app: ${props.text}`
+                        )}
+                    >
+                        <SvgImport svg={shareChat}/>
+                    </Pressable>
                     <View style={{flex:1}} />
                     <Text style={styles.time}>{getFormattedTime()}</Text>
                 </View>

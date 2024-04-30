@@ -58,25 +58,26 @@ export function useInBox(): [InBoxItemProps[], IActions] {
     function clearAllChat() {
         return database().ref(`users/${session?.user}/inbox`).remove();
     }
-    function newChat(navigation: any) {
-            let refInbox = database().ref(`users/${session?.user}/inbox`);
-            let id = refInbox.push().key;
-            if (!id) return;
-            refInbox.child(id).set({
-                id: id,
-                prompt: undefined,
-                messages: [],
-            });
 
-            // @ts-ignore
-            navigation.navigate("history", {
-                screen: "chat",
-                params: {
-                    inboxRef: id
-                }
-            });
+    function newChat(navigation: any) {
+        let refInbox = database().ref(`users/${session?.user}/inbox`);
+        let id = refInbox.push().key;
+        if (!id) return;
+        refInbox.child(id).set({
+            id: id,
+            prompt: undefined,
+            messages: [],
+        });
+
+        // @ts-ignore
+        navigation.navigate("chat", {
+            inboxRef: id,
+            startGettingResponse: true,
+        });
+
 
     }
+
     useEffect(() => {
             const ref = database().ref(`users/${session?.user}/inbox`);
             ref.on('value', mySnapshot);

@@ -13,6 +13,7 @@ import InputSendButton from "./input-send-button.tsx";
 interface ChatInputProps extends IDefaultProps {
     onSend?: (message: string) => void,
     disabled?: boolean,
+    onRetry?: () => void,
 }
 
 const InputHeight = 55;
@@ -34,8 +35,6 @@ const ChatInput: FC<ChatInputProps> = ({...props}) => {
                 props.onSend(message.trim())
             }
         } else if (type === "default") {
-            console.log("Empty message")
-            setType("voice")
             // props.onSend?.(message)
             // setMessage("")
         } else {
@@ -48,9 +47,13 @@ const ChatInput: FC<ChatInputProps> = ({...props}) => {
 
     return (
         <View style={styles.container}>
-            <SvgImport style={{
+            <Pressable
+                disabled={props.disabled}
+                onPress={props.onRetry}
+            ><SvgImport style={{
                 marginLeft: 20,
             }} svg={retry}/>
+            </Pressable>
             <TextInput
                 disabled={props.disabled}
                 style={{

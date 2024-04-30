@@ -27,6 +27,7 @@ import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subs
 import UpgradeToPremiumToast from "./component/upgrade-to-premium-toast/upgrade-to-premium-toast.tsx";
 import {getDeviceLanguage} from "../../../utils/get-device-language.ts";
 import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
+import {toArray} from "react-native-svg/lib/typescript/lib/Matrix2D";
 
 
 interface ChatScreenProps extends IDefaultProps {
@@ -35,7 +36,7 @@ interface ChatScreenProps extends IDefaultProps {
 
 
 const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
-    useHiddenTabs()
+    // useHiddenTabs()
     const [session] = useSession();
     const user = session.user;
     // @ts-ignore
@@ -66,8 +67,11 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 index: chat.messages.length - 1
             })
         if (chat?.messages && chat?.messages?.length > 0) {
+            console.log(chat.messages[chat.messages.length - 1].user)
             if (chat.messages[chat.messages.length - 1].user === user && startGettingResponse && !gettingResponse) {
+                console.log("Getting response")
                 getResponse()
+
             } else {
                 setGettingResponse(false)
             }
@@ -181,6 +185,14 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 {!subActions.hasActiveSubscription() && !subActions.hasDailyQuota() ? <UpgradeToPremiumToast/> :
                     <ChatInput
                         disabled={gettingResponse}
+                        onRetry={async () => {
+                            let totalMessages = actions.getMessagesWithGreeting().length
+                            if (totalMessages > 1 && actions.getMessagesWithGreeting()[totalMessages - 1].user !== user) {
+                                await actions.retryMessage()
+                                    setGettingResponse(true)
+                            }
+
+                        }}
                         onSend={(message) => {
                             actions.sendMessage(message)
                             subActions.dailyMessagesActions.increment?.()

@@ -1,17 +1,16 @@
 import React, {FC} from "react";
 import {Pressable, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../../utils/types.ts";
-import themeColors from "../../../../theme/colors.ts";
-import SvgImport from "../../../../utils/import-svg.tsx";
-import LeftIcon from "../../../../components/icons/left.tsx";
-import deleteIcon from "../../../../../assets/svgs/deleteIcon.js";
 import {useNavigation} from "@react-navigation/native";
+import {IDefaultProps} from "../../../utils/types.ts";
+import SvgImport from "../../../utils/import-svg.tsx";
+import Left from "../../../../assets/svgs/left.js";
+import themeColors from "../../../theme/colors.ts";
 
 interface ChatScreenHeaderProps extends IDefaultProps {
     title?: string
 }
 
-const ChatScreenHeader: FC<ChatScreenHeaderProps> = ({...props}) => {
+const SettingScreenHeader: FC<ChatScreenHeaderProps> = ({...props}) => {
     const navigation = useNavigation();
     return (
         <View style={styles.container}>
@@ -29,13 +28,13 @@ const ChatScreenHeader: FC<ChatScreenHeaderProps> = ({...props}) => {
                     }}
                 >
 
-                    <SvgImport svg={LeftIcon}/>
+                    <SvgImport svg={Left}/>
                 </Pressable>
                 <Text style={styles.text}>
-                    {props.title}
+                    Settings
                 </Text>
 
-                {/*<SvgImport svg={deleteIcon} style={{marginLeft: 6}}/>*/}
+
 
             </View>
         </View>
@@ -60,4 +59,4 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
 })
 
 
-export default ChatScreenHeader
+export default SettingScreenHeader

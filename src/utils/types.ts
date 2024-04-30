@@ -25,15 +25,26 @@ export interface IChat {
     prompt?: prompt;
 }
 
+export interface IPlan {
+    duration: string;
+    title: string;
+    price: number;
+    id: string;
+    gpt3: boolean;
+    gpt4: boolean;
+    totalMessages: number;
+}
 
-export interface  IGptMessage {
+export interface IGptMessage {
     role: string;
     content: string;
 }
 
-export interface  ISubscription {
+export interface ISubscription {
     status: "active" | "inactive" | undefined;
     startDate?: number;
-    subscriptionType?:any,
-
+    endDate?: number;
+    lastRenewalDate?: number;
+    subscriptionType?: IPlan,
 }
+

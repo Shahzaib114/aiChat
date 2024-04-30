@@ -72,11 +72,8 @@ const TopicCardLayout: FC<TopicCardLayoutProps> = ({...props}) => {
         });
 
         // @ts-ignore
-        navigation.navigate("history", {
-            screen: "chat",
-            params: {
-                inboxRef: id
-            }
+        navigation.navigate("chat", {
+            inboxRef: id
         });
     }
 

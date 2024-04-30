@@ -33,13 +33,11 @@ const QuestionLayout: FC<QuestionLayoutProps> = ({...props}) => {
         });
 
         // @ts-ignore
-        navigation.navigate("history", {
-            screen: "chat",
-            params: {
-                inboxRef: id,
-                startGettingResponse: true,
-            }
+        navigation.navigate("chat", {
+            inboxRef: id,
+            startGettingResponse: true,
         });
+
     }
 
     return (

@@ -15,6 +15,8 @@ import onboardingSteps from "./variables/onboardin-steps.ts";
 import Steps from "../../components/steps/steps.tsx";
 import {useNavigation} from "@react-navigation/native";
 import themeColors from "../../theme/colors.ts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {ON_BOARDING} from "../../utils/constant.ts";
 
 
 interface FirstOnboardingScreenProps extends IDefaultProps {
@@ -66,15 +68,22 @@ const OnboardingScreen: FC<FirstOnboardingScreenProps> = ({...props}) => {
 
                 </View>
                 <Pressable
-                    onPress={() => {
+                    onPress={async () => {
                         if (state < onboardingSteps.length - 1) {
                             setState(state + 1)
                         } else {
+                            await AsyncStorage.setItem(ON_BOARDING, 'true');
                             navigation.reset({
                                 index: 0,
+                                routes: [{
+                                    name: 'home-entry' as never,
+                                    state: {
+                                        routes: [{
+                                            name: 'plans'
+                                        }]
+                                    }
 
-                                // @ts-ignore
-                                routes: [{name: 'home-entry'}]
+                                }]
                             })
                         }
                     }}
