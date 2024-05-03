@@ -59,7 +59,6 @@ const Subscription: FC<HomeProps> = ({...props}) => {
         try {
             const offerings = await Purchases.getOfferings();
             if (offerings.all !== null) {
-                // console.log('offeffvvrings', JSON.stringify(offerings.all))
                 setAllProducts(offerings.all?.Standard?.availablePackages)
             }
         } catch (e) {
@@ -91,7 +90,9 @@ const Subscription: FC<HomeProps> = ({...props}) => {
 
                 <SafeAreaView style={{height: responsiveScreenHeight(128.9),}}>
                     <View style={styles.top}>
-                        <TouchableOpacity style={styles.toptouchable}>
+                        <TouchableOpacity 
+                        onPress={()=>navigation.goBack()}
+                        style={styles.toptouchable}>
                             <SvgXml xml={backArrow} width="60%" height="60%"/>
                         </TouchableOpacity>
                         <Text style={styles.toptext}>
