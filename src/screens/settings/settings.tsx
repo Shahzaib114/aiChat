@@ -11,6 +11,7 @@ import star from "../../../assets/svgs/star.js";
 import privacy from "../../../assets/svgs/privacy.js";
 import {Share} from "react-native";
 import {getAppShareLink} from "../../utils/utils.ts";
+import useSubscription from "../../hooks/useSubscription.ts";
 
 
 interface SettingsProps extends IDefaultProps {
@@ -57,6 +58,7 @@ function GetAccountTypeButton({...props}: GetAccountTypeButtonProps) {
 
 const Settings: FC<SettingsProps> = ({...props}) => {
 
+    const [subscription] = useSubscription()
 
     async function shareApp() {
         try {
@@ -89,7 +91,7 @@ const Settings: FC<SettingsProps> = ({...props}) => {
         <ScrollView style={styles.container}>
             <View>
                 <GetAccountTypeButton
-                    accountType={"PREMIUM"}
+                    accountType={subscription.status === "active" ? "PREMIUM" : "FREE"}
                 />
                 <Text
                     style={{

@@ -9,6 +9,7 @@ import Offer from "../common/Offer.tsx";
 import Purchases from 'react-native-purchases';
 import {REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY} from "../../utils/app-config.ts";
 import ChatScreen from "../history/chat/chat.tsx";
+import usePlanOfferCronJob from "../../hooks/usePlanOfferCronJob.ts";
 
 
 const Stack = createNativeStackNavigator();
@@ -17,6 +18,8 @@ const Stack = createNativeStackNavigator();
 export default function Root({onboarded}: {
     onboarded: string
 }) {
+
+
     if (Platform.OS === 'android') {
         Purchases.configure({apiKey: REVENUE_CAT_ANDROID_APIKEY});
     } else if (Platform.OS === 'ios') {

@@ -43,8 +43,9 @@ export interface IGptMessage {
 export interface ISubscription {
     status: "active" | "inactive" | undefined;
     startDate?: number;
-    endDate?: number;
     lastRenewalDate?: number;
     subscriptionType?: IPlan,
+    productIdentifier?: string,
+    transaction?: string,
 }
 

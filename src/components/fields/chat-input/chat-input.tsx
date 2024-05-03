@@ -30,13 +30,13 @@ const ChatInput: FC<ChatInputProps> = ({...props}) => {
     }, [message]);
 
     function handleButton() {
+        console.log("handleButton")
         if (message.trim().length > 0 && type === "text") {
             if (props.onSend) {
                 props.onSend(message.trim())
             }
-        } else if (type === "default") {
-            // props.onSend?.(message)
-            // setMessage("")
+        } else if (type === "default" && message.trim() === "") {
+            setType("voice")
         } else {
             setType("default")
         }
