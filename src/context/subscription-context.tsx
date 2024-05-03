@@ -5,6 +5,7 @@ import database from "@react-native-firebase/database";
 import useSession from "../hooks/useSession.ts";
 import useDailyMessages, {IDailyMessageActions} from "../hooks/useDailyMessages.ts";
 import {FREE_DAIL_MESSAGE_LIMIT} from "../utils/app-config.ts";
+import Toast from "react-native-simple-toast";
 
 export interface ISubscriptionActions {
     hasActiveSubscription: () => boolean,
@@ -13,6 +14,7 @@ export interface ISubscriptionActions {
     getRemainingMessages: () => number,
     todayMessages: number,
     dailyMessagesActions: IDailyMessageActions,
+    subscribe: (extra: any) => void
 }
 
 export interface subscriptionContextProps {
@@ -33,7 +35,9 @@ const SessionContext = createContext<subscriptionContextProps>({
         todayMessages: 0,
         dailyMessagesActions: {} as IDailyMessageActions,
         hasDailyQuota: () => false,
-        getRemainingMessages: () => 0
+        getRemainingMessages: () => 0,
+        subscribe: () => {
+        }
     }
 
 });
@@ -54,6 +58,7 @@ export function SubscriptionProvider({children}: IDefaultProps) {
             getRemainingMessages,
             todayMessages: todayMessages,
             dailyMessagesActions: dailyMessagesActions,
+            subscribe
         }
     }
 
@@ -88,12 +93,31 @@ export function SubscriptionProvider({children}: IDefaultProps) {
 
 
     useEffect(() => {
+        if (!session.user || session.user.trim() === "") {
+            return
+        }
         database().ref(`subscriptions/${session.user}`).on('value', Subscription)
 
         return () => {
             database().ref(`subscriptions/${session.user}`).off('value', Subscription)
         }
-    }, []);
+    }, [session.user]);
+
+    async function subscribe(extra: any) {
+        await database().ref(`subscriptions/${session.user}`).set({
+            status: "active",
+            startDate: new Date().getTime(),
+            lastRenewalDate: new Date().getTime(),
+            transaction: extra?.transaction,
+            productIdentifier: extra?.productIdentifier,
+        } as ISubscription).then(() => {
+            Toast.show("Subscription successful", Toast.SHORT)
+        }).catch((e) => {
+            console.log(e)
+        })
+        Toast.show("Subscription successful", Toast.SHORT)
+
+    }
 
     return (
         <SessionContext.Provider value={value}>

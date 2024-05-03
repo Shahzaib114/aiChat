@@ -7,11 +7,10 @@ import themeColors from "../../theme/colors.ts";
 import Subscription from "../payments/subscription.tsx";
 import HomeHeader from "../home/components/home-header.tsx";
 import Home from "../home/home.tsx";
-import InBox from "../history/inbox/inbox.tsx";
-import InBoxHeader from "../history/inbox/components/inbox-header.tsx";
 import HistoryScreen from "../history/history.tsx";
 import Settings from "../settings/settings.tsx";
 import SettingScreenHeader from "../settings/component/settings-screen-header.tsx";
+import usePlanOfferCronJob from "../../hooks/usePlanOfferCronJob.ts";
 
 
 const Tab = createBottomTabNavigator();
@@ -21,7 +20,7 @@ interface HomeEntryProps extends IDefaultProps {
 }
 
 const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
-
+    usePlanOfferCronJob();
     return (
         <Tab.Navigator
             screenOptions={(route) => {

@@ -25,21 +25,31 @@ import backArrow from "../../../assets/svgs/backArrow.js";
 import ChatSvg from "../../../assets/svgs/ChatSvg.js";
 import Purchases from 'react-native-purchases';
 import usePlans from "../../hooks/usePlans.ts";
+import useSubscription from "../../hooks/useSubscription.ts";
+import {PurchasesPackage} from "@revenuecat/purchases-typescript-internal/dist/offerings";
+import Toast from "react-native-simple-toast";
 
 interface HomeProps extends IDefaultProps {
 }
 
 const Subscription: FC<HomeProps> = ({...props}) => {
-    const [allProducts, setAllProducts] = useState<any>()
-    const [plans] = usePlans();
+    const [allProducts, setAllProducts] = useState<PurchasesPackage[]>()
+    const [subscriptionHook, subscriptionHookAction] = useSubscription()
+    const [selected, setSelected] = useState<PurchasesPackage>()
     useEffect(() => {
         getInAppProducts()
     }, [])
 
     const handlePurchase = async (selectedProduct: any) => {
         try {
+            if (subscriptionHook.status === "active") {
+                Toast.show('You already have an active subscription', Toast.LONG)
+                return
+            }
             const purchasing = await Purchases.purchasePackage(selectedProduct);
             console.log('purchased', purchasing)
+            subscriptionHookAction.subscribe(purchasing);
+
         } catch (e) {
             console.log('go error in offering', e)
         }
@@ -56,6 +66,7 @@ const Subscription: FC<HomeProps> = ({...props}) => {
             console.log('go error in offering', e)
         }
     }
+
 
     const extractPriceAndPeriod = (description: string) => {
         const regex = /([\d.]+\$),\/(month|week|year)/;
@@ -176,7 +187,8 @@ const Subscription: FC<HomeProps> = ({...props}) => {
                     </View>
 
                     <View style={styles.card}>
-                        {allProducts?.map((item: any, index: number) => {
+                        {allProducts?.map((item: PurchasesPackage, index: number) => {
+                            let productId = item.product.defaultOption?.productId
                             const {price, period} = extractPriceAndPeriod(item?.product?.description)
                             return (
                                 <React.Fragment key={index}>
@@ -184,9 +196,10 @@ const Subscription: FC<HomeProps> = ({...props}) => {
                                         text={item?.product?.title}
                                         description={price}
                                         smallDesc={`/${period}`}
-                                        purchased={false}
+                                        isCircleActive={selected === item}
+                                        purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
                                         handleCardPress={() => {
-                                            handlePurchase(item)
+                                            setSelected(item)
                                         }}
                                     />
                                 </React.Fragment>
@@ -195,7 +208,13 @@ const Subscription: FC<HomeProps> = ({...props}) => {
                     </View>
 
                     <View style={styles.buttonview}>
-                        <ButtonComponent text="Continue" onPress={() => navigation.navigate('Offer')}/>
+                        <ButtonComponent text="Continue" onPress={() => {
+                            if (!selected) {
+                                Toast.show('Please select a plan', Toast.LONG)
+                                return
+                            }
+                            handlePurchase(selected)
+                        }}/>
                         <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)}/>
                     </View>
                     <View style={{margin: "5%"}}>
