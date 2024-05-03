@@ -6,9 +6,9 @@ import useSubscription from "./useSubscription.ts";
 
 export default function usePlanOfferCronJob() {
     const navigation = useNavigation();
-    const [isFirstTime,setIsFirstTime] = useState<boolean>(true);
+    const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
     const [lastTimePopUpHasBeen24Hours, setLastTimePopUpHasBeen24Hours] = useState<boolean>(false);
-    const [subscription] = useSubscription();
+    const [subscription, actions] = useSubscription();
 
     async function checkIfUserFirstTimeLoggedIn() {
         let firstTimeOfferFlag = await AsyncStorage.getItem(FIRST_TIME_OFFER_FLAG);
@@ -53,12 +53,12 @@ export default function usePlanOfferCronJob() {
     useEffect(() => {
         if (!isFirstTime && lastTimePopUpHasBeen24Hours) {
             AsyncStorage.setItem(LAST_TIME_OFFER_OPENED, new Date().getTime().toString()).then(() => {
-                if (subscription.status !== 'active')
+                if (actions.hasActiveSubscription())
                     navigation.navigate("Offer" as never);
 
             });
         }
-    }, [isFirstTime,lastTimePopUpHasBeen24Hours,subscription.status]);
+    }, [isFirstTime, lastTimePopUpHasBeen24Hours, subscription.status]);
 
 
 }
