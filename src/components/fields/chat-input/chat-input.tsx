@@ -14,6 +14,7 @@ interface ChatInputProps extends IDefaultProps {
     onSend?: (message: string) => void,
     disabled?: boolean,
     onRetry?: () => void,
+    resetChat?: string,
 }
 
 const InputHeight = 55;
@@ -49,7 +50,7 @@ const ChatInput: FC<ChatInputProps> = ({ ...props }) => {
         <View style={styles.container}>
             <Pressable
                 disabled={props.disabled}
-                onPress={props.onRetry}
+                onPress={() => { props.onRetry, setMessage('') }}
             ><SvgImport style={{
                 marginLeft: 20,
             }} svg={retry} />

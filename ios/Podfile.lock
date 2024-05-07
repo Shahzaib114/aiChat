@@ -1020,8 +1020,11 @@ PODS:
   - React-Mapbuffer (0.73.6):
     - glog
     - React-debug
-  - react-native-safe-area-context (4.10.1):
+  - react-native-safe-area-context (4.9.0):
     - React-Core
+  - react-native-simple-toast (3.3.1):
+    - React-Core
+    - Toast (~> 4)
   - react-native-voice (3.2.4):
     - React-Core
   - React-nativeconfig (0.73.6)
@@ -1198,6 +1201,8 @@ PODS:
     - React-Core
   - RNCMaskedView (0.3.1):
     - React-Core
+  - RNDeviceInfo (10.13.2):
+    - React-Core
   - RNFBApp (19.2.2):
     - Firebase/CoreOnly (= 10.24.0)
     - React-Core
@@ -1216,16 +1221,16 @@ PODS:
   - RNPurchases (7.27.0):
     - PurchasesHybridCommon (= 10.5.0)
     - React-Core
-  - RNScreens (3.31.1):
+  - RNScreens (3.30.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - React-RCTImage
-  - RNSVG (15.2.0):
+  - RNSVG (15.1.0):
     - React-Core
   - SocketRocket (0.6.1)
   - TextToSpeech (4.1.0):
     - React
+  - Toast (4.1.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1271,6 +1276,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
   - "react-native-voice (from `../node_modules/@react-native-voice/voice`)"
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1295,6 +1301,7 @@ DEPENDENCIES:
   - RNAudioRecorderPlayer (from `../node_modules/react-native-audio-recorder-player`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - RNGoogleMobileAds (from `../node_modules/react-native-google-mobile-ads`)
@@ -1329,6 +1336,7 @@ SPEC REPOS:
     - PurchasesHybridCommon
     - RevenueCat
     - SocketRocket
+    - Toast
 
 EXTERNAL SOURCES:
   boost:
@@ -1392,6 +1400,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-simple-toast:
+    :path: "../node_modules/react-native-simple-toast"
   react-native-voice:
     :path: "../node_modules/@react-native-voice/voice"
   React-nativeconfig:
@@ -1440,6 +1450,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-masked-view/masked-view"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBDatabase:
@@ -1509,7 +1521,8 @@ SPEC CHECKSUMS:
   React-jsinspector: 85583ef014ce53d731a98c66a0e24496f7a83066
   React-logger: 3eb80a977f0d9669468ef641a5e1fabbc50a09ec
   React-Mapbuffer: d81d930c1b7f4db284e1d721fe7fdc99230ca108
-  react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
+  react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
+  react-native-simple-toast: 1f1cc551d419bc0ab05dcb0136554006c274789d
   react-native-voice: f5e8eec2278451d0017eb6a30a6ccc726aca34e0
   React-nativeconfig: e700ac3ec3d66329076bd2c2787a204411815d43
   React-NativeModulesApple: f7fa541118d195ac850ca2ea460f338152ced167
@@ -1535,15 +1548,17 @@ SPEC CHECKSUMS:
   RNAudioRecorderPlayer: 9b34adc281800e5b19258f1b91d889b1ef3abdd6
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNCMaskedView: 090213d32d8b3bb83a4dcb7d12c18f0152591906
+  RNDeviceInfo: 42aadf1282ffa0a88dc38a504a7be145eb010dfa
   RNFBApp: 91311b27bc9a33e23b76a62825afd1635501018a
   RNFBDatabase: c5f62ee5aa8809a7172082a0256c12e27c3d76f2
   RNGoogleMobileAds: ed9a500a51ecbcdf6591f057b27170bda2f5c6c1
   RNIap: c76f9a941a212d5f5ef2c04f608287b9f73ee1ad
   RNPurchases: 2f6814bf3387bbb7fb1325a9d938f4e17dff2c6c
-  RNScreens: f0e300a3be13eff48f8afb0b5c6fc558c9369b03
-  RNSVG: 43b64ed39c14ce830d840903774154ca0c1f27ec
+  RNScreens: 97a2a32820e632c5978d75250afa397ed9053910
+  RNSVG: 50cf2c7018e57cf5d3522d98d0a3a4dd6bf9d093
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   TextToSpeech: b3aa777ff5585705f179c0a2436bfd0926d1716e
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   Yoga: d17d2cc8105eed528474683b42e2ea310e1daf61
 
 PODFILE CHECKSUM: b58b70c505527df3e586ae0cc806b33b7bb9f261

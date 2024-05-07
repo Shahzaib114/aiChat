@@ -1,7 +1,7 @@
-import React, {FC} from "react";
-import {StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../utils/types.ts";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import React, { FC } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { IDefaultProps } from "../../utils/types.ts";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BottomNavigationTab from "../../components/bottom-navigation-tab/bottom-navigation-tab.tsx";
 import themeColors from "../../theme/colors.ts";
 import Subscription from "../payments/subscription.tsx";
@@ -19,14 +19,14 @@ interface HomeEntryProps extends IDefaultProps {
 
 }
 
-const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
+const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
     usePlanOfferCronJob();
     return (
         <Tab.Navigator
             screenOptions={(route) => {
                 return {
                     headerShown: false,
-                    tabBarIcon: ({focused, color, size}) => BottomNavigationTab({route, focused, color, size}),
+                    tabBarIcon: ({ focused, color, size }) => BottomNavigationTab({ route, focused, color, size }),
                     tabBarShowLabel: false,
                     tabBarStyle: {
                         height: 60,
@@ -38,28 +38,27 @@ const HomeEntry: FC<HomeEntryProps> = ({...props}) => {
                         flex: 1,
                         borderTopLeftRadius: 10,
                         borderTopRightRadius: 10,
-                    }}/>,
+                    }} />,
                     tabBarHideOnKeyboard: true,
                 }
             }}
             initialRouteName={'home'}
         >
             <Tab.Screen name="home"
-                        options={{
-                            headerShown: true,
-                            header: () => <HomeHeader/>
-                        }}
-                        component={Home}/>
-            <Tab.Screen name="history"
-                        component={HistoryScreen}/>
+                options={{
+                    headerShown: true,
+                    header: () => <HomeHeader />
+                }}
+                component={Home} />
+            <Tab.Screen name="history" component={HistoryScreen} />
 
-            <Tab.Screen name="plans" component={Subscription}/>
+            <Tab.Screen name="plans" component={Subscription} />
             <Tab.Screen name="settings"
-                        options={{
-                            headerShown: true,
-                            header: () => <SettingScreenHeader/>
-                        }}
-                        component={Settings}/>
+                options={{
+                    headerShown: true,
+                    header: () => <SettingScreenHeader />
+                }}
+                component={Settings} />
 
 
         </Tab.Navigator>

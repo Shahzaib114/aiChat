@@ -1,17 +1,18 @@
-import React, {FC} from "react";
-import {Linking, ScrollView, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../utils/types.ts";
+import React, { FC } from "react";
+import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { IDefaultProps } from "../../utils/types.ts";
 import themeColors from "../../theme/colors.ts";
-import SettingsItem, {SettingsItemProps} from "./component/setting-item.tsx";
+import SettingsItem, { SettingsItemProps } from "./component/setting-item.tsx";
 import SvgImport from "../../utils/import-svg.tsx";
 import crown from "../../../assets/svgs/crown.js";
 import share from "../../../assets/svgs/share.js";
 import problem from "../../../assets/svgs/problem.js";
 import star from "../../../assets/svgs/star.js";
 import privacy from "../../../assets/svgs/privacy.js";
-import {Share} from "react-native";
-import {getAppShareLink} from "../../utils/utils.ts";
+import { Share } from "react-native";
+import { getAppShareLink } from "../../utils/utils.ts";
 import useSubscription from "../../hooks/useSubscription.ts";
+import { APP_PRIVACY_POLICY } from "../../utils/app-config.ts";
 
 
 interface SettingsProps extends IDefaultProps {
@@ -23,9 +24,9 @@ interface GetAccountTypeButtonProps extends SettingsItemProps {
 
 }
 
-function GetAccountTypeButton({...props}: GetAccountTypeButtonProps) {
+function GetAccountTypeButton({ ...props }: GetAccountTypeButtonProps) {
     let title = props.accountType === "FREE" ? "Free" : "Premium";
-    let icon = props.accountType === "FREE" ? <SvgImport svg={crown}/> : <SvgImport svg={crown}/>;
+    let icon = props.accountType === "FREE" ? <SvgImport svg={crown} /> : <SvgImport svg={crown} />;
 
     let packageName = props.accountType === "FREE" ? "Free" : "Weekly";
 
@@ -56,7 +57,7 @@ function GetAccountTypeButton({...props}: GetAccountTypeButtonProps) {
 
 }
 
-const Settings: FC<SettingsProps> = ({...props}) => {
+const Settings: FC<SettingsProps> = ({ ...props }) => {
 
     const [subscription] = useSubscription()
 
@@ -107,24 +108,25 @@ const Settings: FC<SettingsProps> = ({...props}) => {
                 </Text>
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={share}/>}
+                    icon={<SvgImport svg={share} />}
                     onClick={shareApp}
                     title={"Share with Friends"}
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={problem}/>}
+                    icon={<SvgImport svg={problem} />}
                     title={"Report a Problem"}
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={star}/>}
+                    icon={<SvgImport svg={star} />}
                     onClick={getUsAppRating}
                     title={"Give us Rating"}
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={privacy}/>}
+                    icon={<SvgImport svg={privacy} />}
+                    onClick={() => { Linking.openURL(APP_PRIVACY_POLICY) }}
                     title={"Privacy Policy"}
                 />
             </View>

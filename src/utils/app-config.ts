@@ -12,3 +12,4 @@ export const IOS_PACKAGE_NAME = "com.aichat";
 export const IOS_APP_ID = "com.aichat";
 
 export const FREE_DAIL_MESSAGE_LIMIT = 5;
+export const APP_PRIVACY_POLICY = 'https://akromaxtech.com/privacy-policy'
