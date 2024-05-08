@@ -6,11 +6,11 @@ import themeColors from '../../theme/colors';
 import Vector from '../../../assets/svgs/vector';
 import { SvgXml } from 'react-native-svg';
 
-const CustomCard = ({ description, text, smallDesc, save, purchased , handleCardPress}: any) => {
-  const [isCircleActive, setIsCircleActive] = useState(false);
-  const handleCirclePress = () => {
-    setIsCircleActive(!isCircleActive);
-  };
+const CustomCard = ({ description, text, smallDesc, save,isCircleActive, purchased , handleCardPress}: any) => {
+  // const [isCircleActive, setIsCircleActive] = useState(false);
+  // const handleCirclePress = () => {
+  //   setIsCircleActive(!isCircleActive);
+  // };
 
   return (
     <TouchableOpacity
@@ -21,7 +21,7 @@ const CustomCard = ({ description, text, smallDesc, save, purchased , handleCard
         <View>
           <View style={styles.header}>
             <TouchableOpacity
-              onPress={handleCirclePress}
+              // onPress={handleCirclePress}
               style={[
                 styles.circle,
                 { backgroundColor: isCircleActive ? '#02A67E' : 'grey', },

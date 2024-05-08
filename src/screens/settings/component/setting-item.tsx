@@ -1,6 +1,6 @@
-import React, {FC} from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../utils/types.ts";
+import React, { FC } from "react";
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { IDefaultProps } from "../../../utils/types.ts";
 
 
 export interface SettingsItemProps extends IDefaultProps {
@@ -12,38 +12,40 @@ export interface SettingsItemProps extends IDefaultProps {
 
 }
 
-const SettingsItem: FC<SettingsItemProps> = ({...props}) => {
+const SettingsItem: FC<SettingsItemProps> = ({ ...props }) => {
 
     return (
-        <Pressable
-            onPress={props.onClick}
-            style={{
-                paddingVertical: 20,
-                paddingHorizontal: 20,
-                borderBottomWidth: props.hasBottomBorder ? 1 : 0,
-                borderBottomColor: "#FFFFFF10",
-                gap: 15,
-                alignItems: "center",
-                flexDirection: "row",
-            }}>
-            {
-                props.icon
-            }
-            <Text
+        <SafeAreaView>
+            <Pressable
+                onPress={props.onClick}
                 style={{
-                    color: "#ffffff",
-                    fontSize: 18,
-                    fontWeight: "400",
-                    flex: 1,
-                }}
-            >{
-                props.title
-            }</Text>
-            {
-                props.endIcon
-            }
+                    paddingVertical: 20,
+                    paddingHorizontal: 20,
+                    borderBottomWidth: props.hasBottomBorder ? 1 : 0,
+                    borderBottomColor: "#FFFFFF10",
+                    gap: 15,
+                    alignItems: "center",
+                    flexDirection: "row",
+                }}>
+                {
+                    props.icon
+                }
+                <Text
+                    style={{
+                        color: "#ffffff",
+                        fontSize: 18,
+                        fontWeight: "400",
+                        flex: 1,
+                    }}
+                >{
+                        props.title
+                    }</Text>
+                {
+                    props.endIcon
+                }
 
-        </Pressable>
+            </Pressable>
+        </SafeAreaView>
     )
 }
 

@@ -1,8 +1,8 @@
-import {IChat, IGptMessage, IMessage} from "./types.ts";
-import {USER_ROLE} from "./roles.ts";
+import { IGptMessage, IMessage } from "./types.ts";
+import { USER_ROLE } from "./roles.ts";
 import mime from "mime";
-import {Platform, Share, Clipboard} from "react-native";
-import {ANDROID_PACKAGE_NAME, IOS_APP_ID, IOS_PACKAGE_NAME} from "./app-config.ts";
+import { Platform, Share, Clipboard } from "react-native";
+import { ANDROID_PACKAGE_NAME, IOS_APP_ID } from "./app-config.ts";
 import Toast from 'react-native-simple-toast';
 import Tts from "react-native-tts";
 

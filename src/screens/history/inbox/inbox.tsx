@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {FlatList, Pressable, StyleSheet, Text, View} from "react-native";
+import {FlatList, Pressable, SafeAreaView, StyleSheet, Text, View} from "react-native";
 import {IDefaultProps} from "../../../utils/types.ts";
 import themeColors from "../../../theme/colors.ts";
 import InBoxHeader from "./components/inbox-header.tsx";
@@ -28,7 +28,7 @@ const InBox: FC<InBoxProps> = ({...props}) => {
 
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={{width: "100%"}}>
                 <InBoxHeader
                     onClearChats={() => {
@@ -72,7 +72,7 @@ const InBox: FC<InBoxProps> = ({...props}) => {
             />
 
 
-        </View>
+        </SafeAreaView>
     )
 }
 

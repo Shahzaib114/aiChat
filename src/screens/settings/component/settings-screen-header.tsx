@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
+import {Pressable, SafeAreaView, StyleSheet, Text, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {IDefaultProps} from "../../../utils/types.ts";
 import SvgImport from "../../../utils/import-svg.tsx";
@@ -13,7 +13,7 @@ interface ChatScreenHeaderProps extends IDefaultProps {
 const SettingScreenHeader: FC<ChatScreenHeaderProps> = ({...props}) => {
     const navigation = useNavigation();
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
@@ -37,7 +37,7 @@ const SettingScreenHeader: FC<ChatScreenHeaderProps> = ({...props}) => {
 
 
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
 

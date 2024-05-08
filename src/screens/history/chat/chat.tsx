@@ -1,7 +1,7 @@
-import React, {FC, useEffect, useRef} from "react";
-import {FlatList, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../utils/types.ts";
-import {useNavigation} from "@react-navigation/native";
+import React, { FC, useEffect, useRef } from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { IDefaultProps } from "../../../utils/types.ts";
+import { useNavigation } from "@react-navigation/native";
 import themeColors from "../../../theme/colors.ts";
 import ChatScreenHeader from "./component/chat-screen-header.tsx";
 import ChatInput from "../../../components/fields/chat-input/chat-input.tsx";
@@ -16,18 +16,18 @@ import ReceivedMessage from "./component/messages/received-message.tsx";
 import useHiddenTabs from "../../../hooks/useHiddenTabs.ts";
 import useChat from "../../../hooks/useChat.ts";
 import useSession from "../../../hooks/useSession.ts";
-import {gptCompletions} from "../../../apis/axios-config.ts";
-import {IMessageToGptMessages} from "../../../utils/utils.ts";
-import {GPT3, GPT4} from "../../../utils/gpt-models.ts";
-import {ITabsItem} from "../../../components/tabs/types.ts";
+import { gptCompletions } from "../../../apis/axios-config.ts";
+import { IMessageToGptMessages } from "../../../utils/utils.ts";
+import { GPT3, GPT4 } from "../../../utils/gpt-models.ts";
+import { ITabsItem } from "../../../components/tabs/types.ts";
 import AvailableModels from "./variables/available-models.tsx";
 import TypingAnimation from "../../../components/typing-animation/typing-animation.tsx";
 import useSubscription from "../../../hooks/useSubscription.ts";
 import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
 import UpgradeToPremiumToast from "./component/upgrade-to-premium-toast/upgrade-to-premium-toast.tsx";
-import {getDeviceLanguage} from "../../../utils/get-device-language.ts";
-import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
-import {toArray} from "react-native-svg/lib/typescript/lib/Matrix2D";
+import { getDeviceLanguage } from "../../../utils/get-device-language.ts";
+import { FREE_DAIL_MESSAGE_LIMIT } from "../../../utils/app-config.ts";
+import { toArray } from "react-native-svg/lib/typescript/lib/Matrix2D";
 
 
 interface ChatScreenProps extends IDefaultProps {
@@ -35,7 +35,7 @@ interface ChatScreenProps extends IDefaultProps {
 }
 
 
-const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
+const ChatScreen: FC<ChatScreenProps> = ({ ...props }) => {
     // useHiddenTabs()
     const [session] = useSession();
     const user = session.user;
@@ -90,7 +90,7 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
     }, [inboxRef]);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <BuySubscriptionPopup
                 onWatch={() => {
                     subActions?.dailyMessagesActions?.custom?.(
@@ -101,7 +101,7 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 }}
                 ref={buySubscriptionPopup}
             />
-            <View style={{width: "100%"}}>
+            <View style={{ width: "100%" }}>
                 <ChatScreenHeader
                     title={chat?.prompt?.title || "Chat"}
                 />
@@ -135,17 +135,17 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                                 setGptModel(value)
                             }
                         }}
-                        items={AvailableModels}/>
+                        items={AvailableModels} />
                 </View>
             </View>
             <FlatList
                 ref={flatListRef}
-                ListHeaderComponent={<SuggestionComponent suggestions={Sugesstions}/>}
-                ListFooterComponent={gettingResponse ? <TypingAnimation/> : <></>}
+                ListHeaderComponent={<SuggestionComponent suggestions={Sugesstions} />}
+                ListFooterComponent={gettingResponse ? <TypingAnimation /> : <></>}
                 onScrollToIndexFailed={(info) => {
                     const wait = new Promise(resolve => setTimeout(resolve, 50));
                     wait.then(() => {
-                        flatListRef.current?.scrollToIndex({index: info.index});
+                        flatListRef.current?.scrollToIndex({ index: info.index });
                     });
                 }}
                 contentContainerStyle={{
@@ -153,12 +153,12 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                     gap: 30,
                 }}
                 data={actions.getMessagesWithGreeting()}
-                renderItem={({item, index}) => {
+                renderItem={({ item, index }) => {
                     if (item.user === user) {
                         return (
                             <SentMessage
                                 {
-                                    ...item
+                                ...item
                                 }
                             />
                         )
@@ -166,14 +166,14 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                         return (
                             <ReceivedMessage
                                 {
-                                    ...item
+                                ...item
                                 }
                             />
                         )
                     }
 
                 }}
-                style={{width: "100%"}}
+                style={{ width: "100%" }}
             />
             <View style={{
                 width: "100%",
@@ -182,14 +182,14 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-                {!subActions.hasActiveSubscription() && !subActions.hasDailyQuota() ? <UpgradeToPremiumToast/> :
+                {!subActions.hasActiveSubscription() && !subActions.hasDailyQuota() ? <UpgradeToPremiumToast /> :
                     <ChatInput
                         disabled={gettingResponse}
                         onRetry={async () => {
                             let totalMessages = actions.getMessagesWithGreeting().length
                             if (totalMessages > 1 && actions.getMessagesWithGreeting()[totalMessages - 1].user !== user) {
                                 await actions.retryMessage()
-                                    setGettingResponse(true)
+                                setGettingResponse(true)
                             }
 
                         }}
@@ -203,7 +203,7 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                     />
                 }
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
 
