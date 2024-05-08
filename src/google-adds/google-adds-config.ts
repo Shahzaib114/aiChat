@@ -19,5 +19,6 @@ const adUnitId_Test = Platform.select({
 const adUnitId = __DEV__ ? adUnitId_Test || "" : adUnitId_Live || "";
 
 
+console.log("adUnitId_Live", adUnitId);
 
 export default adUnitId;

@@ -28,6 +28,7 @@ import UpgradeToPremiumToast from "./component/upgrade-to-premium-toast/upgrade-
 import {getDeviceLanguage} from "../../../utils/get-device-language.ts";
 import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
 import {toArray} from "react-native-svg/lib/typescript/lib/Matrix2D";
+import {resolve} from "dns";
 
 
 interface ChatScreenProps extends IDefaultProps {
@@ -41,8 +42,13 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
     const user = session.user;
     // @ts-ignore
     const inboxRef = props?.route?.params?.inboxRef;
+    const navigation = useNavigation();
     // @ts-ignore
     const startGettingResponseParams = props?.route?.params?.startGettingResponse;
+    // @ts-ignore
+    const dontGreetUser = !!props?.route?.params?.dontGreetUser;
+    // @ts-ignore
+    const tempPrompt = props?.route?.params?.prompt;
     const [chat, actions] = useChat(inboxRef);
     const flatListRef = useRef<FlatList>(null);
     const [startGettingResponse, setStartGettingResponse] = React.useState(!!startGettingResponseParams);
@@ -50,10 +56,11 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
     const [gptModel, setGptModel] = React.useState<ITabsItem>(AvailableModels[0]);
     const [subscription, subActions] = useSubscription();
     const buySubscriptionPopup = React.useRef<BuySubscriptionPopup>(null);
+    const greetedToUser = useRef<boolean>(false);
 
     function getResponse() {
         setGettingResponse(true)
-        gptCompletions(IMessageToGptMessages(actions.getMessagesWithGreeting()), gptModel.value, chat.prompt).then((response) => {
+        gptCompletions(IMessageToGptMessages(actions.getMessagesWithGreeting()), gptModel.value, chat.prompt || tempPrompt).then((response) => {
             actions.addGptMessage(response)
         }).catch(err => {
         }).finally(() => {
@@ -79,6 +86,13 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
 
 
     }, [chat.messages]);
+
+    useEffect(() => {
+        if (greetedToUser.current || dontGreetUser)
+            return;
+        greetedToUser.current = true;
+        getResponse()
+    }, []);
 
     useEffect(() => {
         if (buySubscriptionPopup.current && !subActions.hasActiveSubscription()) {
@@ -128,7 +142,7 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                         selected={gptModel}
                         onChange={(value) => {
                             if (value.value === GPT4 && !subActions.hasActiveSubscription()) {
-                                buySubscriptionPopup.current?.showBuySubscription()
+                                navigation.navigate("plans" as never)
                                 return
                             }
                             {
@@ -183,24 +197,30 @@ const ChatScreen: FC<ChatScreenProps> = ({...props}) => {
                 alignItems: "center",
             }}>
                 {!subActions.hasActiveSubscription() && !subActions.hasDailyQuota() ? <UpgradeToPremiumToast/> :
-                    <ChatInput
-                        disabled={gettingResponse}
-                        onRetry={async () => {
-                            let totalMessages = actions.getMessagesWithGreeting().length
-                            if (totalMessages > 1 && actions.getMessagesWithGreeting()[totalMessages - 1].user !== user) {
-                                await actions.retryMessage()
+                    <View
+                        style={{
+                            width: "100%",
+                        }}
+                    >
+                        <ChatInput
+                            disabled={gettingResponse}
+                            onRetry={async () => {
+                                let totalMessages = actions.getMessagesWithGreeting().length
+                                if (totalMessages > 1 && actions.getMessagesWithGreeting()[totalMessages - 1].user !== user) {
+                                    await actions.retryMessage()
                                     setGettingResponse(true)
-                            }
+                                }
 
-                        }}
-                        onSend={(message) => {
-                            actions.sendMessage(message)
-                            subActions.dailyMessagesActions.increment?.()
-                            if (!startGettingResponse)
-                                setStartGettingResponse(true);
+                            }}
+                            onSend={(message) => {
+                                actions.sendMessage(message)
+                                subActions.dailyMessagesActions.increment?.()
+                                if (!startGettingResponse)
+                                    setStartGettingResponse(true);
 
-                        }}
-                    />
+                            }}
+                        />
+                    </View>
                 }
             </View>
         </View>

@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { IDefaultProps } from "../../../utils/types.ts";
+import React, {FC, useEffect} from "react";
+import {KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View} from "react-native";
+import {IDefaultProps} from "../../../utils/types.ts";
 import themeColors from "../../../theme/colors.ts";
 import SvgImport from "../../../utils/import-svg.tsx";
 import retry from "../../../../assets/svgs/retry.js";
@@ -17,7 +17,7 @@ interface ChatInputProps extends IDefaultProps {
 }
 
 const InputHeight = 55;
-const ChatInput: FC<ChatInputProps> = ({ ...props }) => {
+const ChatInput: FC<ChatInputProps> = ({...props}) => {
     const [message, setMessage] = React.useState<string>("");
     const [type, setType] = React.useState<"text" | "voice" | "default">("default");
 
@@ -45,40 +45,47 @@ const ChatInput: FC<ChatInputProps> = ({ ...props }) => {
         setMessage("")
     }
 
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
+
     return (
-        <View style={styles.container}>
-            <Pressable
-                disabled={props.disabled}
-                onPress={props.onRetry}
-            ><SvgImport style={{
-                marginLeft: 20,
-            }} svg={retry} />
-            </Pressable>
-            <TextInput
-                disabled={props.disabled}
-                style={{
-                    flex: 1,
-                    color: themeColors.white,
-                    fontWeight: "400",
-                    paddingRight: InputHeight || 0,
 
-                    fontSize: 13,
-                    fontFamily: "Manrope",
-                }}
+        <KeyboardAvoidingView
+            behavior='position' keyboardVerticalOffset={keyboardVerticalOffset}>
+            <View style={styles.container}>
+                <Pressable
+                    disabled={props.disabled}
+                    onPress={props.onRetry}
+                ><SvgImport style={{
+                    marginLeft: 20,
+                }} svg={retry}/>
+                </Pressable>
 
-                value={message}
-                onChangeText={(text) => setMessage(text)}
-                placeholder={"Ask me whatever you want..."}
-                placeholderTextColor={themeColors.white + "80"}
-                {...props}
-            />
+                <TextInput
+                    disabled={props.disabled}
+                    style={{
+                        flex: 1,
+                        color: themeColors.white,
+                        fontWeight: "400",
+                        paddingRight: InputHeight || 0,
 
-            <InputSendButton type={type} disabled={props.disabled}
-                height={InputHeight - 7}
-                onSpeechToText={(text) => setMessage(text)}
-                setType={setType}
-                onPress={handleButton} />
-        </View>
+                        fontSize: 13,
+                        fontFamily: "Manrope",
+                    }}
+
+                    value={message}
+                    onChangeText={(text) => setMessage(text)}
+                    placeholder={"Ask me whatever you want..."}
+                    placeholderTextColor={themeColors.white + "80"}
+                    {...props}
+                />
+                <InputSendButton type={type} disabled={props.disabled}
+                                 height={InputHeight - 7}
+                                 onSpeechToText={(text) => setMessage(text)}
+                                 setType={setType}
+                                 onPress={handleButton}/>
+            </View>
+        </KeyboardAvoidingView>
+
     )
 }
 

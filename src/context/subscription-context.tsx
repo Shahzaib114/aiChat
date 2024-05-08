@@ -13,6 +13,7 @@ export interface ISubscriptionActions {
     hasDailyQuota: () => boolean,
     getRemainingMessages: () => number,
     todayMessages: number,
+    isLoaded: boolean,
     dailyMessagesActions: IDailyMessageActions,
     subscribe: (extra: any) => void
 }
@@ -33,6 +34,7 @@ const SessionContext = createContext<subscriptionContextProps>({
         updateSubscription: () => {
         },
         todayMessages: 0,
+        isLoaded: false,
         dailyMessagesActions: {} as IDailyMessageActions,
         hasDailyQuota: () => false,
         getRemainingMessages: () => 0,
@@ -47,7 +49,7 @@ export function SubscriptionProvider({children}: IDefaultProps) {
     const [subscription, updateSubscription] = useState<ISubscription>(initialSession);
     const [session] = useSession()
     const [todayMessages, dailyMessagesActions] = useDailyMessages();
-
+    const [isLoaded, setIsLoaded] = useState(false);
     const value: subscriptionContextProps = {
         subscription,
 
@@ -56,6 +58,7 @@ export function SubscriptionProvider({children}: IDefaultProps) {
             updateSubscription,
             hasDailyQuota,
             getRemainingMessages,
+            isLoaded: isLoaded,
             todayMessages: todayMessages,
             dailyMessagesActions: dailyMessagesActions,
             subscribe
@@ -85,6 +88,7 @@ export function SubscriptionProvider({children}: IDefaultProps) {
             data.status = "inactive"
         }
         updateSubscription(data)
+        setIsLoaded(true)
     }
 
     function hasActiveSubscription() {

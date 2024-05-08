@@ -51,14 +51,14 @@ export default function usePlanOfferCronJob() {
     }, []);
 
     useEffect(() => {
-        if (!isFirstTime && lastTimePopUpHasBeen24Hours) {
+        if (!actions.isLoaded)
+            return;
+        if (!isFirstTime && lastTimePopUpHasBeen24Hours && !actions.hasActiveSubscription()) {
             AsyncStorage.setItem(LAST_TIME_OFFER_OPENED, new Date().getTime().toString()).then(() => {
-                if (actions.hasActiveSubscription())
-                    navigation.navigate("Offer" as never);
-
+                navigation.navigate("Offer" as never);
             });
         }
-    }, [isFirstTime, lastTimePopUpHasBeen24Hours, subscription.status]);
+    }, [isFirstTime, lastTimePopUpHasBeen24Hours, subscription.status, actions.isLoaded]);
 
 
 }

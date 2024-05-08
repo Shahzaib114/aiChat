@@ -7,6 +7,9 @@ import dummyData from "./variables/dummy-data.ts";
 import InBoxItem, {InBoxItemProps} from "./components/ibox-chat-item.tsx";
 import {useInBox} from "../../../hooks/useInBox.ts";
 import {useNavigation} from "@react-navigation/native";
+import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
+import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
+import useSubscription from "../../../hooks/useSubscription.ts";
 
 
 interface InBoxProps extends IDefaultProps {
@@ -16,11 +19,18 @@ interface InBoxProps extends IDefaultProps {
 const InBox: FC<InBoxProps> = ({...props}) => {
     const [inboxData, actions] = useInBox();
     const navigation = useNavigation();
+    const [sub, subscriptionAction] = useSubscription()
+    const buySubscriptionPopup = React.useRef<BuySubscriptionPopup>(null);
 
     function onItemClick(item: InBoxItemProps) {
+        if (!subscriptionAction.hasActiveSubscription() && !subscriptionAction.hasDailyQuota()) {
+            buySubscriptionPopup.current?.showBuySubscription()
+            return
+        }
         // @ts-ignore
         navigation.navigate("chat", {
-            inboxRef:  item.inboxRef,
+            inboxRef: item.inboxRef,
+            dontGreetUser: true
         });
 
 
@@ -29,6 +39,13 @@ const InBox: FC<InBoxProps> = ({...props}) => {
 
     return (
         <View style={styles.container}>
+            <BuySubscriptionPopup
+                onWatch={() => {
+                    subscriptionAction?.dailyMessagesActions?.custom?.(FREE_DAIL_MESSAGE_LIMIT - 1)
+                    console.log("watched")
+                }}
+                ref={buySubscriptionPopup}
+            />
             <View style={{width: "100%"}}>
                 <InBoxHeader
                     onClearChats={() => {
@@ -62,6 +79,10 @@ const InBox: FC<InBoxProps> = ({...props}) => {
 
                               <Pressable
                                   onPress={() => {
+                                      if (!subscriptionAction.hasActiveSubscription() && !subscriptionAction.hasDailyQuota()) {
+                                          buySubscriptionPopup.current?.showBuySubscription()
+                                          return
+                                      }
                                       actions.newChat(navigation)
                                   }}
                                   style={styles.button}>

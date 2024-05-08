@@ -16,7 +16,7 @@ export const gptInstance = axios.create({
 });
 
 
-export const gptSpeechToTextInstance =  axios.create({
+export const gptSpeechToTextInstance = axios.create({
     baseURL: "https://api.openai.com/v1/audio",
     headers: {
         "Content-Type": 'multipart/form-data',
@@ -26,7 +26,7 @@ export const gptSpeechToTextInstance =  axios.create({
 
 
 export const gptCompletions = async (messages: IGptMessage[], model: string, customPrompt: prompt | undefined): Promise<string> => {
-    let messagesCopy = [ ...messages]
+    let messagesCopy = [...messages]
 
     console.log(DEVICE_LANGUAGE)
     if (model === GPT4) {
@@ -37,22 +37,33 @@ export const gptCompletions = async (messages: IGptMessage[], model: string, cus
     }
     if (customPrompt) {
         messagesCopy = [{
-            role: "system",
+            role: "user",
             content: `
             you have provided a custom prompt. the custom prompt is as follows: 
             "${customPrompt?.prompt}"
             Please generate a response for the given messages according to the custom prompt.
+            start with the greeting message.
             `
         }, ...messagesCopy]
+    } else {
+        messagesCopy = [
+            {
+                "role": "user",
+                "content": `Greet  user.`
+
+            },
+            ...messagesCopy
+        ]
     }
 
-    messagesCopy= [
-        {
-            "role": "user",
-            "content": `you have to reply me in this ${DEVICE_LANGUAGE} language. I can understand only ${DEVICE_LANGUAGE} language.`
-        },
-        ...messagesCopy
-    ]
+    // messagesCopy= [
+    //     {
+    //         "role": "user",
+    //         "content": `you have to reply me in this ${DEVICE_LANGUAGE} language. I can understand only ${DEVICE_LANGUAGE} language.`
+    //
+    //     },
+    //     ...messagesCopy
+    // ]
 
 
     return new Promise((resolve, reject) => {
