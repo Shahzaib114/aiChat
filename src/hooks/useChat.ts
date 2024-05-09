@@ -52,16 +52,7 @@ export default function useChat(inboxRef: string): [IChat, IActions] {
         if (lastMessage?.role === SYSTEM_ROLE) {
             return messages;
         }
-        return [
-            {
-                id: Date.now().toString(),
-                text: "Hello, how can I help you?",
-                role: SYSTEM_ROLE,
-                createdAt: formateDateTo12HoursTime(new Date()),
-                user: SYSTEM_ROLE
-            },
-            ...messages
-        ]
+        return messages
     }
 
     async function retryMessage() {

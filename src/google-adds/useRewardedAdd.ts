@@ -9,7 +9,7 @@ interface RewardedAdActions {
 }
 
 const rewardedAdd = RewardedAd.createForAdRequest(adUnitId, {
-    keywords: ['fashion', 'clothing'],
+    keywords: ['fashion', 'clothing', 'shoes', 'bags', 'accessories'],
 });
 
 export default function useRewardedAdd(onWatch: () => void): [boolean, RewardedAdActions] {

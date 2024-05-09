@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Dimensions, Modal, StyleSheet, Text, TouchableHighlight, View} from "react-native";
+import {Dimensions, Modal, Pressable, StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import themeColors from "../../theme/colors.ts";
 import DailyLimitView from "./daily-limit-view.tsx";
 import BuySubscriptionView from "./buy-subscription-view.tsx";
@@ -67,9 +67,28 @@ class BuySubscriptionPopup extends Component<BuySubscriptionPopupProps, BuySubsc
                     this.close()
                 }}>
                 <View style={[styles.mainContainer]}>
-                    <Animated.View style={[styles.container, {
 
-                    }]}>
+                    <Animated.View style={[styles.container]}>
+                        <View style={{
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            width: "100%",
+                        }}>
+                            <Pressable
+                                onPress={() => {
+                                    this.close()
+                                }}
+                            >
+                                <Text style={{
+                                    color: "#595959",
+                                    fontSize: 18,
+                                    fontWeight: "500",
+                                }}>
+                                    X
+                                </Text>
+                            </Pressable>
+
+                        </View>
                         {this.state.view === "daily-limit" && <DailyLimitView
                             onCancel={() => {
                                 this.close()
@@ -108,6 +127,7 @@ const styles: any = StyleSheet.create({
         alignItems: 'center',
 
         padding: 20,
+        paddingTop: 10,
         backgroundColor: themeColors.blackLight,
         width: "80%",
         borderRadius: 10,

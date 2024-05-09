@@ -7,6 +7,10 @@ import useSession from "../../../hooks/useSession.ts";
 import {formateDateTo12HoursTime} from "../../../utils/formate-date.ts";
 import {USER_ROLE} from "../../../utils/roles.ts";
 import {useNavigation} from "@react-navigation/native";
+import useSubscription from "../../../hooks/useSubscription.ts";
+import Toast from "react-native-simple-toast";
+import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
+import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
 
 
 interface QuestionLayoutProps extends TransFormedCategory {
@@ -16,8 +20,14 @@ interface QuestionLayoutProps extends TransFormedCategory {
 const QuestionLayout: FC<QuestionLayoutProps> = ({...props}) => {
     const [session] = useSession();
     const navigation = useNavigation();
+    const [sub, subscriptionAction] = useSubscription()
+    const buySubscriptionPopup = React.useRef<BuySubscriptionPopup>(null);
 
     function onQuestionClick(question: string) {
+        if (!subscriptionAction.hasActiveSubscription() && !subscriptionAction.hasDailyQuota()) {
+            buySubscriptionPopup.current?.showBuySubscription()
+            return
+        }
         let refInbox = database().ref(`users/${session?.user}/inbox`);
         let id = refInbox.push().key;
         if (!id) return;
@@ -36,12 +46,20 @@ const QuestionLayout: FC<QuestionLayoutProps> = ({...props}) => {
         navigation.navigate("chat", {
             inboxRef: id,
             startGettingResponse: true,
+            dontGreetUser: true
         });
 
     }
 
     return (
         <View style={styles.container}>
+            <BuySubscriptionPopup
+                onWatch={() => {
+                    subscriptionAction?.dailyMessagesActions?.custom?.(FREE_DAIL_MESSAGE_LIMIT - 1)
+                    console.log("watched")
+                }}
+                ref={buySubscriptionPopup}
+            />
             <Text style={styles.text}>{props.title}</Text>
             {
                 props.data.map((item, index) => {

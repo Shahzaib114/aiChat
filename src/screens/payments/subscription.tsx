@@ -223,9 +223,19 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             Some Reviews
                         </Text>
                     </View>
-                    <View style={{ alignItems: "center", justifyContent: "center" }}>
-                        <Review />
-                        <Review />
+                    <View style={{alignItems: "center", justifyContent: "center"}}>
+                        <Review
+                            name={"Sophia N."}
+                        image={require('../../../assets/images/userImg.png')}
+                        review={"Spectacular AI in all the themes I have tried so far."}
+                        />
+                        <Review
+                            name={"Maria jr."}
+                            image={{
+                                uri:"https://randomuser.me/api/portraits/women/90.jpg"
+                            }}
+                            review={"Best Ai Service in Market so far!"}
+                        />
                     </View>
                 </SafeAreaView>
             </ImageBackground>

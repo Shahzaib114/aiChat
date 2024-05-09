@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React, {FC, useEffect, useRef} from "react";
 import {Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View} from "react-native";
 import {prompt, TransFormedCategory} from "../variables/types.ts";
 import {IDefaultProps} from "../../../utils/types.ts";
@@ -6,6 +6,10 @@ import themeColors from "../../../theme/colors.ts";
 import {useNavigation} from "@react-navigation/native";
 import database from "@react-native-firebase/database";
 import useSession from "../../../hooks/useSession.ts";
+import useSubscription from "../../../hooks/useSubscription.ts";
+import Toast from "react-native-simple-toast";
+import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
+import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
 
 interface TopicCardProps extends IDefaultProps, prompt {
     variant?: "grid" | "list",
@@ -60,12 +64,18 @@ interface TopicCardLayoutProps extends TransFormedCategory {
 const TopicCardLayout: FC<TopicCardLayoutProps> = ({...props}) => {
     const navigation = useNavigation();
     const [session] = useSession();
+    const [sub, subscriptionAction] = useSubscription()
+    const buySubscriptionPopup = React.useRef<BuySubscriptionPopup>(null);
 
-    function onCardClick(promptData: prompt) {
+    async function onCardClick(promptData: prompt) {
+        if (!subscriptionAction.hasActiveSubscription() && !subscriptionAction.hasDailyQuota()) {
+            buySubscriptionPopup.current?.showBuySubscription()
+            return
+        }
         let refInbox = database().ref(`users/${session?.user}/inbox`);
         let id = refInbox.push().key;
         if (!id) return;
-        refInbox.child(id).set({
+        await refInbox.child(id).set({
             id: id,
             prompt: promptData,
             messages: [],
@@ -73,12 +83,22 @@ const TopicCardLayout: FC<TopicCardLayoutProps> = ({...props}) => {
 
         // @ts-ignore
         navigation.navigate("chat", {
-            inboxRef: id
+            inboxRef: id,
+            prompt: promptData,
+            startGettingResponse: true
         });
     }
 
+
     return (
         <View style={styles.container}>
+            <BuySubscriptionPopup
+                onWatch={() => {
+                    subscriptionAction?.dailyMessagesActions?.custom?.(FREE_DAIL_MESSAGE_LIMIT - 1)
+                    console.log("watched")
+                }}
+                ref={buySubscriptionPopup}
+            />
             <Text style={styles.text}>{props.title}</Text>
             {props.isSelected ? <FlatList data={props.data}
                                           renderItem={({item, index}) =>

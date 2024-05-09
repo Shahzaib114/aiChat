@@ -20,11 +20,11 @@ const HomeInput: FC<HomeInputProps> = ({...props}) => {
     const navigation = useNavigation();
     const [subscription, subActions] = useSubscription();
 
-    function sendMessage(message: string) {
+    async function sendMessage(message: string) {
         let refInbox = database().ref(`users/${session?.user}/inbox`);
         let id = refInbox.push().key;
         if (!id) return;
-        refInbox.child(id).set({
+        await refInbox.child(id).set({
             id: id,
             messages: [{
                 id: Date.now().toString(),
@@ -39,6 +39,7 @@ const HomeInput: FC<HomeInputProps> = ({...props}) => {
         navigation.navigate("chat", {
             inboxRef: id,
             startGettingResponse: true,
+            dontGreetUser: true
         });
 
 

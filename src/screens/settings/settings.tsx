@@ -26,8 +26,9 @@ interface GetAccountTypeButtonProps extends SettingsItemProps {
 
 function GetAccountTypeButton({ ...props }: GetAccountTypeButtonProps) {
     let title = props.accountType === "FREE" ? "Free" : "Premium";
-    let icon = props.accountType === "FREE" ? <SvgImport svg={crown} /> : <SvgImport svg={crown} />;
-
+    let icon = props.accountType === "FREE" ? <SvgImport svg={crown}/> : <SvgImport svg={crown}/>;
+    const [subscription] = useSubscription()
+    console.log(subscription.productIdentifier)
     let packageName = props.accountType === "FREE" ? "Free" : "Weekly";
 
     return (
@@ -47,7 +48,9 @@ function GetAccountTypeButton({ ...props }: GetAccountTypeButtonProps) {
                         backgroundColor: themeColors.primary,
 
                     }}>
-                        {packageName}
+                        {
+                            subscription.productIdentifier?.split(".")[0]
+                        }
                     </Text>
                 )
             }
@@ -114,19 +117,25 @@ const Settings: FC<SettingsProps> = ({ ...props }) => {
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={problem} />}
+                    icon={<SvgImport svg={problem}/>}
+                    onClick={() => {
+                        Linking.openURL("mailto:contact@akromaxtech.com");
+                    }}
                     title={"Report a Problem"}
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={star} />}
+                    icon={<SvgImport svg={star}/>}
+
                     onClick={getUsAppRating}
                     title={"Give us Rating"}
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={privacy} />}
-                    onClick={() => { Linking.openURL(APP_PRIVACY_POLICY) }}
+                    onClick={() => {
+                        Linking.openURL("https://akromaxtech.com/privacy-policy")
+                    }}
+                    icon={<SvgImport svg={privacy}/>}
                     title={"Privacy Policy"}
                 />
             </View>
