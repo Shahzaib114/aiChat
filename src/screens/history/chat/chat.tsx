@@ -1,34 +1,28 @@
 import React, { FC, useEffect, useRef } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import { IDefaultProps } from "../../../utils/types.ts";
 import { useNavigation } from "@react-navigation/native";
 import themeColors from "../../../theme/colors.ts";
 import ChatScreenHeader from "./component/chat-screen-header.tsx";
 import ChatInput from "../../../components/fields/chat-input/chat-input.tsx";
 import Tabs from "../../../components/tabs/tabs.tsx";
-import SvgImport from "../../../utils/import-svg.tsx";
-import crown from "../../../../assets/svgs/crown.js";
 import NotificationBar from "./component/notification-bar/notification-bar.tsx";
 import SuggestionComponent from "./component/suggestion/suggestion.tsx";
 import Sugesstions from "./component/suggestion/sugesstions.ts";
 import SentMessage from "./component/messages/sent-message.tsx";
 import ReceivedMessage from "./component/messages/received-message.tsx";
-import useHiddenTabs from "../../../hooks/useHiddenTabs.ts";
 import useChat from "../../../hooks/useChat.ts";
 import useSession from "../../../hooks/useSession.ts";
 import { gptCompletions } from "../../../apis/axios-config.ts";
 import { IMessageToGptMessages } from "../../../utils/utils.ts";
-import { GPT3, GPT4 } from "../../../utils/gpt-models.ts";
+import { GPT4 } from "../../../utils/gpt-models.ts";
 import { ITabsItem } from "../../../components/tabs/types.ts";
 import AvailableModels from "./variables/available-models.tsx";
 import TypingAnimation from "../../../components/typing-animation/typing-animation.tsx";
 import useSubscription from "../../../hooks/useSubscription.ts";
 import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
 import UpgradeToPremiumToast from "./component/upgrade-to-premium-toast/upgrade-to-premium-toast.tsx";
-import {getDeviceLanguage} from "../../../utils/get-device-language.ts";
-import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
-import {toArray} from "react-native-svg/lib/typescript/lib/Matrix2D";
-import {resolve} from "dns";
+import { FREE_DAIL_MESSAGE_LIMIT } from "../../../utils/app-config.ts";
 
 
 interface ChatScreenProps extends IDefaultProps {
@@ -189,40 +183,33 @@ const ChatScreen: FC<ChatScreenProps> = ({ ...props }) => {
                 }}
                 style={{ width: "100%" }}
             />
-            <View style={{
-                width: "100%",
-                paddingVertical: 10,
-                paddingHorizontal: 20,
-                justifyContent: "center",
-                alignItems: "center",
-            }}>
-                {!subActions.hasActiveSubscription() && !subActions.hasDailyQuota() ? <UpgradeToPremiumToast/> :
-                    <View
-                        style={{
-                            width: "100%",
-                        }}
-                    >
-                        <ChatInput
-                            disabled={gettingResponse}
-                            onRetry={async () => {
-                                let totalMessages = actions.getMessagesWithGreeting().length
-                                if (totalMessages > 1 && actions.getMessagesWithGreeting()[totalMessages - 1].user !== user) {
-                                    await actions.retryMessage()
-                                    setGettingResponse(true)
-                                }
+            {!subActions.hasActiveSubscription() && !subActions.hasDailyQuota() ? <UpgradeToPremiumToast /> :
+                <ChatInput
+                    chatInputStyle={{
+                        width: "100%",
+                        paddingHorizontal: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                    iosHeight={10}
+                    disabled={gettingResponse}
+                    onRetry={async () => {
+                        let totalMessages = actions.getMessagesWithGreeting().length
+                        if (totalMessages > 1 && actions.getMessagesWithGreeting()[totalMessages - 1].user !== user) {
+                            await actions.retryMessage()
+                            setGettingResponse(true)
+                        }
 
-                            }}
-                            onSend={(message) => {
-                                actions.sendMessage(message)
-                                subActions.dailyMessagesActions.increment?.()
-                                if (!startGettingResponse)
-                                    setStartGettingResponse(true);
+                    }}
+                    onSend={(message) => {
+                        actions.sendMessage(message)
+                        subActions.dailyMessagesActions.increment?.()
+                        if (!startGettingResponse)
+                            setStartGettingResponse(true);
 
-                            }}
-                        />
-                    </View>
-                }
-            </View>
+                    }}
+                />
+            }
         </SafeAreaView>
     )
 }

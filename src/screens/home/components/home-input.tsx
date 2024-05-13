@@ -1,21 +1,20 @@
-import React, {FC} from "react";
-import {StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../utils/types.ts";
+import React, { FC } from "react";
+import { StyleSheet } from "react-native";
+import { IDefaultProps } from "../../../utils/types.ts";
 import ChatInput from "../../../components/fields/chat-input/chat-input.tsx";
 import database from "@react-native-firebase/database";
-import {USER_ROLE} from "../../../utils/roles.ts";
-import {formateDateTo12HoursTime} from "../../../utils/formate-date.ts";
+import { USER_ROLE } from "../../../utils/roles.ts";
+import { formateDateTo12HoursTime } from "../../../utils/formate-date.ts";
 import useSession from "../../../hooks/useSession.ts";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import useSubscription from "../../../hooks/useSubscription.ts";
-import UpgradeToPremiumToast from "../../history/chat/component/upgrade-to-premium-toast/upgrade-to-premium-toast.tsx";
 
 
 interface HomeInputProps extends IDefaultProps {
-
+    iosHeight?: number;
 }
 
-const HomeInput: FC<HomeInputProps> = ({...props}) => {
+const HomeInput: FC<HomeInputProps> = ({ ...props }) => {
     const [session] = useSession();
     const navigation = useNavigation();
     const [subscription, subActions] = useSubscription();
@@ -49,18 +48,13 @@ const HomeInput: FC<HomeInputProps> = ({...props}) => {
         return <></>
 
     return (
-        <View
-            style={styles.container}
-        >
-
-            <ChatInput
-                disabled={false}
-                onSend={(message) => {
-                    sendMessage(message)
-                }}
-            />
-
-        </View>
+        <ChatInput
+            disabled={false}
+            iosHeight={40}
+            onSend={(message) => {
+                sendMessage(message)
+            }}
+        />
     )
 }
 

@@ -93,11 +93,11 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         <TouchableOpacity
                             onPress={() => navigation.goBack()}
                             style={styles.toptouchable}>
-                            <SvgXml xml={backArrow} width="60%" height="60%" />
+                            <SvgXml xml={backArrow} width="10%" height="50%" />
+                            <Text style={styles.toptext}>
+                                Subscription
+                            </Text>
                         </TouchableOpacity>
-                        <Text style={styles.toptext}>
-                            Subscription
-                        </Text>
                     </View>
 
                     <View style={styles.secondview}>
@@ -223,18 +223,46 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             Some Reviews
                         </Text>
                     </View>
-                    <View style={{alignItems: "center", justifyContent: "center"}}>
+                    <View style={{ alignItems: "center", justifyContent: "center" }}>
                         <Review
                             name={"Sophia N."}
-                        image={require('../../../assets/images/userImg.png')}
-                        review={"Spectacular AI in all the themes I have tried so far."}
+                            image={require('../../../assets/images/userImg.png')}
+                            review={"Spectacular AI in all the themes I have tried so far."}
                         />
                         <Review
                             name={"Maria jr."}
                             image={{
-                                uri:"https://randomuser.me/api/portraits/women/90.jpg"
+                                uri: "https://randomuser.me/api/portraits/women/90.jpg"
                             }}
                             review={"Best Ai Service in Market so far!"}
+                        />
+                        <Review
+                            name={"Jenna"}
+                            image={{
+                                uri: "https://randomuser.me/api/portraits/women/64.jpg"
+                            }}
+                            review={"Eva AI is the cat's whiskers of AI apps, offering personalized tips and quirky cat facts that have revolutionized my cat-parenting experience!"}
+                        />
+                        <Review
+                            name={"Rosy"}
+                            image={{
+                                uri: "https://randomuser.me/api/portraits/women/86.jpg"
+                            }}
+                            review={"Eva AI is the perfect study partner, providing personalized guidance and invaluable insights that have transformed my educational journey!"}
+                        />
+                        <Review
+                            name={"John"}
+                            image={{
+                                uri: "https://randomuser.me/api/portraits/men/79.jpg"
+                            }}
+                            review={"Eva AI has made learning a joy with its user-friendly interface and wealth of educational resources!"}
+                        />
+                        <Review
+                            name={"Christopher"}
+                            image={{
+                                uri: "https://randomuser.me/api/portraits/men/53.jpg"
+                            }}
+                            review={"Eva AI surpasses expectations, offering intuitive access to a vast array of educational materials and insightful recommendations!"}
                         />
                     </View>
                 </SafeAreaView>
@@ -261,14 +289,14 @@ const styles = StyleSheet.create({
     top: {
         flexDirection: "row",
         alignItems: "center",
-        marginLeft: responsiveScreenWidth(5),
+        marginLeft: responsiveScreenWidth(2),
         marginTop: responsiveScreenHeight(3)
     },
     toptouchable: {
-        width: responsiveScreenWidth(3.8),
         height: responsiveScreenHeight(4.3),
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexDirection:'row'
     },
     image: {
         width: "100%",

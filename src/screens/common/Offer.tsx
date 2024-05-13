@@ -4,23 +4,25 @@ import {
     View,
     ScrollView
 } from "react-native";
-import React, {useEffect, useState} from "react";
-import Entypo from 'react-native-vector-icons/Entypo';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import React, { useEffect, useState } from "react";
 import OfferTop from "../../../assets/svgs/offerTop";
 import OfferCenter from "../../../assets/svgs/OfferCenter";
 import Rocket from "../../../assets/svgs/Rocket";
+
 import PartyPopper from "../../../assets/svgs/PartyPopper";
 import RobotHead from "../../../assets/svgs/RobotHead";
 import FONTS from "../../theme/FONTS";
 import themeColors from "../../theme/colors";
-import {responsiveFontSize} from "react-native-responsive-dimensions";
-import {TouchableOpacity} from "react-native";
+import { responsiveFontSize } from "react-native-responsive-dimensions";
+import { TouchableOpacity } from "react-native";
 import Point from "../../components/point/Point";
 import Purchases from 'react-native-purchases';
 import useSubscription from "../../hooks/useSubscription.ts";
-import Toast from "react-native-simple-toast";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { SvgXml } from "react-native-svg";
+import CrossWhiteSvg from "../../../assets/svgs/crossWhite.js";
+import SvgImport from "../../utils/import-svg.tsx";
+import starYellow from "../../../assets/svgs/starYellow.js";
 
 const Offer = () => {
     const [discountedProduct, setDiscountedProduct] = useState<any>()
@@ -62,52 +64,53 @@ const Offer = () => {
     return (
         <ImageBackground
             source={require("../../../assets/images/bg.png")}
-            style={{flex: 1, justifyContent: 'space-between'}}
+            style={{ flex: 1, justifyContent: 'space-between' }}
             resizeMode="cover"
         >
             <SafeAreaView
                 style={styles.safeareaview}>
                 <ScrollView showsVerticalScrollIndicator={false}
-                            contentContainerStyle={{justifyContent: 'space-between', flexGrow: 1}}>
-                    <View
+                    contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
+                    <TouchableOpacity
                         style={styles.view2}
-                    >
-                        <Entypo onPress={() => {
+                        onPress={() => {
                             navigation.goBack();
-
-                        }} name="cross" size={30} color="white"/>
-                    </View>
+                        }}
+                    >
+                        <SvgXml xml={CrossWhiteSvg} width="15%" style={{ alignSelf: 'flex-end' }} />
+                    </TouchableOpacity>
 
                     <View style={styles.view3}>
-                        <OfferTop text={`This is Just for`} off={"You!"}/>
-                        <OfferCenter heading={"Special Offer"} off={"-50%"}/>
+                        <OfferTop text={`This is Just for`} off={"You!"} />
+                        <OfferCenter heading={"Special Offer"} off={"-50%"} />
                         <View style={styles.view4}>
                             <Point
-                                Icon={<AntDesign name="star" size={24} color="yellow" style={styles.iconStyle}/>}
+
+                                Icon={<SvgImport svg={starYellow} />}
                                 color={"white"}
                                 text={"Unlimited chat messages"}
                             />
                             <Point
-                                Icon={<Rocket style={styles.iconStyle}/>}
+                                Icon={<Rocket style={styles.iconStyle} />}
                                 color={"white"}
                                 text={"Improved Answers AI"}
                             />
                             <Point
-                                Icon={<PartyPopper size={14} style={styles.iconStyle}/>}
+                                Icon={<PartyPopper size={14} style={styles.iconStyle} />}
                                 color={"white"}
                                 text={
                                     <Text>
-                                        No <Text style={{color: themeColors.red}}>ADS</Text> in the app
+                                        No <Text style={{ color: themeColors.red }}>ADS</Text> in the app
                                     </Text>
                                 }
                             />
                             <Point
-                                Icon={<RobotHead style={styles.iconStyle}/>}
+                                Icon={<RobotHead style={styles.iconStyle} />}
                                 color={"white"}
                                 text={
-                                    <Text style={{color: "white", fontFamily: FONTS.Manrope_Regular}}>
+                                    <Text style={{ color: "white", fontFamily: FONTS.Manrope_Regular }}>
                                         Powered by{" "}
-                                        <Text style={{color: "lightgreen", fontFamily: FONTS.Manrope_Bold}}>ChatGPT
+                                        <Text style={{ color: "lightgreen", fontFamily: FONTS.Manrope_Bold }}>ChatGPT
                                             4</Text>
                                     </Text>
                                 }
@@ -168,7 +171,7 @@ const Offer = () => {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-        </ImageBackground>
+        </ImageBackground >
     );
 };
 
@@ -199,7 +202,6 @@ const styles = StyleSheet.create({
     },
     view2: {
         width: "100%",
-        flexDirection: "row",
         justifyContent: "flex-end",
     },
     view3: {

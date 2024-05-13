@@ -21,6 +21,9 @@ interface HomeEntryProps extends IDefaultProps {
 
 const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
     usePlanOfferCronJob();
+    const delayyy = (ms: any) => new Promise((res: any) => setTimeout(res, ms));
+
+    delayyy(2000)
     return (
         <Tab.Navigator
             screenOptions={(route) => {

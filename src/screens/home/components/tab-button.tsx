@@ -1,6 +1,6 @@
-import React, {FC} from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
-import {IDefaultProps} from "../../../utils/types.ts";
+import React, { FC } from "react";
+import { Pressable, StyleSheet, Text } from "react-native";
+import { IDefaultProps } from "../../../utils/types.ts";
 import themeColors from "../../../theme/colors.ts";
 
 export interface tabProps {
@@ -14,13 +14,12 @@ interface TabComponentProps extends IDefaultProps {
     isSelected: boolean
 }
 
-const TabComponent: FC<TabComponentProps> = ({...props}) => {
-
+const TabComponent: FC<TabComponentProps> = ({ ...props }) => {
     return (
         <Pressable style={[styles.button, {
             backgroundColor: props.isSelected ? themeColors.primary : themeColors.blackLight
         }]}
-                   onPress={props.onPress}
+            onPress={props.onPress}
         >
             <Text style={styles.text}>{props.text}</Text>
         </Pressable>
