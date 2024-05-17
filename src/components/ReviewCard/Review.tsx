@@ -9,11 +9,11 @@ import FONTS from "../../theme/FONTS";
 interface HomeProps extends IDefaultProps {
     image: any,
     review: string,
-    name: string
+    name: string,
+    ratingsNumber?:number | any,
 }
 
 const Review: FC<HomeProps> = ({...props}) => {
-    let ratingsNumber = 3;
 
     return (
         <View style={styles.card}>
@@ -27,7 +27,7 @@ const Review: FC<HomeProps> = ({...props}) => {
                 <Text style={[styles.txtStyle, {color: themeColors.white}]}>{props.name}</Text>
                 <View style={styles.starContainer}>
                     <StarRatingDisplay
-                        rating={ratingsNumber}
+                        rating={props?.ratingsNumber}
                         starStyle={{width: responsiveScreenWidth(1), left: -7}}
                         starSize={responsiveFontSize(2)}
                     />

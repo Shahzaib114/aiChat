@@ -1,8 +1,9 @@
-import {useNavigation} from "@react-navigation/native";
-import {useEffect, useState} from "react";
-import {FIRST_TIME_OFFER_FLAG, LAST_TIME_OFFER_OPENED} from "../utils/constant.ts";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { FIRST_TIME_OFFER_FLAG, LAST_TIME_OFFER_OPENED } from "../utils/constant.ts";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useSubscription from "./useSubscription.ts";
+import Purchases from "react-native-purchases";
 
 export default function usePlanOfferCronJob() {
     const navigation = useNavigation();
@@ -51,9 +52,10 @@ export default function usePlanOfferCronJob() {
     }, []);
 
     useEffect(() => {
+        let res = subscription.productIdentifier?.includes('discounted')
         if (!actions.isLoaded)
             return;
-        if (!isFirstTime && lastTimePopUpHasBeen24Hours && !actions.hasActiveSubscription()) {
+        if (!isFirstTime && lastTimePopUpHasBeen24Hours && !res) {
             AsyncStorage.setItem(LAST_TIME_OFFER_OPENED, new Date().getTime().toString()).then(() => {
                 navigation.navigate("Offer" as never);
             });

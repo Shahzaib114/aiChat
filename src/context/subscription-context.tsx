@@ -1,10 +1,10 @@
-import {createContext, Dispatch, SetStateAction, useEffect, useState} from "react";
-import {IDefaultProps, ISubscription} from "../utils/types.ts";
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { IDefaultProps, ISubscription } from "../utils/types.ts";
 import getUniqueDeviceId from "../utils/device-id.ts";
 import database from "@react-native-firebase/database";
 import useSession from "../hooks/useSession.ts";
-import useDailyMessages, {IDailyMessageActions} from "../hooks/useDailyMessages.ts";
-import {FREE_DAIL_MESSAGE_LIMIT} from "../utils/app-config.ts";
+import useDailyMessages, { IDailyMessageActions } from "../hooks/useDailyMessages.ts";
+import { FREE_DAIL_MESSAGE_LIMIT } from "../utils/app-config.ts";
 import Toast from "react-native-simple-toast";
 
 export interface ISubscriptionActions {
@@ -45,7 +45,7 @@ const SessionContext = createContext<subscriptionContextProps>({
 });
 
 
-export function SubscriptionProvider({children}: IDefaultProps) {
+export function SubscriptionProvider({ children }: IDefaultProps) {
     const [subscription, updateSubscription] = useState<ISubscription>(initialSession);
     const [session] = useSession()
     const [todayMessages, dailyMessagesActions] = useDailyMessages();

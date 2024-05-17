@@ -81,6 +81,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     return (
         <ScrollView
             contentContainerStyle={styles.scrollViewStyle}
+            bounces={false}
         >
             <ImageBackground
                 source={require('../../../assets/images/AIChat.png')}
@@ -88,7 +89,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                 resizeMode="cover"
             >
 
-                <SafeAreaView style={{ height: responsiveScreenHeight(128.9), }}>
+                <SafeAreaView>
                     <View style={styles.top}>
                         <TouchableOpacity
                             onPress={() => navigation.goBack()}
@@ -227,6 +228,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         <Review
                             name={"Sophia N."}
                             image={require('../../../assets/images/userImg.png')}
+                            ratingsNumber={5}
                             review={"Spectacular AI in all the themes I have tried so far."}
                         />
                         <Review
@@ -234,6 +236,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             image={{
                                 uri: "https://randomuser.me/api/portraits/women/90.jpg"
                             }}
+                            ratingsNumber={5}
                             review={"Best Ai Service in Market so far!"}
                         />
                         <Review
@@ -241,6 +244,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             image={{
                                 uri: "https://randomuser.me/api/portraits/women/64.jpg"
                             }}
+                            ratingsNumber={5}
                             review={"Eva AI is the cat's whiskers of AI apps, offering personalized tips and quirky cat facts that have revolutionized my cat-parenting experience!"}
                         />
                         <Review
@@ -248,6 +252,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             image={{
                                 uri: "https://randomuser.me/api/portraits/women/86.jpg"
                             }}
+                            ratingsNumber={5}
                             review={"Eva AI is the perfect study partner, providing personalized guidance and invaluable insights that have transformed my educational journey!"}
                         />
                         <Review
@@ -255,6 +260,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             image={{
                                 uri: "https://randomuser.me/api/portraits/men/79.jpg"
                             }}
+                            ratingsNumber={5}
                             review={"Eva AI has made learning a joy with its user-friendly interface and wealth of educational resources!"}
                         />
                         <Review
@@ -262,6 +268,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             image={{
                                 uri: "https://randomuser.me/api/portraits/men/53.jpg"
                             }}
+                            ratingsNumber={5}
                             review={"Eva AI surpasses expectations, offering intuitive access to a vast array of educational materials and insightful recommendations!"}
                         />
                     </View>
@@ -276,7 +283,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         width: responsiveScreenWidth(100),
         backgroundColor: 'grey',
-        height: responsiveScreenHeight(209)
     },
     container: {
         backgroundColor: 'red',
@@ -296,7 +302,7 @@ const styles = StyleSheet.create({
         height: responsiveScreenHeight(4.3),
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection:'row'
+        flexDirection: 'row'
     },
     image: {
         width: "100%",
@@ -337,7 +343,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         borderStartColor: 'green',
-
+        alignItems: 'center'
     },
     thirdviewtext: {
         color: "white",
@@ -347,7 +353,8 @@ const styles = StyleSheet.create({
     thirdsvgview: {
         flexDirection: "row",
         width: responsiveScreenWidth(45),
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        alignItems: 'center',
     },
     thirdsvgviewtext: {
         color: "white",
