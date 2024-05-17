@@ -26,7 +26,7 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
     const navigate = useNavigation()
     return (
         <View style={styles.container}>
-
+            <SvgImport svg={starts}/>
             <Text style={{color: 'white', textAlign: "center", fontSize: 14, marginTop: 20}}>
                 You have reached the maximum
                 number of messages for today.
