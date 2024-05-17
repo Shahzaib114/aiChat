@@ -9,7 +9,17 @@ interface RewardedAdActions {
 }
 
 const rewardedAdd = RewardedAd.createForAdRequest(adUnitId, {
-    keywords: ['fashion', 'clothing', 'shoes', 'bags', 'accessories'],
+    keywords: [
+        'fashion',
+        'clothing',
+        'apparel',
+        'shoes',
+        'accessories',
+        'ecommerce',
+        'shopping',
+        'retail',
+
+    ],
 });
 
 export default function useRewardedAdd(onWatch: () => void): [boolean, RewardedAdActions] {
@@ -31,7 +41,9 @@ export default function useRewardedAdd(onWatch: () => void): [boolean, RewardedA
             }
         );
 
-
+        // rewardedAdd.addAdEventsListener((type, error, data) => {
+        //     console.log('RewardedAd event:', type, error, data);
+        // });
         rewardedAdd.load();
 
         return () => {

@@ -6,6 +6,7 @@ import {AvailableModels, GPT4} from "../utils/gpt-models.ts";
 import {prompt} from "../screens/home/variables/types.ts";
 import DEVICE_LANGUAGE from "../utils/get-device-language.ts";
 
+// let DEVICE_LANGUAGE = "ur_PK"
 
 export const gptInstance = axios.create({
     baseURL: gptEndpoint,
@@ -27,7 +28,16 @@ export const gptSpeechToTextInstance = axios.create({
 
 export const gptCompletions = async (messages: IGptMessage[], model: string, customPrompt: prompt | undefined): Promise<string> => {
     let messagesCopy = [...messages]
-
+    if (messagesCopy.length === 0) {
+        messagesCopy = [
+            {
+                role: "user",
+                content: `Talk to me in pure ${DEVICE_LANGUAGE} language. I can understand only ${DEVICE_LANGUAGE} language.
+            `
+            },
+            ...messagesCopy
+        ]
+    }
     console.log(DEVICE_LANGUAGE)
     if (model === GPT4) {
         messagesCopy = [{
@@ -37,19 +47,21 @@ export const gptCompletions = async (messages: IGptMessage[], model: string, cus
     }
     if (customPrompt) {
         messagesCopy = [{
-            role: "user",
+            role: "system",
             content: `
             you have provided a custom prompt. the custom prompt is as follows: 
             "${customPrompt?.prompt}"
             Please generate a response for the given messages according to the custom prompt.
             start with the greeting message.
+            .
             `
         }, ...messagesCopy]
     } else {
         messagesCopy = [
             {
-                "role": "user",
-                "content": `Greet  user.`
+                "role": "system",
+                "content": `Greet  user.
+                `
 
             },
             ...messagesCopy

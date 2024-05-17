@@ -1,7 +1,7 @@
 
 
 
-export const GPT_KEY = "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";
+export const GPT_KEY = "sk-proj-2WHapDgx2DXTOdYMvbtRT3BlbkFJeoUBZ3iZTAtIw285lBbY";
 export const REVENUE_CAT_ANDROID_APIKEY = "goog_DbsmqjKJErmJRYilobSziDRYfsf";
 export const REVENUE_CAT_IOS_APIKEY = "appl_GymmwteMQqlUisOpmtfpednebsW";
 
