@@ -8,6 +8,7 @@ import themeColors from "../../theme/colors.ts";
 import add from "../../../assets/svgs/add.js";
 import useRewardedAdd from "../../google-adds/useRewardedAdd.ts";
 import {useNavigation} from "@react-navigation/native";
+import alerticon from "../../../assets/svgs/alerticon.js";
 
 
 interface BuySubscriptionViewProps extends IDefaultProps {
@@ -26,7 +27,7 @@ const BuySubscriptionView: FC<BuySubscriptionViewProps> = ({...props}) => {
     const navigate = useNavigation()
     return (
         <View style={styles.container}>
-            <SvgImport svg={starts}/>
+            <SvgImport svg={alerticon}/>
             <Text style={{color: 'white', textAlign: "center", fontSize: 14, marginTop: 20}}>
                 You have reached the maximum
                 number of messages for today.

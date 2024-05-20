@@ -6,6 +6,7 @@ import starts from "../../../assets/svgs/starts.js";
 import {FREE_DAIL_MESSAGE_LIMIT} from "../../utils/app-config.ts";
 import themeColors from "../../theme/colors.ts";
 import {useNavigation} from "@react-navigation/native";
+import alerticon from "../../../assets/svgs/alerticon.js";
 
 
 interface DailyLimitViewProps extends IDefaultProps {
@@ -18,7 +19,7 @@ const DailyLimitView: FC<DailyLimitViewProps> = ({...props}) => {
 
     return (
         <View style={styles.container}>
-            <SvgImport svg={starts}/>
+            <SvgImport svg={alerticon}/>
             <Text style={{color: 'white', textAlign: "center", fontSize: 14, marginTop: 20}}>
                 You have {FREE_DAIL_MESSAGE_LIMIT} free daily requests
                 for ChatBot. To unlock unlimited access, upgrade to PRO.
