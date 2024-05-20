@@ -197,6 +197,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                     <Card
                                         text={item?.product?.title}
                                         description={price}
+                                        save={item?.product?.identifier}
                                         smallDesc={`/${period}`}
                                         isCircleActive={selected === item}
                                         purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}

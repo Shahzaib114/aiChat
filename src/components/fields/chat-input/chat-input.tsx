@@ -49,7 +49,7 @@ const ChatInput: FC<ChatInputProps> = ({ ...props }) => {
     const height = useHeaderHeight()
     return (
         <KeyboardAvoidingView
-            keyboardVerticalOffset={Platform.OS === 'ios' ? props.iosHeight == 10 ? height + 10 : height + 37 : 0}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? props.iosHeight == 10 ? height + 2 : height + 27 : 0}
             behavior={Platform.OS === 'ios' ? "padding" : 'height'}
             style={[props.chatInputStyle]}
         >
@@ -101,6 +101,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
+        bottom: 10
     }
 })
 

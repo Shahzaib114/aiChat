@@ -6,11 +6,7 @@ import themeColors from '../../theme/colors';
 import Vector from '../../../assets/svgs/vector';
 import { SvgXml } from 'react-native-svg';
 
-const CustomCard = ({ description, text, smallDesc, save,isCircleActive, purchased , handleCardPress}: any) => {
-  // const [isCircleActive, setIsCircleActive] = useState(false);
-  // const handleCirclePress = () => {
-  //   setIsCircleActive(!isCircleActive);
-  // };
+const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purchased, handleCardPress }: any) => {
 
   return (
     <TouchableOpacity
@@ -21,13 +17,12 @@ const CustomCard = ({ description, text, smallDesc, save,isCircleActive, purchas
         <View>
           <View style={styles.header}>
             <TouchableOpacity
-              // onPress={handleCirclePress}
               style={[
                 styles.circle,
                 { backgroundColor: isCircleActive ? '#02A67E' : 'grey', },
               ]}
             />
-            <Text style={styles.headerText}>{text}</Text>
+            <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '')}</Text>
           </View>
           <View>
             <Text style={styles.description}>
@@ -38,10 +33,10 @@ const CustomCard = ({ description, text, smallDesc, save,isCircleActive, purchas
             </Text>
           </View>
         </View>
-        {save &&
+        {save.includes('yearly') &&
           <View style={styles.saveView}>
             <Text style={styles.saveTxt}>
-              Save 80%
+              80% off
             </Text>
           </View>
         }
@@ -121,10 +116,10 @@ const styles = StyleSheet.create({
     color: themeColors.white,
     fontFamily: FONTS.Manrope_Light
   },
-  cardinnerview:{
+  cardinnerview: {
     width: '85%',
-     flexDirection: 'row',
-      justifyContent: 'space-between' 
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   }
 });
 
