@@ -1,8 +1,8 @@
-import { IGptMessage, IMessage } from "./types.ts";
-import { USER_ROLE } from "./roles.ts";
+import {IGptMessage, IMessage} from "./types.ts";
+import {USER_ROLE} from "./roles.ts";
 import mime from "mime";
-import { Platform, Share, Clipboard } from "react-native";
-import { ANDROID_PACKAGE_NAME, IOS_APP_ID } from "./app-config.ts";
+import {Platform, Share, Clipboard} from "react-native";
+import {ANDROID_PACKAGE_NAME, IOS_APP_ID} from "./app-config.ts";
 import Toast from 'react-native-simple-toast';
 import Tts from "react-native-tts";
 
@@ -72,9 +72,10 @@ export const CopyToClipboard = async (txt: string) => {
 }
 
 
-export function TextToSpeech(text: string) {
-    if (Tts.voices.length == 0) {
-        Tts.speak(text);
-    }
+export async function TextToSpeech(text: string) {
+    await Tts.stop()
+
+    // Speak the text
+    Tts.speak(text);
 
 }

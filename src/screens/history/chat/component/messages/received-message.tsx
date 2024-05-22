@@ -32,7 +32,7 @@ const ReceivedMessage: FC<ReceivedMessageProps> = ({...props}) => {
     return (
         <View style={styles.container}>
             <View style={{
-                maxWidth: "70%",
+                maxWidth: "80%",
                 paddingRight: 10,
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
@@ -67,6 +67,10 @@ const ReceivedMessage: FC<ReceivedMessageProps> = ({...props}) => {
                         onPress={() => {
                             TextToSpeech(props.text)
                         }}
+                        style={{
+                            padding: 5,
+                        }}
+
                     >
 
                         <SvgImport svg={speaker}/>
@@ -95,7 +99,8 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
     },
     text: {
         fontSize: 14,
-        marginRight: 5,
+        marginRight: 6,
+        marginLeft: 6,
         fontWeight: "500",
         color: themeColors.black,
         fontFamily: "Manrope",
@@ -107,7 +112,7 @@ const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
         gap: 10,
         borderTopLeftRadius: 0,
         paddingHorizontal: 10,
-        paddingRight: 22,
+        paddingRight: 25,
         paddingVertical: 10,
         backgroundColor: themeColors.white,
     }

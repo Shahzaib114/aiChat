@@ -1,11 +1,12 @@
-import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IDefaultProps, ISubscription } from "../utils/types.ts";
+import {createContext, Dispatch, SetStateAction, useEffect, useState} from "react";
+import {IDefaultProps, ISubscription} from "../utils/types.ts";
 import getUniqueDeviceId from "../utils/device-id.ts";
 import database from "@react-native-firebase/database";
 import useSession from "../hooks/useSession.ts";
-import useDailyMessages, { IDailyMessageActions } from "../hooks/useDailyMessages.ts";
-import { FREE_DAIL_MESSAGE_LIMIT } from "../utils/app-config.ts";
+import useDailyMessages, {IDailyMessageActions} from "../hooks/useDailyMessages.ts";
+import {FREE_DAIL_MESSAGE_LIMIT} from "../utils/app-config.ts";
 import Toast from "react-native-simple-toast";
+import Purchases from "react-native-purchases";
 
 export interface ISubscriptionActions {
     hasActiveSubscription: () => boolean,
@@ -45,7 +46,7 @@ const SessionContext = createContext<subscriptionContextProps>({
 });
 
 
-export function SubscriptionProvider({ children }: IDefaultProps) {
+export function SubscriptionProvider({children}: IDefaultProps) {
     const [subscription, updateSubscription] = useState<ISubscription>(initialSession);
     const [session] = useSession()
     const [todayMessages, dailyMessagesActions] = useDailyMessages();
@@ -79,6 +80,8 @@ export function SubscriptionProvider({ children }: IDefaultProps) {
 
     function Subscription(snapshot: any) {
         let data: ISubscription = snapshot.val();
+        console.log(data, "data")
+
         if (data === null) {
             data = {
                 status: "inactive"
@@ -106,6 +109,27 @@ export function SubscriptionProvider({ children }: IDefaultProps) {
             database().ref(`subscriptions/${session.user}`).off('value', Subscription)
         }
     }, [session.user]);
+
+    async function clearSubscription() {
+        await database().ref(`subscriptions/${session.user}`).update({
+            status: "inactive"
+        })
+    }
+
+    async function checkForSubscription() {
+        let res = await (await Purchases.getCustomerInfo()).activeSubscriptions
+        console.log(res, "subscription")
+        if (res.length <= 0) {
+            await clearSubscription()
+        }
+
+    }
+
+    useEffect(() => {
+        checkForSubscription()
+
+    }, []);
+
 
     async function subscribe(extra: any) {
         await database().ref(`subscriptions/${session.user}`).set({

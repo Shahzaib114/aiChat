@@ -4,6 +4,7 @@ import { NativeModules, Platform } from 'react-native';
 
 
 export function getDeviceLanguage(): string {
+
     const deviceLanguage =
         Platform.OS === 'ios'
             ? NativeModules.SettingsManager.settings.AppleLocale ||

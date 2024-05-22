@@ -6,7 +6,7 @@ import {AvailableModels, GPT4} from "../utils/gpt-models.ts";
 import {prompt} from "../screens/home/variables/types.ts";
 import DEVICE_LANGUAGE from "../utils/get-device-language.ts";
 
-// let DEVICE_LANGUAGE = "ur_PK"
+// let DEVICE_LANGUAGE = "es_ES"
 
 export const gptInstance = axios.create({
     baseURL: gptEndpoint,
@@ -27,45 +27,53 @@ export const gptSpeechToTextInstance = axios.create({
 
 
 export const gptCompletions = async (messages: IGptMessage[], model: string, customPrompt: prompt | undefined): Promise<string> => {
-    let messagesCopy = [...messages]
-    if (messagesCopy.length === 0) {
-        messagesCopy = [
-            {
-                role: "user",
-                content: `Talk to me in pure ${DEVICE_LANGUAGE} language. I can understand only ${DEVICE_LANGUAGE} language.
-            `
-            },
-            ...messagesCopy
-        ]
-    }
-    console.log(DEVICE_LANGUAGE)
-    if (model === GPT4) {
-        messagesCopy = [{
-            role: "system",
-            content: "act as a Gpt-4 model and generate a response for the given messages. according to the GPT-4 model, the response will be more accurate and relevant."
-        }, ...messagesCopy]
-    }
-    if (customPrompt) {
-        messagesCopy = [{
-            role: "system",
-            content: `
-            you have provided a custom prompt. the custom prompt is as follows: 
-            "${customPrompt?.prompt}"
-            Please generate a response for the given messages according to the custom prompt.
-            start with the greeting message.
-            .
-            `
-        }, ...messagesCopy]
-    } else {
-        messagesCopy = [
-            {
-                "role": "system",
-                "content": `Greet  user.
-                `
+    let messagesCopy = [...messages];
 
+    if (messagesCopy.length === 0) {
+        messagesCopy.push({
+            role: "user",
+            content: "hi"
+
+        }, {
+            role: "system",
+            content: `Engage with me using only the ${DEVICE_LANGUAGE} language, utilizing pure ${DEVICE_LANGUAGE} characters. I'm only capable of understanding ${DEVICE_LANGUAGE}, so please ensure your responses are in that language. Maintain a natural and authentic writing style in ${DEVICE_LANGUAGE}, avoiding any hints of translation or prompting.
+             `
+        });
+    }
+
+    // if (model === GPT4) {
+    //     messagesCopy.unshift({
+    //         role: "system",
+    //         content: "Act as a GPT-4 model and generate a response for the given messages. According to the GPT-4 model, the response will be more accurate and relevant."
+    //     });
+    // }
+
+    if (customPrompt) {
+        messagesCopy.unshift(
+            {
+                role: "system",
+                content: `
+                You have provided a custom prompt. The custom prompt is as follows: 
+                "${customPrompt?.prompt}"
+                Please generate a response for the given messages according to the custom prompt.
+                Act according to prompt. 
+            `
             },
-            ...messagesCopy
-        ]
+            {
+                role: "system",
+                content: `Start asking related questions about the prompt. The first message is after this message. 
+                Don't start the message with "of course," "obviously," "sure," "Great!," "understood," or anything like that.`
+            }
+        );
+    } else {
+        messagesCopy.unshift({
+            role: "system",
+            content: `Act according to prompt.`
+        }, {
+            role: "system",
+            content: `The first message is after this message. 
+                Don't start the message with "of course," "obviously," "sure," "Great!," "understood," or anything like that.`
+        });
     }
 
     // messagesCopy= [
@@ -77,12 +85,12 @@ export const gptCompletions = async (messages: IGptMessage[], model: string, cus
     //     ...messagesCopy
     // ]
 
-
     return new Promise((resolve, reject) => {
         gptInstance.post(`/completions`, {
             messages: messagesCopy,
             max_tokens: 1000,
-            model: model
+            model: model,
+
         }).then((res) => {
 
             let response = res.data?.choices[0]?.message?.content || ""
@@ -96,3 +104,4 @@ export const gptCompletions = async (messages: IGptMessage[], model: string, cus
     });
 
 }
+

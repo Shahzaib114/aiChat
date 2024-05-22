@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   saveView: {
     backgroundColor: themeColors.blue,
     alignSelf: 'baseline',
+    marginLeft: 4,
     padding: responsiveFontSize(0.5),
     borderRadius: responsiveFontSize(1.5),
     justifyContent: 'center',

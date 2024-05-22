@@ -29,7 +29,7 @@ const SentMessage: FC<SentMessageProps> = ({...props}) => {
     return (
         <View style={styles.container}>
             <View style={{
-                maxWidth: "70%",
+                maxWidth: "80%",
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
                 gap: 5,
