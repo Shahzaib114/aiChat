@@ -47,8 +47,6 @@ export default function usePlanOfferCronJob() {
     useEffect(() => {
         checkIfUserFirstTimeLoggedIn();
         checkIfLastTimePopUpHasBeen24Hours();
-        // AsyncStorage.removeItem(LAST_TIME_OFFER_OPENED)
-        // AsyncStorage.removeItem(FIRST_TIME_OFFER_FLAG)
     }, []);
 
     useEffect(() => {

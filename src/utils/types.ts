@@ -46,6 +46,6 @@ export interface ISubscription {
     lastRenewalDate?: number;
     subscriptionType?: IPlan,
     productIdentifier?: string,
-    transaction?: string,
+    transaction?: object,
 }
 

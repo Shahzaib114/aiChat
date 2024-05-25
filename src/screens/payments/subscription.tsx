@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
     responsiveFontSize,
     responsiveScreenFontSize,
@@ -24,35 +24,42 @@ import FONTS from "../../theme/FONTS.tsx";
 import backArrow from "../../../assets/svgs/backArrow.js";
 import ChatSvg from "../../../assets/svgs/ChatSvg.js";
 import Purchases from 'react-native-purchases';
-import usePlans from "../../hooks/usePlans.ts";
 import useSubscription from "../../hooks/useSubscription.ts";
 import { PurchasesPackage } from "@revenuecat/purchases-typescript-internal/dist/offerings";
 import Toast from "react-native-simple-toast";
+import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
 
 interface HomeProps extends IDefaultProps {
 }
 
 const Subscription: FC<HomeProps> = ({ ...props }) => {
+    const navigation: any = useNavigation()
     const [allProducts, setAllProducts] = useState<PurchasesPackage[]>()
+        const [isLoader, setIsLoader] = useState(false)
     const [subscriptionHook, subscriptionHookAction] = useSubscription()
     const [selected, setSelected] = useState<PurchasesPackage>()
     useEffect(() => {
         getInAppProducts()
+
     }, [])
 
     const handlePurchase = async (selectedProduct: any) => {
         try {
-            if (subscriptionHook.status === "active") {
-                Toast.show('You already have an active subscription', Toast.LONG)
+            if (subscriptionHook.productIdentifier === selectedProduct?.product?.identifier) {
+                Toast.show('You already have this subscription activated ', Toast.LONG)
                 return
             }
-            const purchasing = await Purchases.purchasePackage(selectedProduct);
-            console.log('purchased', purchasing)
-            subscriptionHookAction.subscribe(purchasing);
-
-        } catch (e) {
-            console.log('go error in offering', e)
+            setIsLoader(true)
+            let purchase = await Purchases.purchasePackage(selectedProduct);
+            const updatedCustomerInfo = await Purchases.getCustomerInfo();
+            await subscriptionHookAction.subscribe(updatedCustomerInfo);
+            setIsLoader(false)
+        } catch {
+            setIsLoader(false)
+        } finally {
+            setIsLoader(false)
         }
+
     };
 
     const getInAppProducts = async () => {
@@ -66,18 +73,6 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
         }
     }
 
-
-    const extractPriceAndPeriod = (description: string) => {
-        const regex = /([\d.]+\$),\/(month|week|year)/;
-        const match = description.match(regex);
-        if (match) {
-            const [_, price, period] = match;
-            return { price, period };
-        }
-        return { price: '', period: '' };
-    };
-
-    const navigation: any = useNavigation()
     return (
         <ScrollView
             contentContainerStyle={styles.scrollViewStyle}
@@ -190,15 +185,15 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
 
                     <View style={styles.card}>
                         {allProducts?.map((item: PurchasesPackage, index: number) => {
-                            let productId = item.product.defaultOption?.productId
-                            const { price, period } = extractPriceAndPeriod(item?.product?.description)
+                            let productId = item.product?.identifier
+                            const pricesAndPeriods = ExtractPriceAndPeriod(item?.product?.description);
                             return (
                                 <React.Fragment key={index}>
                                     <Card
-                                        text={item?.product?.title}
-                                        description={price}
+                                        text={pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly'}
+                                        description={pricesAndPeriods[index].price}
                                         save={item?.product?.identifier}
-                                        smallDesc={`/${period}`}
+                                        smallDesc={`/${pricesAndPeriods[index]?.period}`}
                                         isCircleActive={selected === item}
                                         purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
                                         handleCardPress={() => {
@@ -211,13 +206,20 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     </View>
 
                     <View style={styles.buttonview}>
-                        <ButtonComponent text="Continue" onPress={() => {
-                            if (!selected) {
-                                Toast.show('Please select a plan', Toast.LONG)
-                                return
-                            }
-                            handlePurchase(selected)
-                        }} />
+                        {!isLoader ?
+                            <ButtonComponent text="Continue" onPress={() => {
+                                if (!selected) {
+                                    Toast.show('Please select a plan', Toast.LONG)
+                                    return
+                                }
+                                handlePurchase(selected)
+                            }} />
+                            :
+                            <View>
+                                <ActivityIndicator color={themeColors.white} size={'large'} />
+                            </View>
+                        }
+
                         <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
                     </View>
                     <View style={{ margin: "5%" }}>
