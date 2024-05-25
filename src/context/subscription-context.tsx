@@ -132,12 +132,17 @@ export function SubscriptionProvider({children}: IDefaultProps) {
 
 
     async function subscribe(extra: any) {
+        let productId = extra?.activeSubscriptions[0]
         await database().ref(`subscriptions/${session.user}`).set({
             status: "active",
             startDate: new Date().getTime(),
             lastRenewalDate: new Date().getTime(),
-            transaction: extra?.transaction,
-            productIdentifier: extra?.productIdentifier,
+            transaction: {
+                productIdentifier: productId,
+                purchaseDate: extra?.allPurchaseDates?.productId,
+                purchaseDateMillis:extra?.allPurchaseDates?.productId,
+            },
+            productIdentifier: extra?.activeSubscriptions[0],
         } as ISubscription).then(() => {
             Toast.show("Subscription successful", Toast.SHORT)
         }).catch((e) => {

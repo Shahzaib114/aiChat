@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { IDefaultProps } from "../../utils/types.ts";
 import themeColors from "../../theme/colors.ts";
@@ -12,7 +12,6 @@ import privacy from "../../../assets/svgs/privacy.js";
 import { Share } from "react-native";
 import { getAppShareLink } from "../../utils/utils.ts";
 import useSubscription from "../../hooks/useSubscription.ts";
-import { APP_PRIVACY_POLICY } from "../../utils/app-config.ts";
 
 
 interface SettingsProps extends IDefaultProps {
@@ -26,11 +25,9 @@ interface GetAccountTypeButtonProps extends SettingsItemProps {
 
 function GetAccountTypeButton({ ...props }: GetAccountTypeButtonProps) {
     let title = props.accountType === "FREE" ? "Free" : "Premium";
-    let icon = props.accountType === "FREE" ? <SvgImport svg={crown}/> : <SvgImport svg={crown}/>;
+    let icon = props.accountType === "FREE" ? <SvgImport svg={crown} /> : <SvgImport svg={crown} />;
     const [subscription] = useSubscription()
-    console.log(subscription.productIdentifier)
     let packageName = props.accountType === "FREE" ? "Free" : "Weekly";
-
     return (
         <SettingsItem
             icon={icon}
@@ -49,7 +46,10 @@ function GetAccountTypeButton({ ...props }: GetAccountTypeButtonProps) {
 
                     }}>
                         {
-                            subscription.productIdentifier?.split(".")[0]
+                            subscription?.productIdentifier?.includes('week') ? `Weekly` :
+                                subscription?.productIdentifier?.includes('monthly') ? 'Monthly' :
+                                    subscription?.productIdentifier?.includes('year') ? 'yearly' :
+                                        subscription?.productIdentifier?.includes('discounted') && 'Discounted Yearly'
                         }
                     </Text>
                 )
@@ -117,7 +117,7 @@ const Settings: FC<SettingsProps> = ({ ...props }) => {
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={problem}/>}
+                    icon={<SvgImport svg={problem} />}
                     onClick={() => {
                         Linking.openURL("mailto:contact@akromaxtech.com");
                     }}
@@ -125,7 +125,7 @@ const Settings: FC<SettingsProps> = ({ ...props }) => {
                 />
                 <SettingsItem
                     hasBottomBorder
-                    icon={<SvgImport svg={star}/>}
+                    icon={<SvgImport svg={star} />}
 
                     onClick={getUsAppRating}
                     title={"Give us Rating"}
@@ -135,7 +135,7 @@ const Settings: FC<SettingsProps> = ({ ...props }) => {
                     onClick={() => {
                         Linking.openURL("https://akromaxtech.com/privacy-policy")
                     }}
-                    icon={<SvgImport svg={privacy}/>}
+                    icon={<SvgImport svg={privacy} />}
                     title={"Privacy Policy"}
                 />
             </View>

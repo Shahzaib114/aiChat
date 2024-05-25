@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import FONTS from '../../theme/FONTS';
@@ -22,7 +22,7 @@ const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purcha
                 { backgroundColor: isCircleActive ? '#02A67E' : 'grey', },
               ]}
             />
-            <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '')}</Text>
+            <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '') }</Text>
           </View>
           <View>
             <Text style={styles.description}>

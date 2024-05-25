@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { FC, useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import { IDefaultProps } from "../../utils/types.ts";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BottomNavigationTab from "../../components/bottom-navigation-tab/bottom-navigation-tab.tsx";
@@ -11,6 +11,7 @@ import HistoryScreen from "../history/history.tsx";
 import Settings from "../settings/settings.tsx";
 import SettingScreenHeader from "../settings/component/settings-screen-header.tsx";
 import usePlanOfferCronJob from "../../hooks/usePlanOfferCronJob.ts";
+import Purchases from "react-native-purchases";
 
 
 const Tab = createBottomTabNavigator();
@@ -21,7 +22,6 @@ interface HomeEntryProps extends IDefaultProps {
 
 const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
     usePlanOfferCronJob();
-
     return (
         <Tab.Navigator
             screenOptions={(route) => {
