@@ -2,13 +2,13 @@ import {
     ImageBackground, SafeAreaView, StyleSheet,
     Text,
     View,
-    ScrollView
+    ScrollView,
+    ActivityIndicator
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import OfferTop from "../../../assets/svgs/offerTop";
 import OfferCenter from "../../../assets/svgs/OfferCenter";
 import Rocket from "../../../assets/svgs/Rocket";
-
 import PartyPopper from "../../../assets/svgs/PartyPopper";
 import RobotHead from "../../../assets/svgs/RobotHead";
 import FONTS from "../../theme/FONTS";
@@ -23,9 +23,12 @@ import { SvgXml } from "react-native-svg";
 import CrossWhiteSvg from "../../../assets/svgs/crossWhite.js";
 import SvgImport from "../../utils/import-svg.tsx";
 import starYellow from "../../../assets/svgs/starYellow.js";
+import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
 
 const Offer = () => {
     const [discountedProduct, setDiscountedProduct] = useState<any>()
+    const [isLoader, setIsLoader] = useState(false)
+    const [pricingDetails, setPricingDetails] = useState<any>('')
     const [subscription, subscriptionAction] = useSubscription()
     useEffect(() => {
         getInAppProducts()
@@ -33,18 +36,16 @@ const Offer = () => {
     const navigation = useNavigation();
     const handlePurchase = async (selectedProduct: any) => {
         try {
-            // if (subscription.status === "active") {
-            //     Toast.show('You already have an active subscription', Toast.LONG)
-            //     return
-            // }
+            setIsLoader(true)
             const purchasing = await Purchases.purchasePackage(selectedProduct);
-            console.log('purchased', purchasing)
-            await subscriptionAction.subscribe(purchasing);
+            const updatedCustomerInfo = await Purchases.getCustomerInfo();
+            await subscriptionAction.subscribe(updatedCustomerInfo);
             navigation.goBack();
-
-
         } catch (e) {
             console.log('go error in offering', e)
+            setIsLoader(false)
+        } finally {
+            setIsLoader(false)
         }
     };
 
@@ -53,8 +54,10 @@ const Offer = () => {
             const offerings = await Purchases.getOfferings();
             if (offerings.all !== null) {
                 // Display packages for sale
-                console.log('Discounted Offer', JSON.stringify(offerings.all?.Discounted))
+
                 setDiscountedProduct(offerings.all?.Discounted?.availablePackages[0])
+                let discountedObject = ExtractPriceAndPeriod(offerings.all?.Discounted?.availablePackages[0]?.product?.description)
+                setPricingDetails(discountedObject)
             }
         } catch (e) {
             console.log('go error in offering', e)
@@ -136,7 +139,7 @@ const Offer = () => {
                                         styles.view6text3
                                     }
                                 >
-                                    {discountedProduct?.product?.description}
+                                    {pricingDetails[3]?.price} per year
                                 </Text>
                                 <Text
                                     style={
@@ -154,19 +157,25 @@ const Offer = () => {
                                     Automatically renewable. Cancel whenever you want.
                                 </Text>
                             </View>
-
-                            <TouchableOpacity
-                                style={styles.btnStyle}
-                                onPress={() => {
-                                    handlePurchase(discountedProduct)
-                                }}
-                            >
-                                <Text
-                                    style={styles.takeOfferTxt}
+                            {!isLoader ?
+                                <TouchableOpacity
+                                    style={styles.btnStyle}
+                                    onPress={() => {
+                                        handlePurchase(discountedProduct)
+                                    }}
                                 >
-                                    Take this Offer
-                                </Text>
-                            </TouchableOpacity>
+                                    <Text
+                                        style={styles.takeOfferTxt}
+                                    >
+                                        Take this Offer
+                                    </Text>
+                                </TouchableOpacity>
+                                :
+                                <View>
+                                    <ActivityIndicator color={themeColors.white} size={'large'} />
+                                </View>
+                            }
+
                         </View>
                     </View>
                 </ScrollView>
