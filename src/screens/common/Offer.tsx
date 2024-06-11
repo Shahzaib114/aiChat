@@ -3,9 +3,11 @@ import {
     Text,
     View,
     ScrollView,
-    ActivityIndicator
+    ActivityIndicator,
+    Platform,
+    Alert
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import OfferTop from "../../../assets/svgs/offerTop";
 import OfferCenter from "../../../assets/svgs/OfferCenter";
 import Rocket from "../../../assets/svgs/Rocket";
@@ -16,53 +18,166 @@ import themeColors from "../../theme/colors";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import { TouchableOpacity } from "react-native";
 import Point from "../../components/point/Point";
-import Purchases from 'react-native-purchases';
 import useSubscription from "../../hooks/useSubscription.ts";
 import { useNavigation } from "@react-navigation/native";
 import { SvgXml } from "react-native-svg";
 import CrossWhiteSvg from "../../../assets/svgs/crossWhite.js";
 import SvgImport from "../../utils/import-svg.tsx";
 import starYellow from "../../../assets/svgs/starYellow.js";
+import Toast from "react-native-simple-toast";
 import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
+import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
+import getUniqueDeviceId from "../../utils/device-id.ts";
+import { finishTransaction, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
 
 const Offer = () => {
     const [discountedProduct, setDiscountedProduct] = useState<any>()
     const [isLoader, setIsLoader] = useState(false)
     const [pricingDetails, setPricingDetails] = useState<any>('')
-    const [subscription, subscriptionAction] = useSubscription()
-    useEffect(() => {
-        getInAppProducts()
-    }, [])
+    const [subscriptionHook, subscriptionHookAction] = useSubscription()
     const navigation = useNavigation();
-    const handlePurchase = async (selectedProduct: any) => {
-        try {
-            setIsLoader(true)
-            const purchasing = await Purchases.purchasePackage(selectedProduct);
-            const updatedCustomerInfo = await Purchases.getCustomerInfo();
-            await subscriptionAction.subscribe(updatedCustomerInfo);
-            navigation.goBack();
-        } catch (e) {
-            console.log('go error in offering', e)
-            setIsLoader(false)
-        } finally {
-            setIsLoader(false)
-        }
-    };
+    const iosProductIds = ["yearly.discounted.subscription"]; // Replace with your actual product IDs
+    const androidProductIds = ["com.aichat"]; // Replace with your actual product IDs
+    const selectedProdId = useRef(null);  //
 
-    const getInAppProducts = async () => {
-        try {
-            const offerings = await Purchases.getOfferings();
-            if (offerings.all !== null) {
-                // Display packages for sale
-
-                setDiscountedProduct(offerings.all?.Discounted?.availablePackages[0])
-                let discountedObject = ExtractPriceAndPeriod(offerings.all?.Discounted?.availablePackages[0]?.product?.description)
-                setPricingDetails(discountedObject)
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const products: any = await getSubscriptions({ skus: Platform.OS === 'ios' ? iosProductIds : androidProductIds });
+                if (Platform.OS === 'android') {
+                    const pricesAndPeriods = ExtractPriceAndPeriod(products[0]?.description);
+                    setPricingDetails(pricesAndPeriods[3].price)
+                    setDiscountedProduct(products[0].subscriptionOfferDetails[3]);
+                } else if (Platform.OS === 'ios') {
+                    setPricingDetails(products[0].description)
+                    setDiscountedProduct(products[0]);
+                }
+            } catch (err) {
+                console.log(err);
             }
-        } catch (e) {
-            console.log('go error in offering', e)
+        };
+
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        const purchaseUpdateSubscription = Platform.OS === 'android' && purchaseUpdatedListener(async (purchase) => {
+            try {
+                await finishTransaction({ purchase, isConsumable: false });
+                await sendPurchaseToRevenueCat(purchase)
+            } catch (error) {
+                console.error('Purchase error:', error);
+            }
+        });
+        return () => {
+            if (purchaseUpdateSubscription) {
+                purchaseUpdateSubscription.remove();
+            }
+        };
+    })
+
+    const handlePurchaseIOS = async (myProducts: any) => {
+        setIsLoader(true)
+        let payment: any = await getSubscriptions({ skus: [myProducts] })
+            .then(async (value: any) => {
+                return await requestSubscription({
+                    sku: myProducts,
+                    ...('offerToken' && {
+                        subscriptionOffers: [
+                            {
+                                sku: myProducts, // as a string
+                                offerToken: 'offerToken',
+                            },
+                        ],
+                    }),
+                })
+                    .then(async (requestSubscriptionIAP: any) => {
+                        if (Platform.OS == 'ios') {
+                            if (
+                                requestSubscriptionIAP &&
+                                requestSubscriptionIAP?.transactionReceipt
+                            ) {
+                                await sendPurchaseToRevenueCat(requestSubscriptionIAP)
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        setIsLoader(false)
+                        return {
+                            error: error,
+                            success: false,
+                        };
+                    });
+            })
+            .catch(err => {
+                setIsLoader(false)
+                return {
+                    error: err,
+                    success: false,
+                };
+            });
+        return payment;
+    }
+    const handlePurchaseAndroid = async (offerToken: any) => {
+        setIsLoader(true)
+        try {
+            await requestSubscription({
+                sku: "com.aichat",
+                ...('offerToken' && {
+                    subscriptionOffers: [
+                        {
+                            sku: "com.aichat", // as a string
+                            offerToken: offerToken
+                        },
+                    ],
+                }),
+            })
+        } catch (error) {
+            setIsLoader(false)
+            console.log('Failed to purchase subscription:', error);
         }
     }
+    const sendPurchaseToRevenueCat = async (purchase: any) => {
+        const { transactionReceipt, transactionId, productId } = purchase;
+        let deviceId = await getUniqueDeviceId()
+        let updatedReciept;
+        if (Platform.OS === 'android' && typeof transactionReceipt === 'string') {
+            let parsedValue: any = JSON.parse(transactionReceipt)
+            updatedReciept = parsedValue?.purchaseToken
+        }
+
+        if (transactionReceipt && transactionId) {
+            try {
+                const response = await fetch('https://api.revenuecat.com/v1/receipts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': Platform.OS === 'android' ? `Bearer ${REVENUE_CAT_ANDROID_APIKEY}` : `Bearer ${REVENUE_CAT_IOS_APIKEY}` // Replace with your actual API key
+                    },
+                    body: JSON.stringify({
+                        app_user_id: deviceId,
+                        fetch_token: Platform.OS === 'android' ? updatedReciept : transactionReceipt,
+                        product_id: Platform.OS === 'android' ? selectedProdId.current : productId,
+                    })
+                });
+
+                const data = await response.json();
+                const updatedData = {
+                    ...data,
+                    selectedPackage: selectedProdId.current // or whichever value you need to set
+                };
+                Toast.show("Subscription successful", Toast.SHORT)
+                await subscriptionHookAction.subscribe(updatedData);
+                selectedProdId.current = null
+                setIsLoader(false)
+                navigation.goBack()
+            } catch (error: any) {
+                setIsLoader(false)
+                Alert.alert('error', error)
+                console.log('Error sending purchase to RevenueCat:', error);
+            }
+        }
+    };
 
     return (
         <ImageBackground
@@ -139,7 +254,7 @@ const Offer = () => {
                                         styles.view6text3
                                     }
                                 >
-                                    {pricingDetails[3]?.price} per year
+                                    {pricingDetails?.replace('per year', '')} per year
                                 </Text>
                                 <Text
                                     style={
@@ -160,8 +275,14 @@ const Offer = () => {
                             {!isLoader ?
                                 <TouchableOpacity
                                     style={styles.btnStyle}
-                                    onPress={() => {
-                                        handlePurchase(discountedProduct)
+                                    onPress={async () => {
+                                        if (Platform.OS === 'ios') {
+                                            selectedProdId.current = discountedProduct?.productId;
+                                            handlePurchaseIOS(discountedProduct.productId)
+                                        } else {
+                                            handlePurchaseAndroid(discountedProduct.offerToken)
+                                            selectedProdId.current = discountedProduct?.basePlanId;
+                                        }
                                     }}
                                 >
                                     <Text
@@ -247,6 +368,8 @@ const styles = StyleSheet.create({
     view6text3: {
         color: "white",
         marginLeft: 10,
+        textAlign: 'center',
+        alignSelf: 'center',
         fontSize: responsiveFontSize(2.5),
         fontFamily: FONTS.Manrope_ExtraBold
     },

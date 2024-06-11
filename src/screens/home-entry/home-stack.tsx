@@ -11,7 +11,7 @@ import HistoryScreen from "../history/history.tsx";
 import Settings from "../settings/settings.tsx";
 import SettingScreenHeader from "../settings/component/settings-screen-header.tsx";
 import usePlanOfferCronJob from "../../hooks/usePlanOfferCronJob.ts";
-import Purchases from "react-native-purchases";
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
 
 
 const Tab = createBottomTabNavigator();
@@ -22,6 +22,8 @@ interface HomeEntryProps extends IDefaultProps {
 
 const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
     usePlanOfferCronJob();
+    Purchases.setLogLevel(LOG_LEVEL.DEBUG)
+  
     return (
         <Tab.Navigator
             screenOptions={(route) => {

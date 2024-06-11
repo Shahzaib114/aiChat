@@ -34,7 +34,7 @@
     "react-native-audio-recorder-player": "^3.6.7",
     "react-native-device-info": "^10.13.2",
     "react-native-google-mobile-ads": "^13.2.0",
-    "react-native-iap": "^12.13.1",
+    "react-native-iap": "^12.13.2",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-purchases": "^7.26.2",
     "react-native-responsive-dimensions": "^3.1.1",

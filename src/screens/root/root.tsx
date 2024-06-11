@@ -6,28 +6,42 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeStack from "../home-entry/home-stack.tsx";
 import themeColors from "../../theme/colors.ts";
 import Offer from "../common/Offer.tsx";
-import Purchases from 'react-native-purchases';
-import {REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY} from "../../utils/app-config.ts";
 import ChatScreen from "../history/chat/chat.tsx";
-import usePlanOfferCronJob from "../../hooks/usePlanOfferCronJob.ts";
+import { useEffect } from "react";
+import { clearProductsIOS, clearTransactionIOS, endConnection, getAvailablePurchases, initConnection } from "react-native-iap";
 
 
 const Stack = createNativeStackNavigator();
 
 
-export default function Root({onboarded}: {
+export default function Root({ onboarded }: {
     onboarded: string
 }) {
+    useEffect(() => {
+        const initIAP = async () => {
+            try {
+                await initConnection().then(async (res) => {
+                    if (Platform.OS === 'ios') {
+                        const availablePurchases = await getAvailablePurchases();
+                        if (availablePurchases.length > 0) {
+                            await clearTransactionIOS();
+                            await clearProductsIOS();
+                        }
+                    }
+                });
+            } catch (err) {
+                console.warn(err);
+            }
+        };
 
+        initIAP();
 
-    if (Platform.OS === 'android') {
-        Purchases.configure({apiKey: REVENUE_CAT_ANDROID_APIKEY});
-    } else if (Platform.OS === 'ios') {
-        Purchases.configure({apiKey: REVENUE_CAT_IOS_APIKEY});
-    }
-
+        return () => {
+            endConnection();
+        };
+    }, []);
     return (
-        <View style={{flex: 1, backgroundColor: themeColors.black}}>
+        <View style={{ flex: 1, backgroundColor: themeColors.black }}>
             <NavigationContainer>
 
                 <Stack.Navigator
@@ -38,20 +52,20 @@ export default function Root({onboarded}: {
                 >
                     <Stack.Screen
                         name={'onboarding-entry'}
-                        component={OnboardingStack}/>
+                        component={OnboardingStack} />
                     <Stack.Screen
                         name={'home-entry'}
-                        component={HomeStack}/>
+                        component={HomeStack} />
                     <Stack.Screen
                         name={'chat'}
                         initialParams={{
                             inboxRef: "-1"
                         }}
                         options={{}}
-                        component={ChatScreen}/>
+                        component={ChatScreen} />
                     <Stack.Screen
                         name={'Offer'}
-                        component={Offer}/>
+                        component={Offer} />
                 </Stack.Navigator>
 
             </NavigationContainer>

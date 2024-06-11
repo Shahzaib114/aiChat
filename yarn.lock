@@ -6151,10 +6151,10 @@ react-native-google-mobile-ads@^13.2.0:
     "@iabtcf/core" "^1.5.3"
     use-deep-compare-effect "^1.8.1"
 
-react-native-iap@^12.13.1:
-  version "12.13.1"
-  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-12.13.1.tgz#43d583d8ba927d9fa28baa4b2d1eb4e0dc467996"
-  integrity sha512-vR2OhtynstRmh7qvW/XmTyjnuvYXJN45ZTA4+h6Z2lWzyRNoLlUuUUIgAclToj/VpC48zUPbIqfSTVW0xpG9ag==
+react-native-iap@^12.13.2:
+  version "12.13.2"
+  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-12.13.2.tgz#68b70044f3db1c9183ed12c9eed85e365e82a16e"
+  integrity sha512-y0YYWKtWebtqViixUdJHrByGLGL8eKcI7380AGgJ8HX5Ag+T4Jj3RhcnG2X98hSb8XGZC+TgyYfOQnUBAlPTSg==
   dependencies:
     "@expo/config-plugins" "^7.8.4"
 

@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from "react";
-import { ActivityIndicator, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { FC, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert, ImageBackground, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
     responsiveFontSize,
     responsiveScreenFontSize,
@@ -23,55 +23,179 @@ import themeColors from "../../theme/colors.ts";
 import FONTS from "../../theme/FONTS.tsx";
 import backArrow from "../../../assets/svgs/backArrow.js";
 import ChatSvg from "../../../assets/svgs/ChatSvg.js";
-import Purchases from 'react-native-purchases';
 import useSubscription from "../../hooks/useSubscription.ts";
-import { PurchasesPackage } from "@revenuecat/purchases-typescript-internal/dist/offerings";
 import Toast from "react-native-simple-toast";
 import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
+import { finishTransaction, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
+import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
+import getUniqueDeviceId from "../../utils/device-id.ts";
 
 interface HomeProps extends IDefaultProps {
 }
 
 const Subscription: FC<HomeProps> = ({ ...props }) => {
     const navigation: any = useNavigation()
-    const [allProducts, setAllProducts] = useState<PurchasesPackage[]>()
-        const [isLoader, setIsLoader] = useState(false)
+    const [allProducts, setAllProducts] = useState<any>()
+    const [isLoader, setIsLoader] = useState(false)
     const [subscriptionHook, subscriptionHookAction] = useSubscription()
-    const [selected, setSelected] = useState<PurchasesPackage>()
+    const [selected, setSelected] = useState<any>()
+    const [description, setDescription] = useState('')
+    const iosProductIds = ["weekly.subscription", "monthly.subscription", "yearly.subscription"]; // Replace with your actual product IDs
+    const androidProductIds = ["com.aichat"]; // Replace with your actual product IDs
+    const [selectedProdToken, setSelectedProdToken] = useState();
+    const selectedProdId = useRef(null);  //
     useEffect(() => {
-        getInAppProducts()
+        const fetchProducts = async () => {
+            try {
+                const products: any = await getSubscriptions({ skus: Platform.OS === 'ios' ? iosProductIds : androidProductIds });
+                if (Platform.OS === 'ios') {
+                    const sortedProducts = products.sort((a: any, b: any) => {
+                        const order = ['Weekly', 'Monthly', 'Yearly'];
+                        return order.indexOf(a.title) - order.indexOf(b.title);
+                    });
+                    setAllProducts(sortedProducts);
 
-    }, [])
-
-    const handlePurchase = async (selectedProduct: any) => {
-        try {
-            if (subscriptionHook.productIdentifier === selectedProduct?.product?.identifier) {
-                Toast.show('You already have this subscription activated ', Toast.LONG)
-                return
+                } else {
+                    products[0].subscriptionOfferDetails?.splice(3, 1);
+                    setDescription(products[0]?.description)
+                    setAllProducts(products[0].subscriptionOfferDetails);
+                }
+            } catch (err) {
+                console.warn(err);
             }
-            setIsLoader(true)
-            let purchase = await Purchases.purchasePackage(selectedProduct);
-            const updatedCustomerInfo = await Purchases.getCustomerInfo();
-            await subscriptionHookAction.subscribe(updatedCustomerInfo);
-            setIsLoader(false)
-        } catch {
-            setIsLoader(false)
-        } finally {
-            setIsLoader(false)
-        }
+        };
 
-    };
+        fetchProducts();
 
-    const getInAppProducts = async () => {
-        try {
-            const offerings = await Purchases.getOfferings();
-            if (offerings.all !== null) {
-                setAllProducts(offerings.all?.Standard?.availablePackages)
+        const purchaseUpdateSubscription = Platform.OS === 'android' && purchaseUpdatedListener(async (purchase) => {
+            try {
+                const receipt = purchase.transactionReceipt;
+                if (receipt) {
+                    await finishTransaction({ purchase, isConsumable: false });
+                    await sendPurchaseToRevenueCat(purchase)
+                }
+            } catch (error) {
+                console.error('Purchase error:', error);
             }
-        } catch (e) {
-            console.log('go error in offering', e)
+        });
+
+        return () => {
+            if (purchaseUpdateSubscription) {
+                purchaseUpdateSubscription.remove();
+            }
+
+        };
+    }, []);
+
+    const handlePurchaseIOS = async (myProducts: any) => {
+        setIsLoader(true)
+        let payment: any = await getSubscriptions({ skus: [myProducts] })
+            .then(async (value: any) => {
+                return await requestSubscription({
+                    sku: myProducts,
+                    ...('offerToken' && {
+                        subscriptionOffers: [
+                            {
+                                sku: myProducts, // as a string
+                                offerToken: 'offerToken',
+                            },
+                        ],
+                    }),
+                })
+                    .then(async (purchase: any) => {
+                        if (Platform.OS == 'ios') {
+                            if (
+                                purchase &&
+                                purchase?.transactionReceipt
+                            ) {
+                                await finishTransaction({ purchase, isConsumable: false }).then((res)=>{
+                                    console.log('first', res)
+                                }).catch((error)=>{
+                                    console.log('first', error)
+                                })
+                                await sendPurchaseToRevenueCat(purchase)
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        setIsLoader(false)
+                        return {
+                            error: error,
+                            success: false,
+                        };
+                    });
+            })
+            .catch(err => {
+                setIsLoader(false)
+                return {
+                    error: err,
+                    success: false,
+                };
+            });
+        return payment;
+    }
+    const handlePurchaseAndroid = async (offerToken: any) => {
+        setIsLoader(true)
+        try {
+            await requestSubscription({
+                sku: "com.aichat",
+                ...('offerToken' && {
+                    subscriptionOffers: [
+                        {
+                            sku: "com.aichat", // as a string
+                            offerToken: offerToken
+                        },
+                    ],
+                }),
+            })
+        } catch (error) {
+            setIsLoader(false)
+            console.log('Failed to purchase subscription:', error);
         }
     }
+
+
+    const sendPurchaseToRevenueCat = async (purchase: any) => {
+        const { transactionReceipt, transactionId, productId } = purchase;
+        let deviceId = await getUniqueDeviceId()
+        let updatedReciept;
+        if (Platform.OS === 'android' && typeof transactionReceipt === 'string') {
+            let parsedValue: any = JSON.parse(transactionReceipt)
+            updatedReciept = parsedValue?.purchaseToken
+        }
+
+
+        if (transactionReceipt && transactionId) {
+            try {
+                const response = await fetch('https://api.revenuecat.com/v1/receipts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': Platform.OS === 'android' ? `Bearer ${REVENUE_CAT_ANDROID_APIKEY}` : `Bearer ${REVENUE_CAT_IOS_APIKEY}` // Replace with your actual API key
+                    },
+                    body: JSON.stringify({
+                        app_user_id: deviceId,
+                        fetch_token: Platform.OS === 'android' ? updatedReciept : transactionReceipt,
+                        product_id: Platform.OS === 'android' ? selectedProdId.current : productId,
+                    })
+                });
+
+                const data = await response.json();
+                const updatedData = {
+                    ...data,
+                    selectedPackage: selectedProdId.current // or whichever value you need to set
+                };
+                Toast.show("Subscription successful", Toast.SHORT)
+                await subscriptionHookAction.subscribe(updatedData);
+                selectedProdId.current = null
+                setIsLoader(false)
+            } catch (error: any) {
+                setIsLoader(false)
+                Alert.alert('error', error)
+                console.log('Error sending purchase to RevenueCat:', error);
+            }
+        }
+    };
 
     return (
         <ScrollView
@@ -184,20 +308,23 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     </View>
 
                     <View style={styles.card}>
-                        {allProducts?.map((item: PurchasesPackage, index: number) => {
-                            let productId = item.product?.identifier
-                            const pricesAndPeriods = ExtractPriceAndPeriod(item?.product?.description);
+                        {allProducts?.length > 0 && allProducts?.map((item: any, index: number) => {
+                            let productId = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                            const pricesAndPeriods = ExtractPriceAndPeriod(Platform.OS === 'ios' ? item?.description : description);
                             return (
                                 <React.Fragment key={index}>
                                     <Card
-                                        text={pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly'}
-                                        description={pricesAndPeriods[index].price}
-                                        save={item?.product?.identifier}
-                                        smallDesc={`/${pricesAndPeriods[index]?.period}`}
-                                        isCircleActive={selected === item}
+                                        text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly' : `${pricesAndPeriods?.period.charAt(0).toUpperCase() + pricesAndPeriods?.period.slice(1)}` + 'ly'}
+                                        description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
+                                        save={productId}
+                                        smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
+                                        isCircleActive={selected === productId}
                                         purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
                                         handleCardPress={() => {
-                                            setSelected(item)
+                                            let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                                            setSelected(selectedProd)
+                                            setSelectedProdToken(item?.offerToken)
+                                            selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
                                         }}
                                     />
                                 </React.Fragment>
@@ -212,7 +339,15 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                     Toast.show('Please select a plan', Toast.LONG)
                                     return
                                 }
-                                handlePurchase(selected)
+                                else if (subscriptionHook.productIdentifier === selected) {
+                                    Toast.show('You already have this subscription activated ', Toast.LONG)
+                                    return
+                                }
+                                if (Platform.OS === 'ios') {
+                                    handlePurchaseIOS(selected)
+                                } else {
+                                    handlePurchaseAndroid(selectedProdToken)
+                                }
                             }} />
                             :
                             <View>

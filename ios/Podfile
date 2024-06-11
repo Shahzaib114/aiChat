@@ -1,6 +1,5 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
 $RNFirebaseAsStaticFramework = true
-
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
@@ -47,6 +46,7 @@ end
 target 'aichat' do
   # use_frameworks! :linkage => :static
   config = use_native_modules!
+  pod 'RNIap', :path => '../node_modules/react-native-iap'
   $RNGoogleMobileAdsAsStaticFramework = true
   use_react_native!(
     :path => config[:reactNativePath],

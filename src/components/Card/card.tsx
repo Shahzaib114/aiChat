@@ -7,7 +7,6 @@ import Vector from '../../../assets/svgs/vector';
 import { SvgXml } from 'react-native-svg';
 
 const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purchased, handleCardPress }: any) => {
-
   return (
     <TouchableOpacity
       onPress={handleCardPress}
@@ -22,7 +21,7 @@ const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purcha
                 { backgroundColor: isCircleActive ? '#02A67E' : 'grey', },
               ]}
             />
-            <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '') }</Text>
+            <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '')}</Text>
           </View>
           <View>
             <Text style={styles.description}>
@@ -33,7 +32,7 @@ const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purcha
             </Text>
           </View>
         </View>
-        {save.includes('yearly') &&
+        {save?.includes('yearly') &&
           <View style={styles.saveView}>
             <Text style={styles.saveTxt}>
               80% off

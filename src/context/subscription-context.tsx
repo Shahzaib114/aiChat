@@ -1,12 +1,11 @@
-import {createContext, Dispatch, SetStateAction, useEffect, useState} from "react";
-import {IDefaultProps, ISubscription} from "../utils/types.ts";
-import getUniqueDeviceId from "../utils/device-id.ts";
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { IDefaultProps, ISubscription } from "../utils/types.ts";
 import database from "@react-native-firebase/database";
 import useSession from "../hooks/useSession.ts";
-import useDailyMessages, {IDailyMessageActions} from "../hooks/useDailyMessages.ts";
-import {FREE_DAIL_MESSAGE_LIMIT} from "../utils/app-config.ts";
-import Toast from "react-native-simple-toast";
+import useDailyMessages, { IDailyMessageActions } from "../hooks/useDailyMessages.ts";
+import { FREE_DAIL_MESSAGE_LIMIT } from "../utils/app-config.ts";
 import Purchases from "react-native-purchases";
+import { Platform } from "react-native";
 
 export interface ISubscriptionActions {
     hasActiveSubscription: () => boolean,
@@ -46,7 +45,7 @@ const SessionContext = createContext<subscriptionContextProps>({
 });
 
 
-export function SubscriptionProvider({children}: IDefaultProps) {
+export function SubscriptionProvider({ children }: IDefaultProps) {
     const [subscription, updateSubscription] = useState<ISubscription>(initialSession);
     const [session] = useSession()
     const [todayMessages, dailyMessagesActions] = useDailyMessages();
@@ -80,7 +79,6 @@ export function SubscriptionProvider({children}: IDefaultProps) {
 
     function Subscription(snapshot: any) {
         let data: ISubscription = snapshot.val();
-        console.log(data, "data")
 
         if (data === null) {
             data = {
@@ -100,7 +98,7 @@ export function SubscriptionProvider({children}: IDefaultProps) {
 
 
     useEffect(() => {
-        if (!session.user || session.user.trim() === "") {
+        if (!session.user || session.user?.trim() === "") {
             return
         }
         database().ref(`subscriptions/${session.user}`).on('value', Subscription)
@@ -117,38 +115,50 @@ export function SubscriptionProvider({children}: IDefaultProps) {
     }
 
     async function checkForSubscription() {
-        let res = await (await Purchases.getCustomerInfo()).activeSubscriptions
-        console.log(res, "subscription")
-        if (res.length <= 0) {
+        let res = await Purchases.getCustomerInfo()
+        if (res?.entitlements?.active) {
             await clearSubscription()
+        } else {
+            subscribe(res)
         }
 
     }
 
     useEffect(() => {
         checkForSubscription()
-
     }, []);
 
 
     async function subscribe(extra: any) {
-        let productId = extra?.activeSubscriptions[0]
+        let Plan: any;
+        let groupid: any;
+        
+        if (Platform.OS === 'android') {
+            Plan = extra?.subscriber?.subscriptions?.["com.aichat"]
+            groupid = Plan.product_plan_identifier
+        } else {
+            if (extra?.subscriber?.subscriptions?.[extra?.selectedPackage]) {
+                Plan = extra?.subscriber?.subscriptions?.[extra?.selectedPackage]
+                groupid = Plan.product_plan_identifier
+            }
+        }
+
         await database().ref(`subscriptions/${session.user}`).set({
             status: "active",
             startDate: new Date().getTime(),
             lastRenewalDate: new Date().getTime(),
             transaction: {
-                productIdentifier: productId,
-                purchaseDate: extra?.allPurchaseDates?.productId,
-                purchaseDateMillis:extra?.allPurchaseDates?.productId,
+                productIdentifier: Platform.OS === 'android' ? Plan.product_plan_identifier : extra?.selectedPackage,
+                purchaseDate: Plan?.purchase_date,
+                transactionId: Platform.OS === 'android' ? extra?.subscriber?.subscriptions?.[groupid]?.store_transaction_id : Plan?.store_transaction_id,
             },
-            productIdentifier: extra?.activeSubscriptions[0],
+            productIdentifier: Platform.OS === 'android' ? Plan.product_plan_identifier : extra?.selectedPackage,
         } as ISubscription).then(() => {
-            Toast.show("Subscription successful", Toast.SHORT)
+            // Toast.show("Subscription successful", Toast.SHORT)
         }).catch((e) => {
             console.log(e)
         })
-        Toast.show("Subscription successful", Toast.SHORT)
+        // Toast.show("Subscription successful", Toast.SHORT)
 
     }
 
