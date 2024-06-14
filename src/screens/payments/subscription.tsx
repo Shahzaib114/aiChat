@@ -39,6 +39,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const [isLoader, setIsLoader] = useState(false)
     const [subscriptionHook, subscriptionHookAction] = useSubscription()
     const [selected, setSelected] = useState<any>()
+    const [isGetPackage, setIsGetPackage] = useState(false)
     const [description, setDescription] = useState('')
     const iosProductIds = ["weekly.subscription", "monthly.subscription", "yearly.subscription"]; // Replace with your actual product IDs
     const androidProductIds = ["com.aichat"]; // Replace with your actual product IDs
@@ -54,14 +55,15 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         return order.indexOf(a.title) - order.indexOf(b.title);
                     });
                     setAllProducts(sortedProducts);
-
                 } else {
                     products[0].subscriptionOfferDetails?.splice(3, 1);
                     setDescription(products[0]?.description)
                     setAllProducts(products[0].subscriptionOfferDetails);
                 }
+                setIsGetPackage(true)
             } catch (err) {
                 console.warn(err);
+                setIsGetPackage(true)
             }
         };
 
@@ -108,9 +110,9 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 purchase &&
                                 purchase?.transactionReceipt
                             ) {
-                                await finishTransaction({ purchase, isConsumable: false }).then((res)=>{
+                                await finishTransaction({ purchase, isConsumable: false }).then((res) => {
                                     console.log('first', res)
-                                }).catch((error)=>{
+                                }).catch((error) => {
                                     console.log('first', error)
                                 })
                                 await sendPurchaseToRevenueCat(purchase)
@@ -196,224 +198,233 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
             }
         }
     };
-
-    return (
-        <ScrollView
-            contentContainerStyle={styles.scrollViewStyle}
-            bounces={false}
-        >
-            <ImageBackground
-                source={require('../../../assets/images/AIChat.png')}
-                style={styles.imageBackground}
-                resizeMode="cover"
+    if (!isGetPackage) {
+        return (
+            <SafeAreaView style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+                <ActivityIndicator color={themeColors.black} size={'large'} />
+            </SafeAreaView>
+        )
+    } else {
+        return (
+            <ScrollView
+                contentContainerStyle={styles.scrollViewStyle}
+                bounces={false}
             >
+                <ImageBackground
+                    source={require('../../../assets/images/AIChat.png')}
+                    style={styles.imageBackground}
+                    resizeMode="cover"
+                >
 
-                <SafeAreaView>
-                    <View style={styles.top}>
-                        <TouchableOpacity
-                            onPress={() => navigation.goBack()}
-                            style={styles.toptouchable}>
-                            <SvgXml xml={backArrow} width="10%" height="50%" />
-                            <Text style={styles.toptext}>
-                                Subscription
+                    <SafeAreaView>
+                        <View style={styles.top}>
+                            <TouchableOpacity
+                                onPress={() => navigation.goBack()}
+                                style={styles.toptouchable}>
+                                <SvgXml xml={backArrow} width="10%" height="50%" />
+                                <Text style={styles.toptext}>
+                                    Subscription
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.secondview}>
+                            <Text style={styles.secondtext}>
+                                Unlock Unlimited Access!
                             </Text>
-                        </TouchableOpacity>
-                    </View>
+                        </View>
 
-                    <View style={styles.secondview}>
-                        <Text style={styles.secondtext}>
-                            Unlock Unlimited Access!
-                        </Text>
-                    </View>
+                        <View style={styles.thirdmainview}>
+                            <View style={styles.thirdview}>
+                                <Text style={styles.thirdviewtext}>Features</Text>
+                                <View style={styles.thirdsvgview}>
+                                    <Text style={styles.thirdsvgviewtext}>Free</Text>
+                                    <View style={styles.thirdviewnested}>
+                                        <SvgXml xml={PremiumSvg} width="100%" height="100%" />
+                                    </View>
+                                </View>
+                            </View>
 
-                    <View style={styles.thirdmainview}>
-                        <View style={styles.thirdview}>
-                            <Text style={styles.thirdviewtext}>Features</Text>
-                            <View style={styles.thirdsvgview}>
-                                <Text style={styles.thirdsvgviewtext}>Free</Text>
-                                <View style={styles.thirdviewnested}>
-                                    <SvgXml xml={PremiumSvg} width="100%" height="100%" />
+                            <View style={styles.fourthviewmain}>
+                                <View style={styles.fourthview1}>
+                                    <View style={styles.fourthview2}>
+                                        <SvgXml xml={RobotSvg} width="100%" height="100%" />
+                                    </View>
+                                    <Text style={styles.fourthview2text}>Best Model AI</Text>
+                                </View>
+
+                                <View style={styles.fourthview3}>
+                                    <View style={styles.fourthview4}>
+                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    </View>
+                                    <View style={styles.fourthview5}>
+                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={styles.fourthviewmain}>
+                                <View style={styles.fourthview1}>
+                                    <View style={styles.fourthview2}>
+                                        <SvgXml xml={AdsSvg} width="100%" height="100%" />
+                                    </View>
+                                    <Text style={styles.fourthview2text}>No Ads</Text>
+                                </View>
+                                <View style={styles.fourthview3}>
+                                    <View style={styles.fourthview4}>
+                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    </View>
+                                    <View style={styles.fourthview5}>
+                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={styles.fourthviewmain}>
+                                <View style={styles.fourthview1}>
+                                    <View style={styles.fourthview2}>
+                                        <SvgXml xml={ChatSvg} width="100%" height="100%" />
+                                    </View>
+                                    <Text style={styles.fourthview2text}>Unlimited Msgs</Text>
+                                </View>
+                                <View style={styles.fourthview3}>
+                                    <View style={styles.fourthview4}>
+                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    </View>
+                                    <View style={styles.fourthview5}>
+                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={[styles.fourthviewmain, { borderBottomWidth: 0, }]}>
+                                <View style={styles.fourthview1}>
+                                    <View style={styles.fourthview2}>
+                                        <SvgXml xml={BrainSvg} width="100%" height="100%" />
+                                    </View>
+                                    <Text style={styles.fourthview2text}>Detailed Answers</Text>
+                                </View>
+                                <View style={styles.fourthview3}>
+                                    <View style={styles.fourthview4}>
+                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
+                                    </View>
+                                    <View style={styles.fourthview5}>
+                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
+                                    </View>
                                 </View>
                             </View>
                         </View>
 
-                        <View style={styles.fourthviewmain}>
-                            <View style={styles.fourthview1}>
-                                <View style={styles.fourthview2}>
-                                    <SvgXml xml={RobotSvg} width="100%" height="100%" />
-                                </View>
-                                <Text style={styles.fourthview2text}>Best Model AI</Text>
-                            </View>
-
-                            <View style={styles.fourthview3}>
-                                <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                </View>
-                                <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                </View>
-                            </View>
+                        <View style={styles.card}>
+                            {allProducts?.length > 0 && allProducts?.map((item: any, index: number) => {
+                                let productId = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                                const pricesAndPeriods = ExtractPriceAndPeriod(Platform.OS === 'ios' ? item?.description : description);
+                                return (
+                                    <React.Fragment key={index}>
+                                        <Card
+                                            text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly' : `${pricesAndPeriods?.period.charAt(0).toUpperCase() + pricesAndPeriods?.period.slice(1)}` + 'ly'}
+                                            description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
+                                            save={productId}
+                                            smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
+                                            isCircleActive={selected === productId}
+                                            purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
+                                            handleCardPress={() => {
+                                                let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                                                setSelected(selectedProd)
+                                                setSelectedProdToken(item?.offerToken)
+                                                selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
+                                            }}
+                                        />
+                                    </React.Fragment>
+                                )
+                            })}
                         </View>
 
-                        <View style={styles.fourthviewmain}>
-                            <View style={styles.fourthview1}>
-                                <View style={styles.fourthview2}>
-                                    <SvgXml xml={AdsSvg} width="100%" height="100%" />
+                        <View style={styles.buttonview}>
+                            {!isLoader ?
+                                <ButtonComponent text="Continue" onPress={() => {
+                                    if (!selected) {
+                                        Toast.show('Please select a plan', Toast.LONG)
+                                        return
+                                    }
+                                    else if (subscriptionHook.productIdentifier === selected) {
+                                        Toast.show('You already have this subscription activated ', Toast.LONG)
+                                        return
+                                    }
+                                    if (Platform.OS === 'ios') {
+                                        handlePurchaseIOS(selected)
+                                    } else {
+                                        handlePurchaseAndroid(selectedProdToken)
+                                    }
+                                }} />
+                                :
+                                <View>
+                                    <ActivityIndicator color={themeColors.white} size={'large'} />
                                 </View>
-                                <Text style={styles.fourthview2text}>No Ads</Text>
-                            </View>
-                            <View style={styles.fourthview3}>
-                                <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                </View>
-                                <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                </View>
-                            </View>
+                            }
+
+                            <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
                         </View>
-
-                        <View style={styles.fourthviewmain}>
-                            <View style={styles.fourthview1}>
-                                <View style={styles.fourthview2}>
-                                    <SvgXml xml={ChatSvg} width="100%" height="100%" />
-                                </View>
-                                <Text style={styles.fourthview2text}>Unlimited Msgs</Text>
-                            </View>
-                            <View style={styles.fourthview3}>
-                                <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                </View>
-                                <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                </View>
-                            </View>
+                        <View style={{ margin: "5%" }}>
+                            <Text style={{ color: "white", fontSize: responsiveScreenFontSize(2.5) }}>
+                                Some Reviews
+                            </Text>
                         </View>
-
-                        <View style={[styles.fourthviewmain, { borderBottomWidth: 0, }]}>
-                            <View style={styles.fourthview1}>
-                                <View style={styles.fourthview2}>
-                                    <SvgXml xml={BrainSvg} width="100%" height="100%" />
-                                </View>
-                                <Text style={styles.fourthview2text}>Detailed Answers</Text>
-                            </View>
-                            <View style={styles.fourthview3}>
-                                <View style={styles.fourthview4}>
-                                    <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                </View>
-                                <View style={styles.fourthview5}>
-                                    <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                </View>
-                            </View>
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                            <Review
+                                name={"Sophia N."}
+                                image={require('../../../assets/images/userImg.png')}
+                                ratingsNumber={5}
+                                review={"Spectacular AI in all the themes I have tried so far."}
+                            />
+                            <Review
+                                name={"Maria jr."}
+                                image={{
+                                    uri: "https://randomuser.me/api/portraits/women/90.jpg"
+                                }}
+                                ratingsNumber={5}
+                                review={"Best Ai Service in Market so far!"}
+                            />
+                            <Review
+                                name={"Jenna"}
+                                image={{
+                                    uri: "https://randomuser.me/api/portraits/women/64.jpg"
+                                }}
+                                ratingsNumber={5}
+                                review={"Eva AI is the cat's whiskers of AI apps, offering personalized tips and quirky cat facts that have revolutionized my cat-parenting experience!"}
+                            />
+                            <Review
+                                name={"Rosy"}
+                                image={{
+                                    uri: "https://randomuser.me/api/portraits/women/86.jpg"
+                                }}
+                                ratingsNumber={5}
+                                review={"Eva AI is the perfect study partner, providing personalized guidance and invaluable insights that have transformed my educational journey!"}
+                            />
+                            <Review
+                                name={"John"}
+                                image={{
+                                    uri: "https://randomuser.me/api/portraits/men/79.jpg"
+                                }}
+                                ratingsNumber={5}
+                                review={"Eva AI has made learning a joy with its user-friendly interface and wealth of educational resources!"}
+                            />
+                            <Review
+                                name={"Christopher"}
+                                image={{
+                                    uri: "https://randomuser.me/api/portraits/men/53.jpg"
+                                }}
+                                ratingsNumber={5}
+                                review={"Eva AI surpasses expectations, offering intuitive access to a vast array of educational materials and insightful recommendations!"}
+                            />
                         </View>
-                    </View>
+                    </SafeAreaView>
+                </ImageBackground>
+            </ScrollView>
+        );
+    }
 
-                    <View style={styles.card}>
-                        {allProducts?.length > 0 && allProducts?.map((item: any, index: number) => {
-                            let productId = Platform.OS === 'android' ? item?.basePlanId : item?.productId
-                            const pricesAndPeriods = ExtractPriceAndPeriod(Platform.OS === 'ios' ? item?.description : description);
-                            return (
-                                <React.Fragment key={index}>
-                                    <Card
-                                        text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly' : `${pricesAndPeriods?.period.charAt(0).toUpperCase() + pricesAndPeriods?.period.slice(1)}` + 'ly'}
-                                        description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
-                                        save={productId}
-                                        smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
-                                        isCircleActive={selected === productId}
-                                        purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
-                                        handleCardPress={() => {
-                                            let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
-                                            setSelected(selectedProd)
-                                            setSelectedProdToken(item?.offerToken)
-                                            selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
-                                        }}
-                                    />
-                                </React.Fragment>
-                            )
-                        })}
-                    </View>
 
-                    <View style={styles.buttonview}>
-                        {!isLoader ?
-                            <ButtonComponent text="Continue" onPress={() => {
-                                if (!selected) {
-                                    Toast.show('Please select a plan', Toast.LONG)
-                                    return
-                                }
-                                else if (subscriptionHook.productIdentifier === selected) {
-                                    Toast.show('You already have this subscription activated ', Toast.LONG)
-                                    return
-                                }
-                                if (Platform.OS === 'ios') {
-                                    handlePurchaseIOS(selected)
-                                } else {
-                                    handlePurchaseAndroid(selectedProdToken)
-                                }
-                            }} />
-                            :
-                            <View>
-                                <ActivityIndicator color={themeColors.white} size={'large'} />
-                            </View>
-                        }
-
-                        <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
-                    </View>
-                    <View style={{ margin: "5%" }}>
-                        <Text style={{ color: "white", fontSize: responsiveScreenFontSize(2.5) }}>
-                            Some Reviews
-                        </Text>
-                    </View>
-                    <View style={{ alignItems: "center", justifyContent: "center" }}>
-                        <Review
-                            name={"Sophia N."}
-                            image={require('../../../assets/images/userImg.png')}
-                            ratingsNumber={5}
-                            review={"Spectacular AI in all the themes I have tried so far."}
-                        />
-                        <Review
-                            name={"Maria jr."}
-                            image={{
-                                uri: "https://randomuser.me/api/portraits/women/90.jpg"
-                            }}
-                            ratingsNumber={5}
-                            review={"Best Ai Service in Market so far!"}
-                        />
-                        <Review
-                            name={"Jenna"}
-                            image={{
-                                uri: "https://randomuser.me/api/portraits/women/64.jpg"
-                            }}
-                            ratingsNumber={5}
-                            review={"Eva AI is the cat's whiskers of AI apps, offering personalized tips and quirky cat facts that have revolutionized my cat-parenting experience!"}
-                        />
-                        <Review
-                            name={"Rosy"}
-                            image={{
-                                uri: "https://randomuser.me/api/portraits/women/86.jpg"
-                            }}
-                            ratingsNumber={5}
-                            review={"Eva AI is the perfect study partner, providing personalized guidance and invaluable insights that have transformed my educational journey!"}
-                        />
-                        <Review
-                            name={"John"}
-                            image={{
-                                uri: "https://randomuser.me/api/portraits/men/79.jpg"
-                            }}
-                            ratingsNumber={5}
-                            review={"Eva AI has made learning a joy with its user-friendly interface and wealth of educational resources!"}
-                        />
-                        <Review
-                            name={"Christopher"}
-                            image={{
-                                uri: "https://randomuser.me/api/portraits/men/53.jpg"
-                            }}
-                            ratingsNumber={5}
-                            review={"Eva AI surpasses expectations, offering intuitive access to a vast array of educational materials and insightful recommendations!"}
-                        />
-                    </View>
-                </SafeAreaView>
-            </ImageBackground>
-        </ScrollView>
-    );
 }
 
 const styles = StyleSheet.create({
