@@ -26,7 +26,7 @@ import ChatSvg from "../../../assets/svgs/ChatSvg.js";
 import useSubscription from "../../hooks/useSubscription.ts";
 import Toast from "react-native-simple-toast";
 import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
-import { finishTransaction, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
+import { finishTransaction, getAvailablePurchases, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
 import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
 import getUniqueDeviceId from "../../utils/device-id.ts";
 
@@ -37,6 +37,8 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const navigation: any = useNavigation()
     const [allProducts, setAllProducts] = useState<any>()
     const [isLoader, setIsLoader] = useState(false)
+    const [restoreLoader, setRestoreLoader] = useState(false)
+
     const [subscriptionHook, subscriptionHookAction] = useSubscription()
     const [selected, setSelected] = useState<any>()
     const [isGetPackage, setIsGetPackage] = useState(false)
@@ -136,6 +138,35 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
             });
         return payment;
     }
+
+
+    const restorePurchases = async () => {
+        try {
+            setRestoreLoader(true)
+            const purchases = await getAvailablePurchases();
+            console.log('purchases', purchases)
+            setRestoreLoader(false)
+            Alert.alert('Restore Successful', 'Your purchases have been restored.');
+            return
+            if (purchases && purchases.length > 0) {
+                purchases.forEach(purchase => {
+                    if (purchase.productId === 'your_product_id') {
+                        // Unlock the purchased content for the user
+                        // e.g., mark the purchase as active in your app's state or storage
+                    }
+                });
+                Alert.alert('Restore Successful', 'Your purchases have been restored.');
+            } else {
+                Alert.alert('No Purchases Found', 'No previous purchases were found.');
+            }
+        } catch (error) {
+            setRestoreLoader(false)
+            console.log('Error restoring purchases: ', error);
+            Alert.alert('Error', 'There was an error restoring purchases. Please try again.');
+        }
+    };
+
+
     const handlePurchaseAndroid = async (offerToken: any) => {
         setIsLoader(true)
         try {
@@ -364,6 +395,23 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             }
 
                             <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
+                        </View>
+
+                        <View style={styles.buttonview}>
+                            {!restoreLoader ?
+                                <ButtonComponent text="Restore Purchase" onPress={() => {
+                                    restorePurchases()
+                                    // if (Platform.OS === 'ios') {
+                                    //     handlePurchaseIOS(selected)
+                                    // } else {
+                                    //     handlePurchaseAndroid(selectedProdToken)
+                                    // }
+                                }} />
+                                :
+                                <View>
+                                    <ActivityIndicator color={themeColors.white} size={'large'} />
+                                </View>
+                            }
                         </View>
                         <View style={{ margin: "5%" }}>
                             <Text style={{ color: "white", fontSize: responsiveScreenFontSize(2.5) }}>

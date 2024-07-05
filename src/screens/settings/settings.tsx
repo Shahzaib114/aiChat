@@ -138,6 +138,14 @@ const Settings: FC<SettingsProps> = ({ ...props }) => {
                     icon={<SvgImport svg={privacy} />}
                     title={"Privacy Policy"}
                 />
+                 <SettingsItem
+                    hasBottomBorder
+                    onClick={() => {
+                        Linking.openURL("https://www.akromaxtech.com/terms-conditions")
+                    }}
+                    icon={<SvgImport svg={privacy} />}
+                    title={"Terms and Conditions"}
+                />
             </View>
         </ScrollView>
     )
