@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Root from "./src/screens/root/root.tsx";
 import Providers from "./providers.tsx";
-import {useEffect, useState} from "react";
-import {ON_BOARDING} from "./src/utils/constant.ts";
+import { useEffect, useState } from "react";
+import { ON_BOARDING } from "./src/utils/constant.ts";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -18,15 +18,12 @@ function App() {
         if (onboarded)
             if (onboarded === "true") {
                 setOnboarded("true");
-
             }
         setIsReady(true)
-
-
     };
     return (
         <Providers>
-            {isReady && <Root onboarded={onboarded}/>}
+            {isReady && <Root onboarded={onboarded} />}
         </Providers>
     );
 }

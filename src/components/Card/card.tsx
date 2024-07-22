@@ -25,9 +25,25 @@ const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purcha
           </View>
           <View>
             <Text style={styles.description}>
-              {description}
+              {save?.includes('weekly') ?
+                '14.99$'
+                :
+                save?.includes('monthly') ?
+                  '9.19$'
+                  :
+                  save?.includes('yearly') &&
+                  '34.99$'
+              }
               <Text style={styles.smallDescription}>
-                {smallDesc}
+                {save?.includes('weekly') ?
+                  '/week'
+                  :
+                  save?.includes('monthly') ?
+                    '/month'
+                    :
+                    save?.includes('yearly') &&
+                    '/year'
+                }
               </Text>
             </Text>
           </View>
