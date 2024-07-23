@@ -5,7 +5,8 @@ import {
     ScrollView,
     ActivityIndicator,
     Platform,
-    Alert
+    Alert,
+    Modal
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import OfferTop from "../../../assets/svgs/offerTop";
@@ -15,7 +16,7 @@ import PartyPopper from "../../../assets/svgs/PartyPopper";
 import RobotHead from "../../../assets/svgs/RobotHead";
 import FONTS from "../../theme/FONTS";
 import themeColors from "../../theme/colors";
-import { responsiveFontSize } from "react-native-responsive-dimensions";
+import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenWidth } from "react-native-responsive-dimensions";
 import { TouchableOpacity } from "react-native";
 import Point from "../../components/point/Point";
 import useSubscription from "../../hooks/useSubscription.ts";
@@ -39,6 +40,7 @@ const Offer = () => {
     const iosProductIds = ["yearly.discounted.subscription"]; // Replace with your actual product IDs
     const androidProductIds = ["com.aichat"]; // Replace with your actual product IDs
     const selectedProdId = useRef(null);  //
+    const [subsModalCLose, setSubsModalClose] = useState(false)
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -197,6 +199,55 @@ const Offer = () => {
                     >
                         <SvgXml xml={CrossWhiteSvg} width="15%" style={{ alignSelf: 'flex-end' }} />
                     </TouchableOpacity>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={subsModalCLose}
+                        onRequestClose={() => setSubsModalClose(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.contentContainer}>
+                                <Text style={styles.titleText}>
+                                    Yearly Discounted Access
+                                </Text>
+
+                                <Text style={styles.contentText}>
+                                    {`- Only in $17.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited yearly messages to chat with EVA.\n- More detailed answers.\n- 1 year Access`}
+                                </Text>
+
+
+
+                                <View style={styles.twoRowItemsContainer}>
+                                    <TouchableOpacity
+                                        onPress={() => setSubsModalClose(false)}
+                                        style={[styles.buttonOpacity, { backgroundColor: themeColors.blackLight }]}
+                                    >
+                                        <Text style={styles.cancelTxtStyles} >
+                                            Cancel
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={async () => {
+                                            setSubsModalClose(false)
+                                            if (Platform.OS === 'ios') {
+                                                selectedProdId.current = discountedProduct?.productId;
+                                                handlePurchaseIOS(discountedProduct.productId)
+                                            } else {
+                                                handlePurchaseAndroid(discountedProduct.offerToken)
+                                                selectedProdId.current = discountedProduct?.basePlanId;
+                                            }
+                                        }}
+                                        style={[styles.buttonOpacity, { backgroundColor: themeColors.primary }]}
+                                    >
+                                        <Text style={styles.acceptTxtStyles} >
+                                            Ok
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
 
                     <View style={styles.view3}>
                         <OfferTop text={`This is Just for`} off={"You!"} />
@@ -254,7 +305,7 @@ const Offer = () => {
                                         styles.view6text3
                                     }
                                 >
-                                    {pricingDetails?.replace('per year', '')} per year
+                                    17.99 per year
                                 </Text>
                                 <Text
                                     style={
@@ -276,13 +327,7 @@ const Offer = () => {
                                 <TouchableOpacity
                                     style={styles.btnStyle}
                                     onPress={async () => {
-                                        if (Platform.OS === 'ios') {
-                                            selectedProdId.current = discountedProduct?.productId;
-                                            handlePurchaseIOS(discountedProduct.productId)
-                                        } else {
-                                            handlePurchaseAndroid(discountedProduct.offerToken)
-                                            selectedProdId.current = discountedProduct?.basePlanId;
-                                        }
+                                        setSubsModalClose(true)
                                     }}
                                 >
                                     <Text
@@ -364,6 +409,64 @@ const styles = StyleSheet.create({
     view6text2: {
         textDecorationLine: "line-through",
         textDecorationStyle: "solid",
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        width: '100%',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    contentText: {
+        marginVertical: responsiveFontSize(3),
+        color: 'black',
+        fontFamily: FONTS.Manrope_Regular,
+        width: responsiveScreenWidth(95),
+        alignSelf: 'center',
+    },
+    buttonOpacity: {
+        width: '45%',
+        backgroundColor: 'grey',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: responsiveFontSize(5),
+    },
+    contentContainer: {
+        width: '100%',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: responsiveFontSize(2),
+        borderRadius: responsiveFontSize(3),
+        backgroundColor: 'white'
+    },
+    cancelTxtStyles: {
+        padding: responsiveFontSize(2),
+        alignSelf: 'center',
+        color: themeColors.white,
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(2)
+    },
+    titleText: {
+        color: 'black',
+        fontSize: responsiveScreenFontSize(4),
+        fontFamily: FONTS.Manrope_ExtraBold,
+    },
+    acceptTxtStyles: {
+        padding: responsiveFontSize(2),
+        borderRadius: responsiveFontSize(5),
+        alignSelf: 'center',
+        color: themeColors.white,
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(2)
+    },
+    twoRowItemsContainer: {
+        width: '95%',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'flex-start',
+        textAlign: 'left',
     },
     view6text3: {
         color: "white",

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, ImageBackground, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ImageBackground, Modal, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
     responsiveFontSize,
     responsiveScreenFontSize,
@@ -26,7 +26,7 @@ import ChatSvg from "../../../assets/svgs/ChatSvg.js";
 import useSubscription from "../../hooks/useSubscription.ts";
 import Toast from "react-native-simple-toast";
 import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
-import { finishTransaction, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
+import { finishTransaction, getAvailablePurchases, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
 import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
 import getUniqueDeviceId from "../../utils/device-id.ts";
 
@@ -37,7 +37,10 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const navigation: any = useNavigation()
     const [allProducts, setAllProducts] = useState<any>()
     const [isLoader, setIsLoader] = useState(false)
+    const [restoreLoader, setRestoreLoader] = useState(false)
+    const [subsModalCLose, setSubsModalClose] = useState(false)
     const [subscriptionHook, subscriptionHookAction] = useSubscription()
+    const [subscriptionDetails, setSubscriptionDetails] = useState<any>()
     const [selected, setSelected] = useState<any>()
     const [isGetPackage, setIsGetPackage] = useState(false)
     const [description, setDescription] = useState('')
@@ -45,13 +48,15 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const androidProductIds = ["com.aichat"]; // Replace with your actual product IDs
     const [selectedProdToken, setSelectedProdToken] = useState();
     const selectedProdId = useRef(null);  //
+    const [subsDetails, setsubsDetails] = useState('')
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const products: any = await getSubscriptions({ skus: Platform.OS === 'ios' ? iosProductIds : androidProductIds });
                 if (Platform.OS === 'ios') {
                     const sortedProducts = products.sort((a: any, b: any) => {
-                        const order = ['Weekly', 'Monthly', 'Yearly'];
+                        const order = ['Weekly Access', 'Monthly Access', 'Yearly Access'];
                         return order.indexOf(a.title) - order.indexOf(b.title);
                     });
                     setAllProducts(sortedProducts);
@@ -120,6 +125,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         }
                     })
                     .catch(error => {
+                        setSubsModalClose(false)
                         setIsLoader(false)
                         return {
                             error: error,
@@ -128,6 +134,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     });
             })
             .catch(err => {
+                setSubsModalClose(false)
                 setIsLoader(false)
                 return {
                     error: err,
@@ -136,6 +143,35 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
             });
         return payment;
     }
+
+
+    const restorePurchases = async () => {
+        try {
+            setRestoreLoader(true)
+            const purchases = await getAvailablePurchases();
+            console.log('purchases', purchases)
+            setRestoreLoader(false)
+            Alert.alert('Restore Successful', 'Your purchases have been restored.');
+            return
+            if (purchases && purchases.length > 0) {
+                purchases.forEach(purchase => {
+                    if (purchase.productId === 'your_product_id') {
+                        // Unlock the purchased content for the user
+                        // e.g., mark the purchase as active in your app's state or storage
+                    }
+                });
+                Alert.alert('Restore Successful', 'Your purchases have been restored.');
+            } else {
+                Alert.alert('No Purchases Found', 'No previous purchases were found.');
+            }
+        } catch (error) {
+            setRestoreLoader(false)
+            console.log('Error restoring purchases: ', error);
+            Alert.alert('Error', 'There was an error restoring purchases. Please try again.');
+        }
+    };
+
+
     const handlePurchaseAndroid = async (offerToken: any) => {
         setIsLoader(true)
         try {
@@ -151,6 +187,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                 }),
             })
         } catch (error) {
+            setSubsModalClose(false)
             setIsLoader(false)
             console.log('Failed to purchase subscription:', error);
         }
@@ -191,8 +228,10 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                 await subscriptionHookAction.subscribe(updatedData);
                 selectedProdId.current = null
                 setIsLoader(false)
+                setSubsModalClose(false)
             } catch (error: any) {
                 setIsLoader(false)
+                setSubsModalClose(false)
                 Alert.alert('error', error)
                 console.log('Error sending purchase to RevenueCat:', error);
             }
@@ -210,6 +249,65 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                 contentContainerStyle={styles.scrollViewStyle}
                 bounces={false}
             >
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={subsModalCLose}
+                    onRequestClose={() => setSubsModalClose(false)}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.contentContainer}>
+                            <Text style={styles.titleText}>
+                                {subscriptionDetails?.title}
+                            </Text>
+
+                            <Text style={styles.contentText}>
+                                {subsDetails}
+                            </Text>
+
+
+
+                            <View style={styles.twoRowItemsContainer}>
+                                <TouchableOpacity
+                                    onPress={() => setSubsModalClose(false)}
+                                    style={[styles.buttonOpacity, { backgroundColor: themeColors.blackLight }]}
+                                >
+                                    <Text style={styles.cancelTxtStyles} >
+                                        Cancel
+                                    </Text>
+                                </TouchableOpacity>
+                                {isLoader ?
+                                    <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+                                        <ActivityIndicator size={'large'} color={themeColors.black} />
+                                    </View>
+                                    :
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            let selectedProd = Platform.OS === 'android' ? subscriptionDetails?.basePlanId : subscriptionDetails?.productId
+                                            if (subscriptionHook.productIdentifier === selectedProd) {
+                                                Toast.show('You already have this subscription activated ', Toast.LONG)
+                                                return
+                                            }
+                                            setSelectedProdToken(subscriptionDetails?.offerToken)
+                                            selectedProdId.current = selectedProd;
+
+                                            if (Platform.OS === 'ios') {
+                                                handlePurchaseIOS(selectedProd)
+                                            } else {
+                                                handlePurchaseAndroid(subscriptionDetails?.offerToken)
+                                            }
+                                        }}
+                                        style={[styles.buttonOpacity, { backgroundColor: themeColors.primary }]}
+                                    >
+                                        <Text style={styles.acceptTxtStyles} >
+                                            Ok
+                                        </Text>
+                                    </TouchableOpacity>
+                                }
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
                 <ImageBackground
                     source={require('../../../assets/images/AIChat.png')}
                     style={styles.imageBackground}
@@ -285,7 +383,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                     <View style={styles.fourthview2}>
                                         <SvgXml xml={ChatSvg} width="100%" height="100%" />
                                     </View>
-                                    <Text style={styles.fourthview2text}>Unlimited Msgs</Text>
+                                    <Text style={styles.fourthview2text}>Unlimited Chats</Text>
                                 </View>
                                 <View style={styles.fourthview3}>
                                     <View style={styles.fourthview4}>
@@ -322,12 +420,28 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <Card
-                                            text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly' : `${pricesAndPeriods?.period.charAt(0).toUpperCase() + pricesAndPeriods?.period.slice(1)}` + 'ly'}
+                                            text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly' : `${item?.title}`}
                                             description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
                                             save={productId}
                                             smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
                                             isCircleActive={selected === productId}
                                             purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
+                                            // handleCardPress={() => {
+
+                                            //     if (item?.title.includes('Weekly Access')) {
+                                            //         setsubsDetails(`- Only in $14.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited weekly messages to chat with EVA.\n- More detailed answers.\n- 7 Days Access`)
+                                            //         setSubsModalClose(true)
+                                            //         setSubscriptionDetails(item)
+                                            //     } else if (item?.title.includes('Monthly Access')) {
+                                            //         setsubsDetails(`- Only in $9.19 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited monthly messages to chat with EVA.\n- More detailed answers.\n- 1 Month Access`)
+                                            //         setSubsModalClose(true)
+                                            //         setSubscriptionDetails(item)
+                                            //     } else if (item?.title.includes('Yearly Access')) {
+                                            //         setsubsDetails(`- Only in $34.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited annual messages to chat with EVA.\n- More detailed answers.\n- 1 Year Access`)
+                                            //         setSubsModalClose(true)
+                                            //         setSubscriptionDetails(item)
+                                            //     }
+                                            // }}
                                             handleCardPress={() => {
                                                 let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
                                                 setSelected(selectedProd)
@@ -364,6 +478,15 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             }
 
                             <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
+                            {!restoreLoader ?
+                                <ButtonComponent text="Restore Purchase" onPress={() => {
+                                    restorePurchases()
+                                }} />
+                                :
+                                <View>
+                                    <ActivityIndicator color={themeColors.white} size={'large'} />
+                                </View>
+                            }
                         </View>
                         <View style={{ margin: "5%" }}>
                             <Text style={{ color: "white", fontSize: responsiveScreenFontSize(2.5) }}>
@@ -498,6 +621,64 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: responsiveScreenFontSize(2),
         marginLeft: responsiveScreenWidth(1)
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        width: '100%',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    buttonOpacity: {
+        width: '45%',
+        backgroundColor: 'grey',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: responsiveFontSize(5),
+    },
+    contentContainer: {
+        width: '100%',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: responsiveFontSize(2),
+        borderRadius: responsiveFontSize(3),
+        backgroundColor: 'white'
+    },
+    acceptTxtStyles: {
+        padding: responsiveFontSize(2),
+        borderRadius: responsiveFontSize(5),
+        alignSelf: 'center',
+        color: themeColors.white,
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(2)
+    },
+    cancelTxtStyles: {
+        padding: responsiveFontSize(2),
+        alignSelf: 'center',
+        color: themeColors.white,
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(2)
+    },
+    twoRowItemsContainer: {
+        width: '95%',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'flex-start',
+        textAlign: 'left',
+    },
+    contentText: {
+        marginVertical: responsiveFontSize(3),
+        color: 'black',
+        fontFamily: FONTS.Manrope_Regular,
+        width: responsiveScreenWidth(95),
+        alignSelf: 'center',
+    },
+    titleText: {
+        color: 'black',
+        fontSize: responsiveScreenFontSize(4),
+        fontFamily: FONTS.Manrope_ExtraBold,
     },
     thirdsvgview: {
         flexDirection: "row",

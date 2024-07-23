@@ -21,16 +21,16 @@ export default function Root({ onboarded }: {
         const initIAP = async () => {
             try {
                 await initConnection().then(async (res) => {
-                    if (Platform.OS === 'ios') {
-                        const availablePurchases = await getAvailablePurchases();
-                        if (availablePurchases.length > 0) {
-                            await clearTransactionIOS();
-                            await clearProductsIOS();
-                        }
-                    }
+                    // if (Platform.OS === 'ios') {
+                    //     const availablePurchases = await getAvailablePurchases();
+                    //     if (availablePurchases.length > 0) {
+                    //         await clearTransactionIOS();
+                    //         await clearProductsIOS();
+                    //     }
+                    // }
                 });
             } catch (err) {
-                console.warn(err);
+                console.log('err in restore', err);
             }
         };
 
