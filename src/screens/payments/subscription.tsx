@@ -414,6 +414,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                         </View>
 
                         <View style={styles.card}>
+
                             {allProducts?.length > 0 && allProducts?.map((item: any, index: number) => {
                                 let productId = Platform.OS === 'android' ? item?.basePlanId : item?.productId
                                 const pricesAndPeriods = ExtractPriceAndPeriod(Platform.OS === 'ios' ? item?.description : description);
