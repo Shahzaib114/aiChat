@@ -90,9 +90,7 @@ export const gptCompletions = async (messages: IGptMessage[], model: string, cus
             messages: messagesCopy,
             max_tokens: 1000,
             model: model,
-
         }).then((res) => {
-
             let response = res.data?.choices[0]?.message?.content || ""
             if (!response) {
                 reject("No response from GPT")

@@ -341,7 +341,6 @@ const Offer = () => {
                                     <ActivityIndicator color={themeColors.white} size={'large'} />
                                 </View>
                             }
-
                         </View>
                     </View>
                 </ScrollView>

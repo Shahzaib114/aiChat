@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, ImageBackground, Modal, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ImageBackground, Linking, Modal, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
     responsiveFontSize,
     responsiveScreenFontSize,
@@ -29,6 +29,7 @@ import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails
 import { finishTransaction, getAvailablePurchases, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
 import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
 import getUniqueDeviceId from "../../utils/device-id.ts";
+import CheckBox from "../../components/check-box/check-box.tsx";
 
 interface HomeProps extends IDefaultProps {
 }
@@ -49,17 +50,23 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const [selectedProdToken, setSelectedProdToken] = useState();
     const selectedProdId = useRef(null);  //
     const [subsDetails, setsubsDetails] = useState('')
+    const [Agree, setAgree] = React.useState(false)
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const products: any = await getSubscriptions({ skus: Platform.OS === 'ios' ? iosProductIds : androidProductIds });
                 if (Platform.OS === 'ios') {
-                    const sortedProducts = products.sort((a: any, b: any) => {
-                        const order = ['Weekly Access', 'Monthly Access', 'Yearly Access'];
-                        return order.indexOf(a.title) - order.indexOf(b.title);
+                    const sortedSubscriptions = products.sort((a: any, b: any) => {
+                        const order: any = {
+                            "YEAR": 1,
+                            "MONTH": 2,
+                            "DAY": 3
+                        };
+
+                        return order[a.subscriptionPeriodUnitIOS] - order[b.subscriptionPeriodUnitIOS];
                     });
-                    setAllProducts(sortedProducts);
+                    setAllProducts(sortedSubscriptions);
                 } else {
                     products[0].subscriptionOfferDetails?.splice(3, 1);
                     setDescription(products[0]?.description)
@@ -412,9 +419,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 </View>
                             </View>
                         </View>
-
                         <View style={styles.card}>
-
                             {allProducts?.length > 0 && allProducts?.map((item: any, index: number) => {
                                 let productId = Platform.OS === 'android' ? item?.basePlanId : item?.productId
                                 const pricesAndPeriods = ExtractPriceAndPeriod(Platform.OS === 'ios' ? item?.description : description);
@@ -427,23 +432,14 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                             smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
                                             isCircleActive={selected === productId}
                                             purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
-                                            // handleCardPress={() => {
 
-                                            //     if (item?.title.includes('Weekly Access')) {
-                                            //         setsubsDetails(`- Only in $14.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited weekly messages to chat with EVA.\n- More detailed answers.\n- 7 Days Access`)
-                                            //         setSubsModalClose(true)
-                                            //         setSubscriptionDetails(item)
-                                            //     } else if (item?.title.includes('Monthly Access')) {
-                                            //         setsubsDetails(`- Only in $9.19 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited monthly messages to chat with EVA.\n- More detailed answers.\n- 1 Month Access`)
-                                            //         setSubsModalClose(true)
-                                            //         setSubscriptionDetails(item)
-                                            //     } else if (item?.title.includes('Yearly Access')) {
-                                            //         setsubsDetails(`- Only in $34.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited annual messages to chat with EVA.\n- More detailed answers.\n- 1 Year Access`)
-                                            //         setSubsModalClose(true)
-                                            //         setSubscriptionDetails(item)
-                                            //     }
-                                            // }}
                                             handleCardPress={() => {
+                                                let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                                                setSelected(selectedProd)
+                                                setSelectedProdToken(item?.offerToken)
+                                                selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
+                                            }}
+                                            handleCirclePress={() => {
                                                 let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
                                                 setSelected(selectedProd)
                                                 setSelectedProdToken(item?.offerToken)
@@ -454,30 +450,61 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 )
                             })}
                         </View>
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            alignSelf: 'center',
+                            maxWidth: '95%',
+                            marginVertical: 5,
+                            marginTop: 15,
+                            alignContent: 'center'
+                        }}>
+                            {/* <CheckBox checked={Agree} onChange={setAgree} /> */}
+                            <Text style={{ color: themeColors.white }}>I agree to the </Text>
+                            <Pressable
+                                style={{ alignSelf: 'center' }}
+                                onPress={() => {
+                                    Linking.openURL("https://www.akromaxtech.com/terms-conditions")
+                                }}
+                            >
+                                <Text style={{ color: themeColors.primary }}>Terms and Conditions</Text>
+                            </Pressable>
+                            <Text style={{ color: themeColors.white, }}> and </Text>
+                            <Pressable
+                                onPress={() => {
+                                    Linking.openURL("https://akromaxtech.com/privacy-policy")
+                                }}
+                            >
+                                <Text style={{ color: themeColors.primary }}>Privacy Policy</Text>
+                            </Pressable>
+                        </View>
 
                         <View style={styles.buttonview}>
-                            {!isLoader ?
-                                <ButtonComponent text="Continue" onPress={() => {
-                                    if (!selected) {
-                                        Toast.show('Please select a plan', Toast.LONG)
-                                        return
-                                    }
-                                    else if (subscriptionHook.productIdentifier === selected) {
-                                        Toast.show('You already have this subscription activated ', Toast.LONG)
-                                        return
-                                    }
-                                    if (Platform.OS === 'ios') {
-                                        handlePurchaseIOS(selected)
-                                    } else {
-                                        handlePurchaseAndroid(selectedProdToken)
-                                    }
-                                }} />
+                            {selected ?
+                                !isLoader ?
+                                    <ButtonComponent text="Continue" onPress={() => {
+                                        if (!selected) {
+                                            Toast.show('Please select a plan', Toast.LONG)
+                                            return
+                                        }
+                                        else if (subscriptionHook.productIdentifier === selected) {
+                                            Toast.show('You already have this subscription activated ', Toast.LONG)
+                                            return
+                                        }
+                                        if (Platform.OS === 'ios') {
+                                            handlePurchaseIOS(selected)
+                                        } else {
+                                            handlePurchaseAndroid(selectedProdToken)
+                                        }
+                                    }} />
+                                    :
+                                    <View>
+                                        <ActivityIndicator color={themeColors.white} size={'large'} />
+                                    </View>
                                 :
-                                <View>
-                                    <ActivityIndicator color={themeColors.white} size={'large'} />
-                                </View>
+                                <></>
                             }
-
                             <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
                             {!restoreLoader ?
                                 <ButtonComponent text="Restore Purchase" onPress={() => {
@@ -489,6 +516,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 </View>
                             }
                         </View>
+
                         <View style={{ margin: "5%" }}>
                             <Text style={{ color: "white", fontSize: responsiveScreenFontSize(2.5) }}>
                                 Some Reviews
