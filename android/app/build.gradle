@@ -110,6 +110,7 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+
         }
     }
 }
@@ -122,7 +123,8 @@ dependencies {
     implementation project(':react-native-vector-icons')
     implementation("com.android.billingclient:billing:4.0.0")
     implementation project(':react-native-iap')
-    
+    implementation 'com.google.firebase:firebase-crashlytics:19.0.3'
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
@@ -130,4 +132,5 @@ dependencies {
     }
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+apply plugin: 'com.google.firebase.crashlytics'; applyNativeModulesAppBuildGradle(project)

@@ -23,7 +23,7 @@ interface HomeEntryProps extends IDefaultProps {
 const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
     usePlanOfferCronJob();
     Purchases.setLogLevel(LOG_LEVEL.DEBUG)
-  
+
     return (
         <Tab.Navigator
             screenOptions={(route) => {

@@ -40,6 +40,7 @@ export default function Root({ onboarded }: {
             endConnection();
         };
     }, []);
+
     return (
         <View style={{ flex: 1, backgroundColor: themeColors.black }}>
             <NavigationContainer>
