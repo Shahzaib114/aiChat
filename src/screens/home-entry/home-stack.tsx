@@ -12,12 +12,32 @@ import Settings from "../settings/settings.tsx";
 import SettingScreenHeader from "../settings/component/settings-screen-header.tsx";
 import usePlanOfferCronJob from "../../hooks/usePlanOfferCronJob.ts";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import SubscriptionScreenHeader from "../settings/component/subscriptionHeader.tsx";
 
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 interface HomeEntryProps extends IDefaultProps {
 
+}
+
+const SubscriptionStack: FC<HomeEntryProps> = ({ ...props }) => {
+    return (
+        <View style={{ flex: 1 }}>
+            <Stack.Navigator
+            >
+                <Stack.Screen
+                    name={'Subscription'}
+                    component={Subscription}
+                    options={{
+                        headerShown: false
+                    }}
+                />
+            </Stack.Navigator>
+        </View>
+    )
 }
 
 const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
@@ -55,7 +75,12 @@ const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
                 component={Home} />
             <Tab.Screen name="history" component={HistoryScreen} />
 
-            <Tab.Screen name="plans" component={Subscription} />
+            <Tab.Screen name="plans" component={SubscriptionStack}
+                options={{
+                    headerShown: true,
+                    header: () => <SubscriptionScreenHeader />
+                }}
+            />
             <Tab.Screen name="settings"
                 options={{
                     headerShown: true,

@@ -7,7 +7,7 @@ import {
     responsiveScreenWidth
 } from "react-native-responsive-dimensions";
 import { SvgXml } from 'react-native-svg';
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { IDefaultProps } from "../../utils/types.ts";
 import PremiumSvg from "../../../assets/svgs/Premium.js";
 import RobotSvg from "../../../assets/svgs/Robot.js";
@@ -29,13 +29,15 @@ import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails
 import { finishTransaction, getAvailablePurchases, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
 import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
 import getUniqueDeviceId from "../../utils/device-id.ts";
-import CheckBox from "../../components/check-box/check-box.tsx";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface HomeProps extends IDefaultProps {
 }
 
 const Subscription: FC<HomeProps> = ({ ...props }) => {
+
     const navigation: any = useNavigation()
+    const focus = useIsFocused()
     const [allProducts, setAllProducts] = useState<any>()
     const [isLoader, setIsLoader] = useState(false)
     const [restoreLoader, setRestoreLoader] = useState(false)
@@ -50,7 +52,44 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const [selectedProdToken, setSelectedProdToken] = useState();
     const selectedProdId = useRef(null);  //
     const [subsDetails, setsubsDetails] = useState('')
-    const [Agree, setAgree] = React.useState(false)
+    const [isFirstTime, setIsFirstTime] = useState<boolean>(false);
+
+    useEffect(() => {
+        async function getAsyncValue() {
+            const isFirstTime = await AsyncStorage.getItem('isFirstTime')
+            return isFirstTime
+        }
+        getAsyncValue().then(async (res) => {
+            console.log('ress', res)
+            if (res == null) {
+                setIsFirstTime(true)
+                navigation.getParent()?.setOptions({
+                    tabBarStyle: {
+                        display: "none",
+                        height: 60,
+                        backgroundColor: themeColors.black,
+                    },
+                });
+                await AsyncStorage.setItem('isFirstTime', JSON.stringify(true))
+                return
+            } else {
+                navigation.getParent()?.setOptions({
+                    tabBarStyle: {
+                        height: 60,
+                        backgroundColor: themeColors.black,
+                        borderTopWidth: 0,
+                    },
+                });
+                return
+            }
+        })
+
+        // Cleanup to reset the tab bar style when the component unmounts
+        return () => navigation.getParent()?.setOptions({
+            tabBarStyle: undefined,
+        });
+
+    }, [navigation, focus]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -332,7 +371,6 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-
                         <View style={styles.secondview}>
                             <Text style={styles.secondtext}>
                                 Unlock Unlimited Access!
@@ -583,7 +621,7 @@ const styles = StyleSheet.create({
     scrollViewStyle: {
         flexGrow: 1,
         width: responsiveScreenWidth(100),
-        backgroundColor: 'grey',
+        backgroundColor: 'black',
     },
     container: {
         backgroundColor: 'red',
