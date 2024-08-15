@@ -47,6 +47,7 @@ target 'aichat' do
   # use_frameworks! :linkage => :static
   config = use_native_modules!
   pod 'RNIap', :path => '../node_modules/react-native-iap'
+  pod 'RNFBAnalytics', :path => '../node_modules/@react-native-firebase/analytics'
   $RNGoogleMobileAdsAsStaticFramework = true
   use_react_native!(
     :path => config[:reactNativePath],
