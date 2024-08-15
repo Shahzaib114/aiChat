@@ -8,7 +8,7 @@ import themeColors from "../../theme/colors.ts";
 import Offer from "../common/Offer.tsx";
 import ChatScreen from "../history/chat/chat.tsx";
 import { useEffect } from "react";
-import { clearProductsIOS, clearTransactionIOS, endConnection, getAvailablePurchases, initConnection } from "react-native-iap";
+import {  endConnection,  initConnection } from "react-native-iap";
 
 
 const Stack = createNativeStackNavigator();
@@ -18,6 +18,7 @@ export default function Root({ onboarded }: {
     onboarded: string
 }) {
     useEffect(() => {
+
         const initIAP = async () => {
             try {
                 await initConnection().then(async (res) => {

@@ -23,6 +23,7 @@ import useSubscription from "../../../hooks/useSubscription.ts";
 import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
 import UpgradeToPremiumToast from "./component/upgrade-to-premium-toast/upgrade-to-premium-toast.tsx";
 import { FREE_DAIL_MESSAGE_LIMIT } from "../../../utils/app-config.ts";
+import analytics from "@react-native-firebase/analytics";
 
 
 interface ChatScreenProps extends IDefaultProps {
@@ -202,6 +203,8 @@ const ChatScreen: FC<ChatScreenProps> = ({ ...props }) => {
 
                     }}
                     onSend={(message) => {
+
+
                         actions.sendMessage(message)
                         subActions.dailyMessagesActions.increment?.()
                         if (!startGettingResponse)
