@@ -23,6 +23,8 @@ pod 'leveldb-library', :modular_headers => true
 pod 'FirebaseInstallations', :modular_headers => true  
 pod 'GoogleDataTransport', :modular_headers => true   
 pod 'nanopb', :modular_headers => true
+pod 'Firebase/Crashlytics', :modular_headers => true
+pod 'Firebase/Analytics', :modular_headers => true
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded

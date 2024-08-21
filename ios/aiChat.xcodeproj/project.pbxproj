@@ -12,6 +12,10 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		18E32D222626A23820E8D9C3 /* Pods_aichat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 174E25CC78C9454E1B4285FE /* Pods_aichat.framework */; };
+		18F960402C7541C6002093C9 /* GoogleService-InfoIOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18F9603F2C7541C6002093C9 /* GoogleService-InfoIOS.plist */; };
+		18F960422C75430F002093C9 /* RNFBAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F960412C75430F002093C9 /* RNFBAnalytics.framework */; };
+		18F960472C754352002093C9 /* FirebaseCrashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F960452C754352002093C9 /* FirebaseCrashlytics.framework */; };
+		18F960492C754352002093C9 /* RNFBCrashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F960462C754352002093C9 /* RNFBCrashlytics.framework */; };
 		7E7EED458DCA1DE7C23B989F /* Pods_aichat_aichatTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FAC978C8BF513B85D77973D /* Pods_aichat_aichatTests.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		EA8557DD2BDD500100002567 /* GoogleService-Info.plist in Sources */ = {isa = PBXBuildFile; fileRef = EA8557DC2BDD500000002567 /* GoogleService-Info.plist */; };
@@ -39,6 +43,10 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = aichat/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = aichat/main.m; sourceTree = "<group>"; };
 		174E25CC78C9454E1B4285FE /* Pods_aichat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_aichat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18F9603F2C7541C6002093C9 /* GoogleService-InfoIOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-InfoIOS.plist"; path = "aiChat/GoogleService-InfoIOS.plist"; sourceTree = "<group>"; };
+		18F960412C75430F002093C9 /* RNFBAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RNFBAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18F960452C754352002093C9 /* FirebaseCrashlytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCrashlytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18F960462C754352002093C9 /* RNFBCrashlytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RNFBCrashlytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3591258154351BBEAECEA82D /* Pods-aichat-aichatTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-aichat-aichatTests.debug.xcconfig"; path = "Target Support Files/Pods-aichat-aichatTests/Pods-aichat-aichatTests.debug.xcconfig"; sourceTree = "<group>"; };
 		54ED2B79F21B318BF6673D0B /* Pods-aichat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-aichat.release.xcconfig"; path = "Target Support Files/Pods-aichat/Pods-aichat.release.xcconfig"; sourceTree = "<group>"; };
 		62C58C5A666982177E9735E9 /* Pods-aichat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-aichat.debug.xcconfig"; path = "Target Support Files/Pods-aichat/Pods-aichat.debug.xcconfig"; sourceTree = "<group>"; };
@@ -61,7 +69,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18F960472C754352002093C9 /* FirebaseCrashlytics.framework in Frameworks */,
 				18E32D222626A23820E8D9C3 /* Pods_aichat.framework in Frameworks */,
+				18F960492C754352002093C9 /* RNFBCrashlytics.framework in Frameworks */,
+				18F960422C75430F002093C9 /* RNFBAnalytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +112,9 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				18F960452C754352002093C9 /* FirebaseCrashlytics.framework */,
+				18F960462C754352002093C9 /* RNFBCrashlytics.framework */,
+				18F960412C75430F002093C9 /* RNFBAnalytics.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				174E25CC78C9454E1B4285FE /* Pods_aichat.framework */,
 				0FAC978C8BF513B85D77973D /* Pods_aichat_aichatTests.framework */,
@@ -118,6 +132,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				18F9603F2C7541C6002093C9 /* GoogleService-InfoIOS.plist */,
 				EA8557DC2BDD500000002567 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* aichat */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -249,6 +264,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				18F960402C7541C6002093C9 /* GoogleService-InfoIOS.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,10 +662,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -728,10 +741,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
