@@ -1,9 +1,9 @@
-import {InBoxItemProps} from "../screens/history/inbox/components/ibox-chat-item.tsx";
-import {useEffect, useState} from "react";
+import { InBoxItemProps } from "../screens/history/inbox/components/ibox-chat-item.tsx";
+import { useEffect, useState } from "react";
 import useSession from "./useSession.ts";
-import database from "@react-native-firebase/database";
-import {IChat} from "../utils/types.ts";
-import {formateDateTo12HoursTime} from "../utils/formate-date.ts";
+import { IChat } from "../utils/types.ts";
+import { formateDateTo12HoursTime } from "../utils/formate-date.ts";
+import { getDatabaseInstance } from "../utils/firebaseInstance.tsx";
 
 
 interface IActions {
@@ -51,16 +51,19 @@ export function useInBox(): [InBoxItemProps[], IActions] {
 
     }
 
-    function deleteInbox(inboxRef: string) {
-        return database().ref(`users/${session?.user}/inbox/${inboxRef}`).remove();
+    async function deleteInbox(inboxRef: string) {
+        const databaseInstance = await getDatabaseInstance();
+        return databaseInstance.ref(`users/${session?.user}/inbox/${inboxRef}`).remove();
     }
 
-    function clearAllChat() {
-        return database().ref(`users/${session?.user}/inbox`).remove();
+    async function clearAllChat() {
+        const databaseInstance = await getDatabaseInstance();
+        return databaseInstance.ref(`users/${session?.user}/inbox`).remove();
     }
 
-    function newChat(navigation: any) {
-        let refInbox = database().ref(`users/${session?.user}/inbox`);
+    async function newChat(navigation: any) {
+        const databaseInstance = await getDatabaseInstance();
+        let refInbox = databaseInstance.ref(`users/${session?.user}/inbox`);
         let id = refInbox.push().key;
         if (!id) return;
         refInbox.child(id).set({
@@ -79,14 +82,23 @@ export function useInBox(): [InBoxItemProps[], IActions] {
     }
 
     useEffect(() => {
-            const ref = database().ref(`users/${session?.user}/inbox`);
-            ref.on('value', mySnapshot);
+        let ref:any;
 
-            return () => {
+        const initializeFirebase = async () => {
+            const databaseInstance = await getDatabaseInstance();
+            ref = databaseInstance.ref(`users/${session?.user}/inbox`);
+            ref.on('value', mySnapshot);
+        };
+
+        initializeFirebase();
+
+        // Cleanup function
+        return () => {
+            if (ref) {
                 ref.off('value', mySnapshot);
             }
-        }
-        , [])
+        };
+    }, [session.user]);
 
     const actions: IActions = {
         deleteInbox: deleteInbox,

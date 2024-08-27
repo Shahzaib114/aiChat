@@ -1,11 +1,11 @@
 import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IDefaultProps, ISubscription } from "../utils/types.ts";
-import database from "@react-native-firebase/database";
 import useSession from "../hooks/useSession.ts";
 import useDailyMessages, { IDailyMessageActions } from "../hooks/useDailyMessages.ts";
 import { FREE_DAIL_MESSAGE_LIMIT } from "../utils/app-config.ts";
 import Purchases from "react-native-purchases";
 import { Platform } from "react-native";
+import { getDatabaseInstance } from "../utils/firebaseInstance.tsx";
 
 export interface ISubscriptionActions {
     hasActiveSubscription: () => boolean,
@@ -98,20 +98,34 @@ export function SubscriptionProvider({ children }: IDefaultProps) {
 
 
     useEffect(() => {
-        if (!session.user || session.user?.trim() === "") {
-            return
-        }
-        database().ref(`subscriptions/${session.user}`).on('value', Subscription)
+        let userRef: any; // To keep a reference to the database ref for cleanup
+        const getDatabaseInstanceAsync = async () => {
+            // Await the async function to get the instance
+            const databaseInstance = await getDatabaseInstance();
 
+            if (session.user && session.user.trim() !== "") {
+                userRef = databaseInstance.ref(`subscriptions/${session.user}`);
+                userRef.on('value', Subscription);
+            }
+        };
+
+        getDatabaseInstanceAsync();
+
+        // Cleanup function
         return () => {
-            database().ref(`subscriptions/${session.user}`).off('value', Subscription)
-        }
+            if (userRef) {
+                userRef.off('value', Subscription);
+            }
+        };
     }, [session.user]);
 
     async function clearSubscription() {
-        await database().ref(`subscriptions/${session.user}`).update({
+        const databaseInstance = await getDatabaseInstance();
+
+        await databaseInstance.ref(`subscriptions/${session.user}`).update({
             status: "inactive"
         })
+
     }
 
     async function checkForSubscription() {
@@ -132,7 +146,8 @@ export function SubscriptionProvider({ children }: IDefaultProps) {
     async function subscribe(extra: any) {
         let Plan: any;
         let groupid: any;
-        
+        const databaseInstance = await getDatabaseInstance();
+
         if (Platform.OS === 'android') {
             Plan = extra?.subscriber?.subscriptions?.["com.aichat"]
             groupid = Plan.product_plan_identifier
@@ -142,8 +157,7 @@ export function SubscriptionProvider({ children }: IDefaultProps) {
                 groupid = Plan.product_plan_identifier
             }
         }
-
-        await database().ref(`subscriptions/${session.user}`).set({
+        await databaseInstance.ref(`subscriptions/${session.user}`).set({
             status: "active",
             startDate: new Date().getTime(),
             lastRenewalDate: new Date().getTime(),

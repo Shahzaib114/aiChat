@@ -6,9 +6,10 @@ import { ON_BOARDING } from "./src/utils/constant.ts";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from '@react-native-firebase/app';
 import { getAnalytics } from '@react-native-firebase/analytics';
-import crashlytics, { getCrashlytics } from '@react-native-firebase/crashlytics';
+import crashlytics from '@react-native-firebase/crashlytics';
 import { Platform } from 'react-native';
-
+import firebase from '@react-native-firebase/app';
+import { getDatabaseInstance } from './src/utils/firebaseInstance.tsx';
 
 function App() {
     const [onboarded, setOnboarded] = useState<string>("");
@@ -25,19 +26,8 @@ function App() {
             }
         setIsReady(true)
     };
-    // const firstAppConfig = {
-    //     name: "IOS_Analytics",
-    //     options: {
-    //         apiKey: "YOUR_API_KEY",
-    //         appId: "YOUR_APP_ID",
-    //         projectId: "YOUR_PROJECT_ID",
-    //         storageBucket: "YOUR_STORAGE_BUCKET",
-    //         messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    //         databaseURL: "YOUR_DATABASE_URL",
-    //     }
-    // };
 
-    const secondaryAppConfig = {
+    const IosAppConfig = {
         name: "EVA AI iOS",
         options: {
             apiKey: "AIzaSyATkBi0aKxNazur07v9Dpn_pYo1oMmrPi8",
@@ -61,17 +51,22 @@ function App() {
 
     useEffect(() => {
         if (Platform.OS === 'ios') {
-            const secondaryApp = initializeApp(secondaryAppConfig.options, secondaryAppConfig.name);
-            getAnalytics(secondaryApp);
-            getCrashlytics()
-            // console.log('i will get ios crashlytics and getAnalytics')
+            getDatabseInstance()
         } else {
-            initializeApp(firstAppConfig.options, firstAppConfig.name);
-            getAnalytics();
+            const analytics = getAnalytics(); // Use the primary app for Android
             crashlytics();
-            // console.log('i will get android crashlytics and getAnalytics')
         }
+        getAnalytics().logEvent('your_event');
+        crashlytics().log('Your log message');
     }, [])
+    const getDatabseInstance = async () => {
+        const iosApp = initializeApp(IosAppConfig.options, IosAppConfig.name);
+        initializeApp(IosAppConfig.options, IosAppConfig.name)
+        const analytics = getAnalytics(iosApp)
+        const databaseInstance = getDatabaseInstance();
+        crashlytics();
+        await AsyncStorage.setItem('iosDatabaseInstance', JSON.stringify(databaseInstance))
+    }
 
     return (
         <Providers>

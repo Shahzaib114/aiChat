@@ -1,30 +1,47 @@
-import {useEffect, useState} from "react";
-import {category} from "../screens/home/variables/types.ts";
-import database, {FirebaseDatabaseTypes} from "@react-native-firebase/database";
-
+import { useEffect, useState } from "react";
+import { category } from "../screens/home/variables/types";
+import { getDatabaseInstance } from "../utils/firebaseInstance";
 
 function useCategories(): [category, boolean] {
     const [data, setData] = useState<category>({});
     const [loading, setLoading] = useState<boolean>(true);
 
-
-    function FireBaseSnapshot(value: any) {
-        setData(value.val());
-        setLoading(false);
-        // console.log(value.val());
-    }
-
     useEffect(() => {
-        setLoading(true)
-        const userRef = database().ref('category');
-        userRef.on('value', FireBaseSnapshot);
+        const fetchData = async () => {
+            setLoading(true);
 
-        return () => {
-            userRef.off('value', FireBaseSnapshot);
-        }
+            try {
+                const databaseInstance = await getDatabaseInstance();
+
+                if (databaseInstance) {
+                    const userRef = databaseInstance.ref('category');
+                    
+                    const FireBaseSnapshot = (value: any) => {
+                        setData(value.val());
+                        setLoading(false);
+                    };
+
+                    userRef.on('value', FireBaseSnapshot);
+
+                    // Cleanup function
+                    return () => {
+                        userRef.off('value', FireBaseSnapshot);
+                    };
+                } else {
+                    // Handle the case where databaseInstance is not available
+                    console.error("Firebase database instance not available");
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.error("Error fetching database instance:", error);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
 
-    return [data, loading]
+    return [data, loading];
 }
 
 export default useCategories;

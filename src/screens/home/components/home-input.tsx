@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import { StyleSheet } from "react-native";
 import { IDefaultProps } from "../../../utils/types.ts";
 import ChatInput from "../../../components/fields/chat-input/chat-input.tsx";
-import database from "@react-native-firebase/database";
 import { USER_ROLE } from "../../../utils/roles.ts";
 import { formateDateTo12HoursTime } from "../../../utils/formate-date.ts";
 import useSession from "../../../hooks/useSession.ts";
 import { useNavigation } from "@react-navigation/native";
 import useSubscription from "../../../hooks/useSubscription.ts";
+import { getDatabaseInstance } from "../../../utils/firebaseInstance.tsx";
 
 
 interface HomeInputProps extends IDefaultProps {
@@ -19,8 +19,10 @@ const HomeInput: FC<HomeInputProps> = ({ ...props }) => {
     const navigation = useNavigation();
     const [subscription, subActions] = useSubscription();
 
+
     async function sendMessage(message: string) {
-        let refInbox = database().ref(`users/${session?.user}/inbox`);
+        const databaseInstance = await getDatabaseInstance();
+        let refInbox = databaseInstance.ref(`users/${session?.user}/inbox`);
         let id = refInbox.push().key;
         if (!id) return;
         await refInbox.child(id).set({

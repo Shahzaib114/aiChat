@@ -1,16 +1,15 @@
-import React, {FC} from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
-import {prompt, TransFormedCategory} from "../variables/types.ts";
+import React, { FC } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { TransFormedCategory } from "../variables/types.ts";
 import themeColors from "../../../theme/colors.ts";
-import database from "@react-native-firebase/database";
 import useSession from "../../../hooks/useSession.ts";
-import {formateDateTo12HoursTime} from "../../../utils/formate-date.ts";
-import {USER_ROLE} from "../../../utils/roles.ts";
-import {useNavigation} from "@react-navigation/native";
+import { formateDateTo12HoursTime } from "../../../utils/formate-date.ts";
+import { USER_ROLE } from "../../../utils/roles.ts";
+import { useNavigation } from "@react-navigation/native";
 import useSubscription from "../../../hooks/useSubscription.ts";
-import Toast from "react-native-simple-toast";
 import BuySubscriptionPopup from "../../../modal/buy-subscription-popup/buy-subscription-popup.tsx";
-import {FREE_DAIL_MESSAGE_LIMIT} from "../../../utils/app-config.ts";
+import { FREE_DAIL_MESSAGE_LIMIT } from "../../../utils/app-config.ts";
+import { getDatabaseInstance } from "../../../utils/firebaseInstance.tsx";
 
 
 interface QuestionLayoutProps extends TransFormedCategory {
@@ -23,12 +22,13 @@ const QuestionLayout: FC<QuestionLayoutProps> = ({...props}) => {
     const [sub, subscriptionAction] = useSubscription()
     const buySubscriptionPopup = React.useRef<BuySubscriptionPopup>(null);
 
-    function onQuestionClick(question: string) {
+   async function onQuestionClick(question: string) {
+    const databaseInstance = await getDatabaseInstance();
         if (!subscriptionAction.hasActiveSubscription() && !subscriptionAction.hasDailyQuota()) {
             buySubscriptionPopup.current?.showBuySubscription()
             return
         }
-        let refInbox = database().ref(`users/${session?.user}/inbox`);
+        let refInbox = databaseInstance.ref(`users/${session?.user}/inbox`);
         let id = refInbox.push().key;
         if (!id) return;
         refInbox.child(id).set({

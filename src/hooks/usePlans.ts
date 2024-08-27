@@ -1,6 +1,7 @@
 import {IPlan} from "../utils/types.ts";
 import {useEffect, useState} from "react";
 import database, {FirebaseDatabaseTypes} from "@react-native-firebase/database";
+import { getDatabaseInstance } from "../utils/firebaseInstance.tsx";
 
 
 export default function usePlans():[IPlan[]] {
@@ -17,19 +18,25 @@ export default function usePlans():[IPlan[]] {
         }
         setPlans(planList)
     }
-
     useEffect(() => {
-        database().ref('plans').on('value', snapshotToArray)
+        let ref:any;
 
+        const initializeDatabase = async () => {
+            const databaseInstance = await getDatabaseInstance();
+            ref = databaseInstance.ref('plans');
+            ref.on('value', snapshotToArray);
+        };
 
+        initializeDatabase();
+
+        // Cleanup function to remove the listener when the component unmounts
         return () => {
-            database().ref('plans').off('value', snapshotToArray)
-        }
-
+            if (ref) {
+                ref.off('value', snapshotToArray);
+            }
+        };
     }, []);
 
-
-    console.log("PLANS: ", plans)
 
     return [plans]
 }
