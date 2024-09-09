@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Pressable, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Pressable, Linking, Platform } from 'react-native';
 import {
     responsiveFontSize,
     responsiveScreenFontSize,
@@ -13,7 +13,7 @@ import { SvgXml } from 'react-native-svg';
 import CheckBox from "../check-box/check-box.tsx";
 import Toast from "react-native-simple-toast";
 
-const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purchased, handleCardPress, handleCirclePress }: any) => {
+const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircleActive, purchased, handleCardPress, handleCirclePress }: any) => {
     return (
         <TouchableOpacity
             onPress={() => {
@@ -42,18 +42,23 @@ const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purcha
                                     handleCirclePress()
                                 }}
                             />
-                            <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '')}</Text>
+                            {Platform.OS === 'ios' ?
+                                <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '',)}</Text>
+                                :
+                                <Text style={styles.headerText}>{androidTitle?.billingPeriod === 'P1Y' ? 'Year' : androidTitle?.billingPeriod === 'P1M' ? "Month" : "Week"}ly Subscription</Text>
+                            }
+
                         </View>
                         <View>
                             <Text style={styles.description}>
                                 {save?.includes('weekly') ?
-                                    '14.99$'
+                                    Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : '14.99 US$'
                                     :
                                     save?.includes('monthly') ?
-                                        '9.19$'
+                                        Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : '9.19 US$'
                                         :
                                         save?.includes('yearly') &&
-                                        '34.99$'
+                                            Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : '34.99 US$'
                                 }
                                 <Text style={styles.smallDescription}>
                                     {save?.includes('weekly') ?
@@ -129,9 +134,23 @@ const CustomCard = ({ description, text, smallDesc, save, isCircleActive, purcha
                         } to chat with EVA
                     </Text>
                 </View>
-                <View style={[styles.feature, { borderBottomWidth: 0 }]}>
+                <View style={[styles.feature, { borderBottomWidth: 1 }]}>
                     <Text style={[styles.featureText]}>
                         - More detailed answers
+                    </Text>
+                </View>
+                <View style={[styles.feature, { borderBottomWidth: 0 }]}>
+                    <Text style={[styles.featureText]}>
+                        - {
+                            save?.includes('weekly') ?
+                                '7 Days Access'
+                                :
+                                save?.includes('monthly') ?
+                                    '1 Month access'
+                                    :
+                                    save?.includes('yearly') &&
+                                    'One Year access'
+                        }
                     </Text>
                 </View>
             </View>
@@ -190,9 +209,9 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     description: {
-        fontSize: responsiveScreenFontSize(4),
+        fontSize: responsiveScreenFontSize(3),
         color: themeColors.white,
-        fontFamily: FONTS.Manrope_ExtraBold
+        fontFamily: FONTS.Manrope_Medium
     },
     saveTxt: {
         fontSize: responsiveScreenFontSize(1.5),

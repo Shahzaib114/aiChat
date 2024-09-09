@@ -540,7 +540,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9;
+				MARKETING_VERSION = 11;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -569,7 +569,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 9;
+				MARKETING_VERSION = 11;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

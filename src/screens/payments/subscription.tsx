@@ -464,7 +464,8 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <Card
-                                            text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) + 'ly' : `${item?.title}`}
+                                            text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) : `${item?.title}`}
+                                            androidTitle={item?.pricingPhases?.pricingPhaseList[0]}
                                             description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
                                             save={productId}
                                             smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
@@ -489,34 +490,38 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             })}
                         </View>
                         <View style={{
-                            flexDirection: 'row',
                             justifyContent: 'center',
-                            alignItems: 'center',
+                            alignItems: 'flex-start',
                             alignSelf: 'center',
                             maxWidth: '95%',
                             marginVertical: 5,
                             marginTop: 15,
                             alignContent: 'center'
                         }}>
-                            {/* <CheckBox checked={Agree} onChange={setAgree} /> */}
-                            <Text style={{ color: themeColors.white }}>I agree to the </Text>
-                            <Pressable
-                                style={{ alignSelf: 'center' }}
-                                onPress={() => {
-                                    Linking.openURL("https://www.akromaxtech.com/terms-conditions")
-                                }}
-                            >
-                                <Text style={{ color: themeColors.primary }}>Terms and Conditions</Text>
-                            </Pressable>
-                            <Text style={{ color: themeColors.white, }}> and </Text>
-                            <Pressable
-                                onPress={() => {
-                                    Linking.openURL("https://akromaxtech.com/privacy-policy")
-                                }}
-                            >
-                                <Text style={{ color: themeColors.primary }}>Privacy Policy</Text>
-                            </Pressable>
+                            <View style={{
+                                flexDirection: 'row',
+                            }}>
+                                <Text style={{ color: themeColors.white }}>I agree to the </Text>
+                                <Pressable
+                                    style={{ alignSelf: 'center' }}
+                                    onPress={() => {
+                                        Linking.openURL("https://www.akromaxtech.com/terms-conditions")
+                                    }}
+                                >
+                                    <Text style={{ color: themeColors.primary }}>Terms and Conditions</Text>
+                                </Pressable>
+                                <Text style={{ color: themeColors.white, }}> and </Text>
+                                <Pressable
+                                    onPress={() => {
+                                        Linking.openURL("https://akromaxtech.com/privacy-policy")
+                                    }}
+                                >
+                                    <Text style={{ color: themeColors.primary }}>Privacy Policy</Text>
+                                </Pressable>
+                            </View>
+                            <Text style={{ color: themeColors.white }}>You can cancel anytime</Text>
                         </View>
+
 
                         <View style={styles.buttonview}>
                             {selected ?
@@ -543,16 +548,43 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 :
                                 <></>
                             }
-                            <SvgXml xml={CanelSvg} width={responsiveScreenWidth(30)} height={responsiveScreenHeight(5)} />
-                            {!restoreLoader ?
-                                <ButtonComponent text="Restore Purchase" onPress={() => {
-                                    restorePurchases()
-                                }} />
+                            <TouchableOpacity
+                                onPress={() => {
+                                    console.log('pressed')
+                                    Linking.openURL("https://play.google.com/store/account/subscriptions")
+                                }}
+                                hitSlop={10}
+                                style={{
+                                    alignSelf: 'flex-start', margin: '3%', flexDirection: 'row',
+                                    paddingHorizontal: '2%',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: 5,
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontFamily: FONTS.Manrope_Medium,
+                                        fontSize: responsiveScreenFontSize(1.5),
+                                        color: 'grey'
+                                    }}
+                                >
+                                    Cancel Subscription
+                                </Text>
+                            </TouchableOpacity>
+                            {Platform.OS === 'ios' ?
+                                !restoreLoader ?
+                                    <ButtonComponent text="Restore Purchase" onPress={() => {
+                                        restorePurchases()
+                                    }} />
+                                    :
+                                    <View>
+                                        <ActivityIndicator color={themeColors.white} size={'large'} />
+                                    </View>
                                 :
-                                <View>
-                                    <ActivityIndicator color={themeColors.white} size={'large'} />
-                                </View>
+                                <></>
                             }
+
                         </View>
 
                         <View style={{ margin: "5%" }}>
