@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, ImageBackground, Linking, Modal, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Linking, Modal, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
     responsiveFontSize,
     responsiveScreenFontSize,
@@ -9,20 +9,12 @@ import {
 import { SvgXml } from 'react-native-svg';
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { IDefaultProps } from "../../utils/types.ts";
-import PremiumSvg from "../../../assets/svgs/Premium.js";
-import RobotSvg from "../../../assets/svgs/Robot.js";
-import CrossSvg from "../../../assets/svgs/cross.js";
-import TickSvg from "../../../assets/svgs/Tick.js";
-import AdsSvg from "../../../assets/svgs/NoAds.js";
-import BrainSvg from "../../../assets/svgs/Brain.js";
 import Card from "../../components/Card/card.tsx";
 import ButtonComponent from "../../components/Button/Button.tsx";
-import CanelSvg from "../../../assets/svgs/Cancel.js";
 import Review from "../../components/ReviewCard/Review.tsx";
 import themeColors from "../../theme/colors.ts";
 import FONTS from "../../theme/FONTS.tsx";
 import backArrow from "../../../assets/svgs/backArrow.js";
-import ChatSvg from "../../../assets/svgs/ChatSvg.js";
 import useSubscription from "../../hooks/useSubscription.ts";
 import Toast from "react-native-simple-toast";
 import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
@@ -30,6 +22,8 @@ import { finishTransaction, getAvailablePurchases, getSubscriptions, purchaseUpd
 import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
 import getUniqueDeviceId from "../../utils/device-id.ts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EvaAiTxtSvg } from "../../../assets/svgs/evaAiTxtSvg.js";
+import { LinearGradient } from "react-native-linear-gradient";
 
 interface HomeProps extends IDefaultProps {
 }
@@ -53,6 +47,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const selectedProdId = useRef(null);  //
     const [subsDetails, setsubsDetails] = useState('')
     const [isFirstTime, setIsFirstTime] = useState<boolean>(false);
+    const [isSelectedPurchased, setIsSelectedPurchased] = useState(false)
 
     useEffect(() => {
         async function getAsyncValue() {
@@ -60,7 +55,6 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
             return isFirstTime
         }
         getAsyncValue().then(async (res) => {
-            console.log('ress', res)
             if (res == null) {
                 setIsFirstTime(true)
                 navigation.getParent()?.setOptions({
@@ -195,7 +189,6 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
         try {
             setRestoreLoader(true)
             const purchases = await getAvailablePurchases();
-            console.log('purchases', purchases)
             setRestoreLoader(false)
             Alert.alert('Restore Successful', 'Your purchases have been restored.');
             return
@@ -217,6 +210,44 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
         }
     };
 
+    const reviewArray = [
+        {
+            name: "Sophia N.",
+            image: require('../../../assets/images/userImg.png'),
+            ratingsNumber: 5,
+            review: "Spectacular AI in all the themes I have tried so far."
+        },
+        {
+            name: "Maria jr.",
+            image: { uri: 'https://randomuser.me/api/portraits/women/90.jpg' },
+            ratingsNumber: 5,
+            review: "Best Ai Service in Market so far!",
+        },
+        {
+            name: "Jenna",
+            image: { uri: 'https://randomuser.me/api/portraits/women/64.jpg' },
+            ratingsNumber: 5,
+            review: "Best Ai Service in Market so far!",
+        },
+        {
+            name: "Rosy",
+            image: { uri: 'https://randomuser.me/api/portraits/women/86.jpg' },
+            ratingsNumber: 5,
+            review: "Eva AI is the perfect study partner, providing personalized guidance and invaluable insights that have transformed my educational journey!",
+        },
+        {
+            name: "John",
+            image: { uri: 'https://randomuser.me/api/portraits/men/79.jpg' },
+            ratingsNumber: 5,
+            review: "Eva AI has made learning a joy with its user-friendly interface and wealth of educational resources!",
+        },
+        {
+            name: "Christopher",
+            image: { uri: 'https://randomuser.me/api/portraits/men/53.jpg' },
+            ratingsNumber: 5,
+            review: "Eva AI surpasses expectations, offering intuitive access to a vast array of educational materials and insightful recommendations!",
+        },
+    ]
 
     const handlePurchaseAndroid = async (offerToken: any) => {
         setIsLoader(true)
@@ -295,72 +326,73 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                 contentContainerStyle={styles.scrollViewStyle}
                 bounces={false}
             >
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={subsModalCLose}
-                    onRequestClose={() => setSubsModalClose(false)}
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.contentContainer}>
-                            <Text style={styles.titleText}>
-                                {subscriptionDetails?.title}
-                            </Text>
+                <>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={subsModalCLose}
+                        onRequestClose={() => setSubsModalClose(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.contentContainer}>
+                                <Text style={styles.titleText}>
+                                    {subscriptionDetails?.title}
+                                </Text>
 
-                            <Text style={styles.contentText}>
-                                {subsDetails}
-                            </Text>
+                                <Text style={styles.contentText}>
+                                    {subsDetails}
+                                </Text>
 
 
 
-                            <View style={styles.twoRowItemsContainer}>
-                                <TouchableOpacity
-                                    onPress={() => setSubsModalClose(false)}
-                                    style={[styles.buttonOpacity, { backgroundColor: themeColors.blackLight }]}
-                                >
-                                    <Text style={styles.cancelTxtStyles} >
-                                        Cancel
-                                    </Text>
-                                </TouchableOpacity>
-                                {isLoader ?
-                                    <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-                                        <ActivityIndicator size={'large'} color={themeColors.black} />
-                                    </View>
-                                    :
+                                <View style={styles.twoRowItemsContainer}>
                                     <TouchableOpacity
-                                        onPress={() => {
-                                            let selectedProd = Platform.OS === 'android' ? subscriptionDetails?.basePlanId : subscriptionDetails?.productId
-                                            if (subscriptionHook.productIdentifier === selectedProd) {
-                                                Toast.show('You already have this subscription activated ', Toast.LONG)
-                                                return
-                                            }
-                                            setSelectedProdToken(subscriptionDetails?.offerToken)
-                                            selectedProdId.current = selectedProd;
-
-                                            if (Platform.OS === 'ios') {
-                                                handlePurchaseIOS(selectedProd)
-                                            } else {
-                                                handlePurchaseAndroid(subscriptionDetails?.offerToken)
-                                            }
-                                        }}
-                                        style={[styles.buttonOpacity, { backgroundColor: themeColors.primary }]}
+                                        onPress={() => setSubsModalClose(false)}
+                                        style={[styles.buttonOpacity, { backgroundColor: themeColors.blackLight }]}
                                     >
-                                        <Text style={styles.acceptTxtStyles} >
-                                            Ok
+                                        <Text style={styles.cancelTxtStyles} >
+                                            Cancel
                                         </Text>
                                     </TouchableOpacity>
-                                }
+                                    {isLoader ?
+                                        <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+                                            <ActivityIndicator size={'large'} color={themeColors.black} />
+                                        </View>
+                                        :
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                let selectedProd = Platform.OS === 'android' ? subscriptionDetails?.basePlanId : subscriptionDetails?.productId
+                                                if (subscriptionHook.productIdentifier === selectedProd) {
+                                                    Toast.show('You already have this subscription activated ', Toast.LONG)
+                                                    return
+                                                }
+                                                setSelectedProdToken(subscriptionDetails?.offerToken)
+                                                selectedProdId.current = selectedProd;
+
+                                                if (Platform.OS === 'ios') {
+                                                    handlePurchaseIOS(selectedProd)
+                                                } else {
+                                                    handlePurchaseAndroid(subscriptionDetails?.offerToken)
+                                                }
+                                            }}
+                                            style={[styles.buttonOpacity, { backgroundColor: themeColors.primary }]}
+                                        >
+                                            <Text style={styles.acceptTxtStyles} >
+                                                Ok
+                                            </Text>
+                                        </TouchableOpacity>
+                                    }
+                                </View>
                             </View>
                         </View>
+                    </Modal>
+                    <View style={{ position: 'absolute', top: 0, width: responsiveScreenWidth(100), height: responsiveScreenHeight(68), backgroundColor: "red" }}>
+                        <Image
+                            source={require('../../../assets/images/AIChat.png')}
+                            style={styles.imageBackground}
+                        />
                     </View>
-                </Modal>
-                <ImageBackground
-                    source={require('../../../assets/images/AIChat.png')}
-                    style={styles.imageBackground}
-                    resizeMode="cover"
-                >
-
-                    <SafeAreaView>
+                    <SafeAreaView style={{ backgroundColor: themeColors.blackTransparent }}>
                         <View style={styles.top}>
                             <TouchableOpacity
                                 onPress={() => navigation.goBack()}
@@ -372,276 +404,258 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.secondview}>
-                            <Text style={styles.secondtext}>
-                                Unlock Unlimited Access!
+
+                            <SvgXml
+                                xml={EvaAiTxtSvg}
+                            />
+                            <Text style={[styles.secondtext, { fontSize: responsiveScreenFontSize(1.6), }]}>
+                                The Best Custom AI Prompts
                             </Text>
-                        </View>
-
-                        <View style={styles.thirdmainview}>
-                            <View style={styles.thirdview}>
-                                <Text style={styles.thirdviewtext}>Features</Text>
-                                <View style={styles.thirdsvgview}>
-                                    <Text style={styles.thirdsvgviewtext}>Free</Text>
-                                    <View style={styles.thirdviewnested}>
-                                        <SvgXml xml={PremiumSvg} width="100%" height="100%" />
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={styles.fourthviewmain}>
-                                <View style={styles.fourthview1}>
-                                    <View style={styles.fourthview2}>
-                                        <SvgXml xml={RobotSvg} width="100%" height="100%" />
-                                    </View>
-                                    <Text style={styles.fourthview2text}>Best Model AI</Text>
-                                </View>
-
-                                <View style={styles.fourthview3}>
-                                    <View style={styles.fourthview4}>
-                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                    </View>
-                                    <View style={styles.fourthview5}>
-                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={styles.fourthviewmain}>
-                                <View style={styles.fourthview1}>
-                                    <View style={styles.fourthview2}>
-                                        <SvgXml xml={AdsSvg} width="100%" height="100%" />
-                                    </View>
-                                    <Text style={styles.fourthview2text}>No Ads</Text>
-                                </View>
-                                <View style={styles.fourthview3}>
-                                    <View style={styles.fourthview4}>
-                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                    </View>
-                                    <View style={styles.fourthview5}>
-                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={styles.fourthviewmain}>
-                                <View style={styles.fourthview1}>
-                                    <View style={styles.fourthview2}>
-                                        <SvgXml xml={ChatSvg} width="100%" height="100%" />
-                                    </View>
-                                    <Text style={styles.fourthview2text}>Unlimited Chats</Text>
-                                </View>
-                                <View style={styles.fourthview3}>
-                                    <View style={styles.fourthview4}>
-                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                    </View>
-                                    <View style={styles.fourthview5}>
-                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={[styles.fourthviewmain, { borderBottomWidth: 0, }]}>
-                                <View style={styles.fourthview1}>
-                                    <View style={styles.fourthview2}>
-                                        <SvgXml xml={BrainSvg} width="100%" height="100%" />
-                                    </View>
-                                    <Text style={styles.fourthview2text}>Detailed Answers</Text>
-                                </View>
-                                <View style={styles.fourthview3}>
-                                    <View style={styles.fourthview4}>
-                                        <SvgXml xml={CrossSvg} width="100%" height="100%" />
-                                    </View>
-                                    <View style={styles.fourthview5}>
-                                        <SvgXml xml={TickSvg} width="100%" height="100%" />
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={styles.card}>
-                            {allProducts?.length > 0 && allProducts?.map((item: any, index: number) => {
-                                let productId = Platform.OS === 'android' ? item?.basePlanId : item?.productId
-                                const pricesAndPeriods = ExtractPriceAndPeriod(Platform.OS === 'ios' ? item?.description : description);
-                                return (
-                                    <React.Fragment key={index}>
-                                        <Card
-                                            text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period.charAt(0).toUpperCase() + pricesAndPeriods[index]?.period.slice(1) : `${item?.title}`}
-                                            androidTitle={item?.pricingPhases?.pricingPhaseList[0]}
-                                            description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
-                                            save={productId}
-                                            smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
-                                            isCircleActive={selected === productId}
-                                            purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
-
-                                            handleCardPress={() => {
-                                                let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
-                                                setSelected(selectedProd)
-                                                setSelectedProdToken(item?.offerToken)
-                                                selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
-                                            }}
-                                            handleCirclePress={() => {
-                                                let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
-                                                setSelected(selectedProd)
-                                                setSelectedProdToken(item?.offerToken)
-                                                selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
-                                            }}
-                                        />
-                                    </React.Fragment>
-                                )
-                            })}
-                        </View>
-                        <View style={{
-                            justifyContent: 'center',
-                            alignItems: 'flex-start',
-                            alignSelf: 'center',
-                            maxWidth: '95%',
-                            marginVertical: 5,
-                            marginTop: 15,
-                            alignContent: 'center'
-                        }}>
-                            <View style={{
-                                flexDirection: 'row',
-                            }}>
-                                <Text style={{ color: themeColors.white }}>I agree to the </Text>
-                                <Pressable
-                                    style={{ alignSelf: 'center' }}
-                                    onPress={() => {
-                                        Linking.openURL("https://www.akromaxtech.com/terms-conditions")
-                                    }}
-                                >
-                                    <Text style={{ color: themeColors.primary }}>Terms and Conditions</Text>
-                                </Pressable>
-                                <Text style={{ color: themeColors.white, }}> and </Text>
-                                <Pressable
-                                    onPress={() => {
-                                        Linking.openURL("https://akromaxtech.com/privacy-policy")
-                                    }}
-                                >
-                                    <Text style={{ color: themeColors.primary }}>Privacy Policy</Text>
-                                </Pressable>
-                            </View>
-                            <Text style={{ color: themeColors.white }}>You can cancel anytime</Text>
-                        </View>
-
-
-                        <View style={styles.buttonview}>
-                            {selected ?
-                                !isLoader ?
-                                    <ButtonComponent text="Continue" onPress={() => {
-                                        if (!selected) {
-                                            Toast.show('Please select a plan', Toast.LONG)
-                                            return
-                                        }
-                                        else if (subscriptionHook.productIdentifier === selected) {
-                                            Toast.show('You already have this subscription activated ', Toast.LONG)
-                                            return
-                                        }
-                                        if (Platform.OS === 'ios') {
-                                            handlePurchaseIOS(selected)
-                                        } else {
-                                            handlePurchaseAndroid(selectedProdToken)
-                                        }
-                                    }} />
-                                    :
-                                    <View>
-                                        <ActivityIndicator color={themeColors.white} size={'large'} />
-                                    </View>
-                                :
-                                <></>
-                            }
-                            <TouchableOpacity
-                                onPress={() => {
-                                    console.log('pressed')
-                                    Linking.openURL("https://play.google.com/store/account/subscriptions")
-                                }}
-                                hitSlop={10}
+                            <LinearGradient colors={['#619AFC', '#3558D5']}
                                 style={{
-                                    alignSelf: 'flex-start', margin: '3%', flexDirection: 'row',
-                                    paddingHorizontal: '2%',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: 5,
+                                    borderRadius: responsiveFontSize(0.8),
                                 }}
                             >
-                                <Text
+                                <TouchableOpacity style={{
+                                    justifyContent: 'center',
+                                    padding: responsiveFontSize(1.5),
+                                    paddingHorizontal: responsiveFontSize(3),
+                                    alignItems: 'center'
+                                }}>
+
+                                    <Text style={styles.thirdsvgviewtext}>
+                                        Unlock The Power of AI
+                                    </Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+                        </View>
+                        <View style={{
+                            backgroundColor: '#0D1110',
+                            padding: responsiveScreenHeight(2.5),
+                            width: '100%',
+                            borderTopLeftRadius: responsiveFontSize(3),
+                            borderTopRightRadius: responsiveFontSize(3)
+                        }}>
+
+                            <ScrollView horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{ justifyContent: 'space-between', gap: 10, }} style={{ flex: 1, width: '100%', }}>
+                                {allProducts?.length > 0 && allProducts?.map((item: any, index: number) => {
+                                    let productId = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                                    const pricesAndPeriods = ExtractPriceAndPeriod(Platform.OS === 'ios' ? item?.description : description);
+                                    return (
+                                        <View
+                                            style={styles.card}
+                                            key={index}
+                                        >
+                                            <Card
+                                                text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period : `${item?.title}`}
+                                                androidTitle={item?.pricingPhases?.pricingPhaseList[0]}
+                                                description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
+                                                save={productId}
+                                                smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
+                                                isCircleActive={selected === productId}
+                                                purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
+
+                                                handleCardPress={() => {
+                                                    console.log('subscriptionHook?.productIdentifier', subscriptionHook?.productIdentifier)
+                                                    let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                                                    setSelected(selectedProd)
+                                                    setSelectedProdToken(item?.offerToken)
+                                                    selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
+                                                }}
+                                                handleCirclePress={() => {
+                                                    let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId
+                                                    setSelected(selectedProd)
+                                                    setSelectedProdToken(item?.offerToken)
+                                                    selectedProdId.current = selectedProd;  // Explicitly change selectedProdId
+                                                }}
+                                            />
+                                        </View>
+                                    )
+                                })}
+                            </ScrollView>
+
+
+                            <View style={styles.buttonview}>
+                                {selected ?
+                                    !isLoader ?
+                                        <LinearGradient colors={selected === subscriptionHook?.productIdentifier ? ['#5B5B5B', '#454545'] : ['#619AFC', '#3558D5']}
+                                            style={{ borderRadius: 12, width: '95%' }}
+                                        >
+                                            <ButtonComponent
+                                                text={selected === subscriptionHook?.productIdentifier ? "Cancel Subscription" : selected.includes('year') ? "TRY 3 DAYS FREE NOW" : "SUBSCRIBE NOW"}
+                                                textStyle={{ color: themeColors.white, fontFamily: FONTS.Manrope_ExtraBold }}
+                                                containerStyle={{ backgroundColor: 'transparent', borderWidth: 0, }}
+                                                onPress={() => {
+                                                    if (selected === subscriptionHook?.productIdentifier) {
+                                                        if (Platform.OS === 'ios') {
+                                                            Linking.openURL('https://apps.apple.com/account/subscriptions')
+                                                            return
+                                                        } else {
+                                                            Linking.openURL('https://play.google.com/store/account/subscriptions')
+                                                            return
+                                                        }
+                                                    } else if (!selected) {
+                                                        Toast.show('Please select a plan', Toast.LONG)
+                                                        return
+                                                    }
+                                                    else if (subscriptionHook.productIdentifier === selected) {
+                                                        Toast.show('You already have this subscription activated ', Toast.LONG)
+                                                        return
+                                                    }
+                                                    if (Platform.OS === 'ios') {
+                                                        handlePurchaseIOS(selected)
+                                                    } else {
+                                                        handlePurchaseAndroid(selectedProdToken)
+                                                    }
+                                                }} />
+                                        </LinearGradient>
+                                        :
+                                        <View>
+                                            <ActivityIndicator color={themeColors.white} size={'large'} />
+                                        </View>
+                                    :
+                                    <></>
+                                }
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        Linking.openURL("https://play.google.com/store/account/subscriptions")
+                                    }}
+                                    hitSlop={10}
                                     style={{
-                                        fontFamily: FONTS.Manrope_Medium,
-                                        fontSize: responsiveScreenFontSize(1.5),
-                                        color: 'grey'
+                                        alignSelf: 'center',
+                                        marginTop: '8%',
+                                        margin: '3%',
+                                        flexDirection: 'row',
+                                        paddingHorizontal: '2%',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        gap: 5,
                                     }}
                                 >
-                                    Cancel Subscription
-                                </Text>
-                            </TouchableOpacity>
-                            {Platform.OS === 'ios' ?
-                                !restoreLoader ?
-                                    <ButtonComponent text="Restore Purchase" onPress={() => {
-                                        restorePurchases()
-                                    }} />
+                                    <Text
+                                        style={{
+                                            fontFamily: FONTS.Manrope_Medium,
+                                            fontSize: responsiveScreenFontSize(1.5),
+                                            color: 'grey'
+                                        }}
+                                    >
+                                        * You can cancel at any time.
+                                    </Text>
+                                </TouchableOpacity>
+                                {Platform.OS === 'ios' ?
+                                    !restoreLoader ?
+                                        <ButtonComponent text="Restore Purchase"
+                                            containerStyle={{
+                                                backgroundColor: 'transparent',
+                                                borderWidth: 0,
+                                                padding: 0,
+                                                margin: responsiveFontSize(0),
+                                            }}
+                                            textStyle={{ color: themeColors.malibu }}
+                                            onPress={() => {
+                                                restorePurchases()
+                                            }} />
+                                        :
+                                        <View>
+                                            <ActivityIndicator color={themeColors.white} size={'large'} />
+                                        </View>
                                     :
-                                    <View>
-                                        <ActivityIndicator color={themeColors.white} size={'large'} />
-                                    </View>
-                                :
-                                <></>
-                            }
+                                    <></>
+                                }
 
+                            </View>
+
+                            <View style={{ margin: "5%" }}>
+                                <Text style={{ color: "white", fontSize: responsiveScreenFontSize(3.5), fontFamily: FONTS.Manrope_ExtraBold }}>
+                                    What People {'\n'}Say About
+                                </Text>
+                                <Text style={{
+                                    color: themeColors.malibu,
+                                    fontSize: responsiveScreenFontSize(3.5),
+                                    gap: 10,
+                                    paddingBottom: 5,
+                                    fontFamily: FONTS.Manrope_ExtraBold
+                                }}
+
+                                >
+                                    EVA
+                                </Text>
+                                <View style={{ height: 3, backgroundColor: themeColors.malibu, width: '17%' }}>
+
+                                </View>
+                            </View>
+
+                            <ScrollView horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{ justifyContent: 'space-between', gap: 10, }} style={{ flex: 1, width: '100%', }}>
+                                {reviewArray?.length > 0 && reviewArray?.map((item: any, index: number) => {
+                                    return (
+                                        <View
+                                            style={styles.card}
+                                            key={index}
+
+                                        >
+                                            <Review
+                                                containerStyle={{ height: responsiveScreenHeight(15) }}
+                                                name={item?.name}
+                                                image={item?.image}
+                                                ratingsNumber={item?.ratingsNumber}
+                                                review={item?.review}
+                                            />
+                                        </View>
+                                    )
+                                })}
+                            </ScrollView>
+
+                            {/* <View style={{ alignItems: "center", justifyContent: "center" }}>
+
+                                <Review
+                                    name={"Maria jr."}
+                                    image={{
+                                        uri: "https://randomuser.me/api/portraits/women/90.jpg"
+                                    }}
+                                    ratingsNumber={5}
+                                    review={"Best Ai Service in Market so far!"}
+                                />
+                                <Review
+                                    name={"Jenna"}
+                                    image={{
+                                        uri: "https://randomuser.me/api/portraits/women/64.jpg"
+                                    }}
+                                    ratingsNumber={5}
+                                    review={"Eva AI is the cat's whiskers of AI apps, offering personalized tips and quirky cat facts that have revolutionized my cat-parenting experience!"}
+                                />
+                                <Review
+                                    name={"Rosy"}
+                                    image={{
+                                        uri: "https://randomuser.me/api/portraits/women/86.jpg"
+                                    }}
+                                    ratingsNumber={5}
+                                    review={"Eva AI is the perfect study partner, providing personalized guidance and invaluable insights that have transformed my educational journey!"}
+                                />
+                                <Review
+                                    name={"John"}
+                                    image={{
+                                        uri: "https://randomuser.me/api/portraits/men/79.jpg"
+                                    }}
+                                    ratingsNumber={5}
+                                    review={"Eva AI has made learning a joy with its user-friendly interface and wealth of educational resources!"}
+                                />
+                                <Review
+                                    name={"Christopher"}
+                                    image={{
+                                        uri: "https://randomuser.me/api/portraits/men/53.jpg"
+                                    }}
+                                    ratingsNumber={5}
+                                    review={"Eva AI surpasses expectations, offering intuitive access to a vast array of educational materials and insightful recommendations!"}
+                                />
+                            </View> */}
                         </View>
 
-                        <View style={{ margin: "5%" }}>
-                            <Text style={{ color: "white", fontSize: responsiveScreenFontSize(2.5) }}>
-                                Some Reviews
-                            </Text>
-                        </View>
-                        <View style={{ alignItems: "center", justifyContent: "center" }}>
-                            <Review
-                                name={"Sophia N."}
-                                image={require('../../../assets/images/userImg.png')}
-                                ratingsNumber={5}
-                                review={"Spectacular AI in all the themes I have tried so far."}
-                            />
-                            <Review
-                                name={"Maria jr."}
-                                image={{
-                                    uri: "https://randomuser.me/api/portraits/women/90.jpg"
-                                }}
-                                ratingsNumber={5}
-                                review={"Best Ai Service in Market so far!"}
-                            />
-                            <Review
-                                name={"Jenna"}
-                                image={{
-                                    uri: "https://randomuser.me/api/portraits/women/64.jpg"
-                                }}
-                                ratingsNumber={5}
-                                review={"Eva AI is the cat's whiskers of AI apps, offering personalized tips and quirky cat facts that have revolutionized my cat-parenting experience!"}
-                            />
-                            <Review
-                                name={"Rosy"}
-                                image={{
-                                    uri: "https://randomuser.me/api/portraits/women/86.jpg"
-                                }}
-                                ratingsNumber={5}
-                                review={"Eva AI is the perfect study partner, providing personalized guidance and invaluable insights that have transformed my educational journey!"}
-                            />
-                            <Review
-                                name={"John"}
-                                image={{
-                                    uri: "https://randomuser.me/api/portraits/men/79.jpg"
-                                }}
-                                ratingsNumber={5}
-                                review={"Eva AI has made learning a joy with its user-friendly interface and wealth of educational resources!"}
-                            />
-                            <Review
-                                name={"Christopher"}
-                                image={{
-                                    uri: "https://randomuser.me/api/portraits/men/53.jpg"
-                                }}
-                                ratingsNumber={5}
-                                review={"Eva AI surpasses expectations, offering intuitive access to a vast array of educational materials and insightful recommendations!"}
-                            />
-                        </View>
                     </SafeAreaView>
-                </ImageBackground>
+                </>
             </ScrollView>
         );
     }
@@ -653,6 +667,7 @@ const styles = StyleSheet.create({
     scrollViewStyle: {
         flexGrow: 1,
         width: responsiveScreenWidth(100),
+        // height: Dimensions.get('window').height,
         backgroundColor: 'black',
     },
     container: {
@@ -660,14 +675,18 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     },
     imageBackground: {
-        width: responsiveScreenWidth(100),
-        flexGrow: 1,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'red'
+        // flex: 1,
+        // alignSelf: 'flex-start'
     },
     top: {
         flexDirection: "row",
         alignItems: "center",
         marginLeft: responsiveScreenWidth(2),
-        marginTop: responsiveScreenHeight(3)
+        marginTop: responsiveScreenHeight(3),
+
     },
     toptouchable: {
         height: responsiveScreenHeight(4.3),
@@ -688,8 +707,9 @@ const styles = StyleSheet.create({
     secondview: {
         alignItems: "center",
         justifyContent: "center",
-        marginTop: responsiveScreenHeight(35),
-        gap: responsiveFontSize(10),
+        marginTop: responsiveScreenHeight(20),
+        gap: responsiveFontSize(3),
+        margin: responsiveFontSize(3),
     },
     secondtext: {
         color: "white",
@@ -702,9 +722,9 @@ const styles = StyleSheet.create({
         marginTop: responsiveScreenHeight(1),
         borderRadius: 15,
         backgroundColor: themeColors.blackLight,
-        width: '95%',
+        width: '100%',
         alignSelf: 'center',
-        padding: 5,
+        // padding: 5,
     },
     thirdview: {
         width: '100%',
@@ -787,7 +807,8 @@ const styles = StyleSheet.create({
     },
     thirdsvgviewtext: {
         color: "white",
-        fontSize: responsiveScreenFontSize(2)
+        fontSize: responsiveScreenFontSize(2),
+        fontFamily: FONTS.Manrope_SemiBold
     },
     thirdviewnested: {
         width: responsiveScreenWidth(20),
@@ -835,11 +856,7 @@ const styles = StyleSheet.create({
         marginRight: responsiveScreenWidth(4)
     },
     card: {
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: responsiveScreenHeight(2),
-        gap: responsiveFontSize(0.5),
-
+        width: responsiveScreenWidth(80),
     },
     buttonview: {
         marginTop: "3%",

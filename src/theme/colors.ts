@@ -12,10 +12,15 @@ const themeColors = {
     dark: '#343a40',
     white: '#ffffff',
     whiteLight: 'rgba(255,255,255,0.47)',
+    blackTransparent: 'rgba(0,0,0,0.3)',
     background: '#f8f9fa',
-    yellow:"#EBFF00",
+    yellow: "#EBFF00",
     transparent: 'transparent',
-    blue:'#4F8BFF',
+    blue: '#4F8BFF',
+    osloGray: "#8B8C91",
+    malibu: "#74A7FF",
+    midnightBlue: "#00225E",
+    
 }
 
 export default themeColors;

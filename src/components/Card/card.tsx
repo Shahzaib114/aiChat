@@ -8,150 +8,184 @@ import {
 } from 'react-native-responsive-dimensions';
 import FONTS from '../../theme/FONTS';
 import themeColors from '../../theme/colors';
-import Vector from '../../../assets/svgs/vector';
 import { SvgXml } from 'react-native-svg';
-import CheckBox from "../check-box/check-box.tsx";
-import Toast from "react-native-simple-toast";
+import LinearGradient from 'react-native-linear-gradient';
+import { BlueCheckSvg } from '../../../assets/svgs/blueCheckSvg.js';
 
 const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircleActive, purchased, handleCardPress, handleCirclePress }: any) => {
+    const getAndroidAndIosTitles = (txt:any) => {
+        if (txt?.toLowerCase().includes('week')) {
+            return 'WEEKLY \nPLAN'
+        } else if (txt?.toLowerCase().includes('month')) {
+            return 'Monthly \nPLAN'
+        } else if (txt?.toLowerCase().includes('year')) {
+            return 'YEARLY \nPLAN'
+        }
+    }
     return (
         <TouchableOpacity
             onPress={() => {
                 handleCardPress()
             }}
+            style={[styles.card, {
+                alignItems: 'flex-start',
+                flexDirection: "column",
+                backgroundColor: '#1D1D1D',
+                width: '100%',
+                height: responsiveScreenHeight(43),
+                borderWidth: isCircleActive ? 5 : 0,
+                borderColor: isCircleActive ? '#619AFC' : undefined,
 
-            style={[styles.card, { alignItems: 'flex-start', flexDirection: "column", gap: 10 }]}
+            }]}
         >
 
             <View
                 style={{
-                    flexDirection: 'row',
                     justifyContent: 'space-between',
                     width: '100%',
+                    flexDirection: 'row',
                 }}
             >
-                <View style={styles.cardinnerview}>
-                    <View>
-                        <View style={styles.header}>
-                            <TouchableOpacity
-                                style={[
-                                    styles.circle,
-                                    { backgroundColor: isCircleActive ? '#02A67E' : 'grey', },
-                                ]}
-                                onPress={() => {
-                                    handleCirclePress()
-                                }}
-                            />
-                            {Platform.OS === 'ios' ?
-                                <Text style={styles.headerText}>{text.replace('(EVA: Your AI Assistant)', '',)}</Text>
-                                :
-                                <Text style={styles.headerText}>{androidTitle?.billingPeriod === 'P1Y' ? 'Year' : androidTitle?.billingPeriod === 'P1M' ? "Month" : "Week"}ly Subscription</Text>
-                            }
 
-                        </View>
-                        <View>
-                            <Text style={styles.description}>
-                                {save?.includes('weekly') ?
-                                    Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : '14.99 US$'
-                                    :
-                                    save?.includes('monthly') ?
-                                        Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : '9.19 US$'
-                                        :
-                                        save?.includes('yearly') &&
-                                            Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : '34.99 US$'
-                                }
-                                <Text style={styles.smallDescription}>
-                                    {save?.includes('weekly') ?
-                                        '/week'
-                                        :
-                                        save?.includes('monthly') ?
-                                            '/month'
-                                            :
-                                            save?.includes('yearly') &&
-                                            '/year'
-                                    }
-                                </Text>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    {purchased ?
+                        <LinearGradient colors={['#619AFC', '#3558D5']} style={styles.saveView}>
+                            <Text style={styles.saveTxt}>
+                                Subscribed
                             </Text>
-                        </View>
-                    </View>
-                    {save?.includes('yearly') &&
-                        <View style={styles.saveView}>
+                        </LinearGradient>
+                        :
+                        save?.includes('yearly') &&
+                        <LinearGradient colors={['#619AFC', '#3558D5']} style={styles.saveView}>
+                            <Text style={styles.saveTxt}>
+                                3-day free trial
+                            </Text>
+                        </LinearGradient>
+                    }
+                    <Text style={[styles.headerText, {}]}>{getAndroidAndIosTitles(text)}</Text>
+                </View>
+                <View style={{ alignSelf: 'flex-start', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+                    {save?.toLowerCase().includes('yearly') &&
+                        <LinearGradient colors={['#639BFC', '#4E8EFD']} style={styles.offPercentView}>
                             <Text style={styles.saveTxt}>
                                 80% off
+                            </Text>
+                        </LinearGradient>
+                    }
+                    <Text style={[styles.description, {}]}>
+
+                        {save?.toLowerCase().includes('week') ?
+                            Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$14.99'
+                            :
+                            save?.toLowerCase().includes('month') ?
+                                Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$9.19'
+                                :
+                                save?.toLowerCase().includes('year') &&
+                                    Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$34.99'
+                        }
+                        <Text style={[styles.smallDescription, {}]}>
+                            {save?.toLowerCase().includes('week') ?
+                                '\n/weekly'
+                                :
+                                save?.toLowerCase().includes('month') ?
+                                    '\n/monthly'
+                                    :
+                                    save?.toLowerCase().includes('year') &&
+                                    '  /yearly'
+                            }
+                        </Text>
+                    </Text>
+                    {save?.includes('yearly') &&
+                        <View style={{ alignSelf: 'flex-end' }}>
+                            <Text style={[styles.smallDescription, {
+                                fontFamily: FONTS.Manrope,
+                                fontSize: responsiveFontSize(2),
+                                textDecorationLine: 'line-through',
+                                color: themeColors.osloGray
+                            }]}>
+                                US$139.49
                             </Text>
                         </View>
                     }
                 </View>
-                {purchased ?
-                    <View style={[styles.saveView, { backgroundColor: themeColors.primary }]}>
-                        <Text style={styles.saveTxt}>
-                            Active
-                        </Text>
-                    </View>
-                    :
-                    <View style={styles.fourthview5}>
-                        <SvgXml xml={Vector} width="100%" height="100%" style={{ alignSelf: 'flex-start' }} />
-                    </View>
-                }
+
             </View>
+
             <View
                 style={{
-
                     width: '100%',
                     flexDirection: 'column',
-                    gap: 10
+                    gap: 10,
                 }}
             >
-                <View style={[styles.feature]}>
+                <View style={[styles.feature, { borderTopWidth: 1, paddingTop: responsiveFontSize(2) }]}>
+                    <SvgXml
+                        xml={BlueCheckSvg}
+                    />
                     <Text style={[styles.featureText]}>
-                        - Improved AI performance
+                        Model Chat-GPT 4.40 Mini
                     </Text>
                 </View>
                 <View style={[styles.feature]}>
+                    <SvgXml
+                        xml={BlueCheckSvg}
+                    />
                     <Text style={[styles.featureText]}>
-                        - Gpt-4 access
+                        100% Ads Free
                     </Text>
                 </View>
                 <View style={[styles.feature]}>
+                    <SvgXml
+                        xml={BlueCheckSvg}
+                    />
                     <Text style={[styles.featureText]}>
-                        - No ads
+                        Unlimited Messages
                     </Text>
                 </View>
                 <View style={[styles.feature]}>
+                    <SvgXml
+                        xml={BlueCheckSvg}
+                    />
                     <Text style={[styles.featureText]}>
-                        - Unlimited messages for {
+                        Voice Chat Available
+                    </Text>
+                </View>
+                <View style={[styles.feature, { borderBottomWidth: 1, paddingBottom: responsiveFontSize(2) }]}>
+                    <SvgXml
+                        xml={BlueCheckSvg}
+                    />
+                    <Text style={[styles.featureText]}>
+                        Updated Prompts 24/7
+                    </Text>
+                </View>
+                <View style={{
+                    flexDirection: 'row',
+                }}>
+                    <Text style={[styles.termsTxt, { color: themeColors.white }]}>* </Text>
+                    <Pressable
+                        style={{ alignSelf: 'center' }}
+                        onPress={() => {
+                            Linking.openURL("https://www.akromaxtech.com/terms-conditions")
+                        }}
+                    >
+                        <Text style={[styles.termsTxt, { color: themeColors.malibu }]}>Terms & Conditions</Text>
 
-                            save?.includes('weekly') ?
-                                '7 days'
-                                :
-                                save?.includes('monthly') ?
-                                    'one Month'
-                                    :
-                                    save?.includes('yearly') &&
-                                    'one Year'
-
-
-                        } to chat with EVA
-                    </Text>
+                    </Pressable>
+                    <Text style={[styles.termsTxt, { color: themeColors.white }]}> are applied. </Text>
                 </View>
-                <View style={[styles.feature, { borderBottomWidth: 1 }]}>
-                    <Text style={[styles.featureText]}>
-                        - More detailed answers
-                    </Text>
-                </View>
-                <View style={[styles.feature, { borderBottomWidth: 0 }]}>
-                    <Text style={[styles.featureText]}>
-                        - {
-                            save?.includes('weekly') ?
-                                '7 Days Access'
-                                :
-                                save?.includes('monthly') ?
-                                    '1 Month access'
-                                    :
-                                    save?.includes('yearly') &&
-                                    'One Year access'
-                        }
-                    </Text>
+                <View style={{
+                    flexDirection: 'row',
+                }}>
+                    <Text style={[styles.termsTxt, { color: themeColors.white }]}>* Agree to our </Text>
+                    <Pressable
+                        style={{ alignSelf: 'center' }}
+                        onPress={() => {
+                            Linking.openURL("https://www.akromaxtech.com/terms-conditions")
+                        }}
+                    >
+                        <Text style={[styles.termsTxt, { color: themeColors.malibu }]}>Privacy Policy</Text>
+
+                    </Pressable>
                 </View>
             </View>
         </TouchableOpacity>
@@ -161,29 +195,33 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
 const styles = StyleSheet.create({
     card: {
         padding: responsiveFontSize(1.8),
-        width: '95%',
-        alignSelf: 'center',
+        width: '33%',
         flexDirection: 'row',
-        justifyContent: 'space-between',
         backgroundColor: themeColors.blackLight,
         borderRadius: 10,
         borderColor: themeColors.dark,
-        borderWidth: 1
+        borderWidth: 1,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
+        width: '100%',
+        justifyContent: 'space-between'
     },
     saveView: {
-        backgroundColor: themeColors.blue,
-        alignSelf: 'baseline',
-        marginLeft: 4,
         padding: responsiveFontSize(0.5),
-        borderRadius: responsiveFontSize(1.5),
-        justifyContent: 'center',
-        alignItems: 'center'
+        paddingHorizontal: responsiveFontSize(1),
+        borderRadius: responsiveFontSize(0.5),
     },
+    offPercentView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'flex-end',
+        padding: responsiveFontSize(0.5),
+        paddingHorizontal: responsiveFontSize(1.5),
+        borderRadius: responsiveFontSize(2),
+    },
+
     fourthview5: {
         width: responsiveScreenWidth(5),
         height: responsiveScreenHeight(5),
@@ -192,13 +230,17 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     feature: {
-        borderBottomWidth: 1,
-        borderBottomColor: themeColors.dark,
+        borderColor: themeColors.osloGray,
         paddingBottom: 10,
+        flexDirection: 'row',
+        gap: responsiveFontSize(1)
 
     },
     featureText: {
+        fontSize: responsiveScreenFontSize(1.5),
         color: themeColors.white,
+        fontFamily: FONTS.Manrope_SemiBold,
+
     },
 
 
@@ -209,30 +251,40 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     description: {
-        fontSize: responsiveScreenFontSize(3),
+        fontSize: responsiveScreenFontSize(2),
         color: themeColors.white,
-        fontFamily: FONTS.Manrope_Medium
+        fontFamily: FONTS.Manrope_ExtraBold,
+        textAlign: 'right'
+    },
+    termsTxt: {
+        fontSize: responsiveScreenFontSize(1.3),
+        color: themeColors.white,
+        fontFamily: FONTS.Manrope_Medium,
     },
     saveTxt: {
         fontSize: responsiveScreenFontSize(1.5),
-        color: themeColors.black,
-        fontFamily: FONTS.Manrope_Regular,
-        paddingHorizontal: 5
+        color: themeColors.white,
+        fontFamily: FONTS.Manrope_Bold,
     },
     smallDescription: {
-        fontSize: responsiveScreenFontSize(2),
+        fontSize: responsiveScreenFontSize(1.5),
         color: themeColors.white,
-        fontFamily: FONTS.Manrope_SemiBold
+        fontFamily: FONTS.Manrope,
+        alignSelf: 'flex-end',
+        textAlign: 'right'
     },
     headerText: {
-        fontSize: responsiveScreenFontSize(2),
+        fontSize: responsiveScreenFontSize(2.5),
         color: themeColors.white,
-        fontFamily: FONTS.Manrope_Light
+        fontFamily: FONTS.Manrope_ExtraBold,
+        textAlign: 'left',
+        alignSelf: 'flex-start',
     },
     cardinnerview: {
-        width: '85%',
+        width: '100%',
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        backgroundColor: 'red'
     }
 });
 
