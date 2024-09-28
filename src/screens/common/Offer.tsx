@@ -30,6 +30,7 @@ import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails
 import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
 import getUniqueDeviceId from "../../utils/device-id.ts";
 import { finishTransaction, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
+import blackcross from "../../../assets/svgs/blackcross.js";
 
 const Offer = () => {
     const [discountedProduct, setDiscountedProduct] = useState<any>()
@@ -180,316 +181,159 @@ const Offer = () => {
             }
         }
     };
+    // source={require("../../../assets/images/Image.png")}
 
     return (
-        <ImageBackground
-            source={require("../../../assets/images/bg.png")}
-            style={{ flex: 1, justifyContent: 'space-between' }}
-            resizeMode="cover"
-        >
-            <SafeAreaView
-                style={styles.safeareaview}>
-                <ScrollView showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
-                    <TouchableOpacity
-                        style={styles.view2}
-                        onPress={() => {
-                            navigation.goBack();
-                        }}
-                    >
-                        <SvgXml xml={CrossWhiteSvg} width="15%" style={{ alignSelf: 'flex-end' }} />
-                    </TouchableOpacity>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={subsModalCLose}
-                        onRequestClose={() => setSubsModalClose(false)}
-                    >
-                        <View style={styles.modalContainer}>
-                            <View style={styles.contentContainer}>
-                                <Text style={styles.titleText}>
-                                    Yearly Discounted Access
-                                </Text>
+        <View style={styles.container}>
+            <ImageBackground
+                source={require("../../../assets/images/Image2.png")}
+                style={styles.backgroundImage}
+                resizeMode="cover"
+            >
+                <TouchableOpacity style={styles.crosstouchable}>
+                    <SvgXml xml={blackcross} width="20" height="12" />
+                </TouchableOpacity>
+                <View style={{ alignItems: "center", justifyContent: "center", marginTop: "2%" }}>
+                    <View style={{ backgroundColor: "#5572F1", width: "80%", borderRadius: 6, padding: 10 }}>
+                        <Text style={styles.headerText}>Get this exclusive offer and </Text>
+                        <Text style={styles.headerText}>enjoy all access pass!</Text>
+                    </View>
+                </View>
+                <View style={styles.discountContainer}>
+                    <Text style={styles.discountText}>50% OFF</Text>
+                    <Text style={styles.subText}>Get this exclusive limited offer!</Text>
+                </View>
 
-                                <Text style={styles.contentText}>
-                                    {`- Only in $17.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited yearly messages to chat with EVA.\n- More detailed answers.\n- 1 year Access`}
-                                </Text>
+            </ImageBackground>
+            <View style={styles.overlay}>
 
-
-
-                                <View style={styles.twoRowItemsContainer}>
-                                    <TouchableOpacity
-                                        onPress={() => setSubsModalClose(false)}
-                                        style={[styles.buttonOpacity, { backgroundColor: themeColors.blackLight }]}
-                                    >
-                                        <Text style={styles.cancelTxtStyles} >
-                                            Cancel
-                                        </Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        onPress={async () => {
-                                            setSubsModalClose(false)
-                                            if (Platform.OS === 'ios') {
-                                                selectedProdId.current = discountedProduct?.productId;
-                                                handlePurchaseIOS(discountedProduct.productId)
-                                            } else {
-                                                handlePurchaseAndroid(discountedProduct.offerToken)
-                                                selectedProdId.current = discountedProduct?.basePlanId;
-                                            }
-                                        }}
-                                        style={[styles.buttonOpacity, { backgroundColor: themeColors.primary }]}
-                                    >
-                                        <Text style={styles.acceptTxtStyles} >
-                                            Ok
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-
-                    <View style={styles.view3}>
-                        <OfferTop text={`This is Just for`} off={"You!"} />
-                        <OfferCenter heading={"Special Offer"} off={"-50%"} />
-                        <View style={styles.view4}>
-                            <Point
-
-                                Icon={<SvgImport svg={starYellow} />}
-                                color={"white"}
-                                text={"Unlimited chat messages"}
-                            />
-                            <Point
-                                Icon={<Rocket style={styles.iconStyle} />}
-                                color={"white"}
-                                text={"Improved Answers AI"}
-                            />
-                            <Point
-                                Icon={<PartyPopper size={14} style={styles.iconStyle} />}
-                                color={"white"}
-                                text={
-                                    <Text>
-                                        No <Text style={{ color: themeColors.red }}>ADS</Text> in the app
-                                    </Text>
-                                }
-                            />
-                            <Point
-                                Icon={<RobotHead style={styles.iconStyle} />}
-                                color={"white"}
-                                text={
-                                    <Text style={{ color: "white", fontFamily: FONTS.Manrope_Regular }}>
-                                        Powered by{" "}
-                                        <Text style={{ color: "lightgreen", fontFamily: FONTS.Manrope_Bold }}>ChatGPT
-                                            4</Text>
-                                    </Text>
-                                }
-                            />
-                        </View>
-
-                        <View style={styles.view5}>
-                            <View style={styles.view6}>
-                                <Text
-                                    style={styles.view6text1}
-                                >
-                                    Only{" "}
-                                    <Text
-                                        style={
-                                            styles.view6text2
-                                        }
-                                    >
-                                        $34.99
-                                    </Text>
-                                </Text>
-                                <Text
-                                    style={
-                                        styles.view6text3
-                                    }
-                                >
-                                    17.99 per year
-                                </Text>
-                                <Text
-                                    style={
-                                        styles.view6text4
-                                    }
-                                >
-                                    (Less than US$0.05 per day)
-                                </Text>
-                            </View>
-
-                            <View
-                                style={styles.view7}>
-                                <Text
-                                    style={styles.view7text}>
-                                    Automatically renewable. Cancel whenever you want.
-                                </Text>
-                            </View>
-                            {!isLoader ?
-                                <TouchableOpacity
-                                    style={styles.btnStyle}
-                                    onPress={async () => {
-                                        setSubsModalClose(true)
-                                    }}
-                                >
-                                    <Text
-                                        style={styles.takeOfferTxt}
-                                    >
-                                        Take this Offer
-                                    </Text>
-                                </TouchableOpacity>
-                                :
-                                <View>
-                                    <ActivityIndicator color={themeColors.white} size={'large'} />
-                                </View>
-                            }
+                <View style={styles.priceContainer}>
+                    <View style={styles.freeTrialWrapper}>
+                        <View style={styles.freeTrialContainer}>
+                            <Text style={styles.freeTrial}>3-day free trial</Text>
                         </View>
                     </View>
-                </ScrollView>
-            </SafeAreaView>
-        </ImageBackground >
+
+                    <Text style={styles.price}>YEARLY</Text>
+                    <Text style={styles.priceAmount}>US$17.99 / year</Text>
+
+                    <Text style={styles.priceMonthly}>($1.49 / month) -50%</Text>
+
+                </View>
+
+                <TouchableOpacity style={styles.subscribeButton}>
+                    <Text style={styles.subscribeText}>TRY 3 DAYS AND SUBSCRIBE</Text>
+                </TouchableOpacity>
+
+                <Text style={styles.footerText}>*US$17.99 billed annually. Cancel anytime.</Text>
+            </View>
+        </View>
     );
 };
 
 export default Offer;
 
 const styles = StyleSheet.create({
-    btnStyle: {
-        width: '95%',
-        alignSelf: 'center',
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: responsiveFontSize(1),
-        backgroundColor: themeColors.white
-    },
-    iconStyle: {
-        width: '10%'
-    },
-    takeOfferTxt: {
-        color: themeColors.black,
-        fontSize: responsiveFontSize(2),
-        fontFamily: FONTS.Manrope_Medium,
-        margin: responsiveFontSize(2)
-    },
-    safeareaview: {
-        flexGrow: 1,
-        width: '100%',
-        padding: 10,
-    },
-    view2: {
-        width: "100%",
-        justifyContent: "flex-end",
-    },
-    view3: {
-        alignItems: "center",
-        gap: 10,
-        width: "100%"
-    },
-    view4: {
-        gap: 10,
-        width: '70%',
-        alignSelf: 'center',
-        marginLeft: '9%'
-    },
-    view5: {
-        marginVertical: 10,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-        gap: responsiveFontSize(3)
-    },
-    view6: {
-        width: "100%",
-        alignItems: "center",
-    },
-    view6text1: {
-        color: "white",
-        fontSize: responsiveFontSize(2),
-        fontFamily: FONTS.Manrope_ExtraBold
-    },
-    view6text2: {
-        textDecorationLine: "line-through",
-        textDecorationStyle: "solid",
-    },
-    modalContainer: {
+    container: {
         flex: 1,
-        justifyContent: 'center',
+        backgroundColor: '#222',
+    },
+    backgroundImage: {
+        flex: 1,
+    },
+    overlay: {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        borderRadius: 10,
+        alignItems: 'center',
         width: '100%',
+        height: "30%"
+    },
+    freeTrialWrapper: {
+        position: 'absolute',
+        top: -15,
+    },
+    freeTrialContainer: {
+        backgroundColor: '#627BFC',
+        borderRadius: 4,
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        paddingVertical: 5,
+        paddingHorizontal: 25,
     },
-    contentText: {
-        marginVertical: responsiveFontSize(3),
-        color: 'black',
-        fontFamily: FONTS.Manrope_Regular,
-        width: responsiveScreenWidth(95),
-        alignSelf: 'center',
+    freeTrial: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: 'bold',
     },
-    buttonOpacity: {
-        width: '45%',
-        backgroundColor: 'grey',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: responsiveFontSize(5),
-    },
-    contentContainer: {
-        width: '100%',
-        alignSelf: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: responsiveFontSize(2),
-        borderRadius: responsiveFontSize(3),
-        backgroundColor: 'white'
-    },
-    cancelTxtStyles: {
-        padding: responsiveFontSize(2),
-        alignSelf: 'center',
-        color: themeColors.white,
-        fontFamily: FONTS.Manrope_ExtraBold,
-        fontSize: responsiveFontSize(2)
-    },
-    titleText: {
-        color: 'black',
-        fontSize: responsiveScreenFontSize(4),
-        fontFamily: FONTS.Manrope_ExtraBold,
-    },
-    acceptTxtStyles: {
-        padding: responsiveFontSize(2),
-        borderRadius: responsiveFontSize(5),
-        alignSelf: 'center',
-        color: themeColors.white,
-        fontFamily: FONTS.Manrope_ExtraBold,
-        fontSize: responsiveFontSize(2)
-    },
-    twoRowItemsContainer: {
-        width: '95%',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        alignSelf: 'center',
-        alignItems: 'flex-start',
-        textAlign: 'left',
-    },
-    view6text3: {
-        color: "white",
-        marginLeft: 10,
+    headerText: {
+        color: '#fff',
+        fontSize: 18,
         textAlign: 'center',
-        alignSelf: 'center',
-        fontSize: responsiveFontSize(2.5),
-        fontFamily: FONTS.Manrope_ExtraBold
     },
-    view6text4: {
-        color: "white",
-        marginLeft: 10,
-        fontSize: responsiveFontSize(1.4),
-        fontFamily: FONTS.Manrope_ExtraBold
+    discountContainer: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        padding: 20,
+        alignItems: 'center',
     },
-    view7: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "center",
+    discountText: {
+        fontSize: 40,
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    subText: {
+        color: '#ccc',
+        fontSize: 16,
+    },
+    priceContainer: {
+        marginTop: "7%",
+        width: "45%",
+        padding: 12,
+        borderWidth: 5,
+        borderRadius: 4,
+        alignItems: 'center',
+        borderColor: "#385BD8"
+    },
+    price: {
+        color: '#fff',
+        fontWeight: 'bold'
+    },
+    priceAmount: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    priceMonthly: {
+        color: '#4A90E2',
+    },
+    subscribeButton: {
+        backgroundColor: '#4A90E2',
+        width: "80%",
+        marginTop: "4%",
         alignItems: "center",
+        justifyContent: "center",
+        padding: 15,
+        borderRadius: 8,
     },
-    view7text: {
-        color: "white",
-        fontSize: responsiveFontSize(1.4),
-        fontFamily: FONTS.Manrope_ExtraBold
+    subscribeText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    footerText: {
+        color: '#ccc',
+        fontSize: 12,
+        marginTop: "2%",
+        textAlign: 'center',
+    },
+    crosstouchable: {
+        backgroundColor: "grey",
+        width: "8%",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 10,
+        borderRadius: 30,
+        alignSelf: "flex-end",
+        marginRight: "3%",
+        marginTop: "2%"
     }
 });
