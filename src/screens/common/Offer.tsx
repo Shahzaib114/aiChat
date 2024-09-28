@@ -193,8 +193,8 @@ const Offer = () => {
                 <TouchableOpacity style={styles.crosstouchable}>
                     <SvgXml xml={blackcross} width="20" height="12" />
                 </TouchableOpacity>
-                <View style={{ alignItems: "center", justifyContent: "center", marginTop: "2%" }}>
-                    <View style={{ backgroundColor: "#5572F1", width: "80%", borderRadius: 6, padding: 10 }}>
+                <View style={styles.offerview}>
+                    <View style={styles.offerview2}>
                         <Text style={styles.headerText}>Get this exclusive offer and </Text>
                         <Text style={styles.headerText}>enjoy all access pass!</Text>
                     </View>
@@ -285,6 +285,12 @@ const styles = StyleSheet.create({
         color: '#ccc',
         fontSize: 16,
     },
+    offerview2: {
+        backgroundColor: "#5572F1",
+        width: "80%",
+        borderRadius: 6,
+        padding: 10
+    },
     priceContainer: {
         marginTop: "7%",
         width: "45%",
@@ -297,6 +303,11 @@ const styles = StyleSheet.create({
     price: {
         color: '#fff',
         fontWeight: 'bold'
+    },
+    offerview: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: "2%"
     },
     priceAmount: {
         color: '#fff',
