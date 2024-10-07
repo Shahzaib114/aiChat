@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Image, Linking, Modal, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Linking, Modal, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
     responsiveFontSize,
     responsiveScreenFontSize,
@@ -102,8 +102,9 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     setAllProducts(sortedSubscriptions);
                 } else {
                     products[0].subscriptionOfferDetails?.splice(3, 1);
+                    let sortedProducts = products[0].subscriptionOfferDetails?.filter((item)=> item?.basePlanId !== 'yearly-discounted-subscription')
                     setDescription(products[0]?.description)
-                    setAllProducts(products[0].subscriptionOfferDetails);
+                    setAllProducts(sortedProducts);
                 }
                 setIsGetPackage(true)
             } catch (err) {
@@ -449,7 +450,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                             key={index}
                                         >
                                             <Card
-                                                text={Platform.OS === 'android' ? pricesAndPeriods[index]?.period : `${item?.title}`}
+                                                text={Platform.OS === 'android' ? item?.basePlanId : `${item?.title}`}
                                                 androidTitle={item?.pricingPhases?.pricingPhaseList[0]}
                                                 description={Platform.OS === 'android' ? pricesAndPeriods[index]?.price : pricesAndPeriods?.price}
                                                 save={productId}
@@ -578,13 +579,9 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                     paddingBottom: 5,
                                     fontFamily: FONTS.Manrope_ExtraBold
                                 }}
-
                                 >
                                     EVA
                                 </Text>
-                                <View style={{ height: 3, backgroundColor: themeColors.malibu, width: '17%' }}>
-
-                                </View>
                             </View>
 
                             <ScrollView horizontal

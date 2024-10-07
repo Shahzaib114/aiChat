@@ -20,6 +20,8 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
             return 'Monthly \nPLAN'
         } else if (txt?.toLowerCase().includes('year')) {
             return 'YEARLY \nPLAN'
+        }else {
+            return;
         }
     }
     return (
@@ -65,7 +67,7 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
                     <Text style={[styles.headerText, {}]}>{getAndroidAndIosTitles(text)}</Text>
                 </View>
                 <View style={{ alignSelf: 'flex-start', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
-                    {save?.toLowerCase().includes('yearly') &&
+                    {save?.toLowerCase().includes('year') &&
                         <LinearGradient colors={['#639BFC', '#4E8EFD']} style={styles.offPercentView}>
                             <Text style={styles.saveTxt}>
                                 80% off
@@ -73,7 +75,6 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
                         </LinearGradient>
                     }
                     <Text style={[styles.description, {}]}>
-
                         {save?.toLowerCase().includes('week') ?
                             Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$14.99'
                             :
