@@ -8,7 +8,6 @@ import { initializeApp } from '@react-native-firebase/app';
 import { getAnalytics } from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
 import { Platform } from 'react-native';
-import firebase from '@react-native-firebase/app';
 import { getDatabaseInstance } from './src/utils/firebaseInstance.tsx';
 
 function App() {

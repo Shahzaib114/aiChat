@@ -1,11 +1,8 @@
-import {useContext} from "react";
-import SessionContext, {Session} from "../context/session-context.tsx";
+import { useContext } from "react";
 import SubscriptionContext, {
-    ISubscriptionActions,
-    subscriptionContextProps,
-    SubscriptionProvider
+    ISubscriptionActions
 } from "../context/subscription-context.tsx";
-import {ISubscription} from "../utils/types.ts";
+import { ISubscription } from "../utils/types.ts";
 
 
 function useSubscription(): [ISubscription, ISubscriptionActions ] {

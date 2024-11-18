@@ -34,7 +34,7 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
                 flexDirection: "column",
                 backgroundColor: '#1D1D1D',
                 width: '100%',
-                height: responsiveScreenHeight(43),
+                height: responsiveScreenHeight(39),
                 borderWidth: isCircleActive ? 5 : 0,
                 borderColor: isCircleActive ? '#619AFC' : undefined,
 
@@ -116,7 +116,7 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
                 style={{
                     width: '100%',
                     flexDirection: 'column',
-                    gap: 10,
+                    gap: 5,
                 }}
             >
                 <View style={[styles.feature, { borderTopWidth: 1, paddingTop: responsiveFontSize(2) }]}>

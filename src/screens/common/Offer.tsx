@@ -1,36 +1,25 @@
 import {
     ImageBackground, SafeAreaView, StyleSheet,
     Text,
-    View,
-    ScrollView,
-    ActivityIndicator,
-    Platform,
+    View, Platform,
     Alert,
     Modal
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import OfferTop from "../../../assets/svgs/offerTop";
-import OfferCenter from "../../../assets/svgs/OfferCenter";
-import Rocket from "../../../assets/svgs/Rocket";
-import PartyPopper from "../../../assets/svgs/PartyPopper";
-import RobotHead from "../../../assets/svgs/RobotHead";
 import FONTS from "../../theme/FONTS";
 import themeColors from "../../theme/colors";
-import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenWidth } from "react-native-responsive-dimensions";
+import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from "react-native-responsive-dimensions";
 import { TouchableOpacity } from "react-native";
-import Point from "../../components/point/Point";
 import useSubscription from "../../hooks/useSubscription.ts";
 import { useNavigation } from "@react-navigation/native";
 import { SvgXml } from "react-native-svg";
-import CrossWhiteSvg from "../../../assets/svgs/crossWhite.js";
-import SvgImport from "../../utils/import-svg.tsx";
-import starYellow from "../../../assets/svgs/starYellow.js";
 import Toast from "react-native-simple-toast";
 import ExtractPriceAndPeriod from "../../components/price&Periods/GetSubsDetails.tsx";
 import { REVENUE_CAT_ANDROID_APIKEY, REVENUE_CAT_IOS_APIKEY } from "../../utils/app-config.ts";
 import getUniqueDeviceId from "../../utils/device-id.ts";
 import { finishTransaction, getSubscriptions, purchaseUpdatedListener, requestSubscription } from "react-native-iap";
 import blackcross from "../../../assets/svgs/blackcross.js";
+import LinearGradient from "react-native-linear-gradient";
 
 const Offer = () => {
     const [discountedProduct, setDiscountedProduct] = useState<any>()
@@ -39,7 +28,7 @@ const Offer = () => {
     const [subscriptionHook, subscriptionHookAction] = useSubscription()
     const navigation = useNavigation();
     const iosProductIds = ["yearly.discounted.subscription"]; // Replace with your actual product IDs
-    const androidProductIds = ["com.aichat"]; // Replace with your actual product IDs
+    const androidProductIds = ["com.aichatbot"]; // com.aichatbot
     const selectedProdId = useRef(null);  //
     const [subsModalCLose, setSubsModalClose] = useState(false)
 
@@ -49,8 +38,7 @@ const Offer = () => {
                 const products: any = await getSubscriptions({ skus: Platform.OS === 'ios' ? iosProductIds : androidProductIds });
                 if (Platform.OS === 'android') {
                     const pricesAndPeriods = ExtractPriceAndPeriod(products[0]?.description);
-                    setPricingDetails(pricesAndPeriods[3].price)
-                    setDiscountedProduct(products[0].subscriptionOfferDetails[3]);
+                    setDiscountedProduct(products[0]?.subscriptionOfferDetails[3])
                 } else if (Platform.OS === 'ios') {
                     setPricingDetails(products[0].description)
                     setDiscountedProduct(products[0]);
@@ -125,11 +113,11 @@ const Offer = () => {
         setIsLoader(true)
         try {
             await requestSubscription({
-                sku: "com.aichat",
+                sku: "com.aichatbot",
                 ...('offerToken' && {
                     subscriptionOffers: [
                         {
-                            sku: "com.aichat", // as a string
+                            sku: "com.aichatbot", // as a string
                             offerToken: offerToken
                         },
                     ],
@@ -148,14 +136,13 @@ const Offer = () => {
             let parsedValue: any = JSON.parse(transactionReceipt)
             updatedReciept = parsedValue?.purchaseToken
         }
-
         if (transactionReceipt && transactionId) {
             try {
                 const response = await fetch('https://api.revenuecat.com/v1/receipts', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': Platform.OS === 'android' ? `Bearer ${REVENUE_CAT_ANDROID_APIKEY}` : `Bearer ${REVENUE_CAT_IOS_APIKEY}` // Replace with your actual API key
+                        'Authorization': Platform.OS === 'android' ? `Bearer ${REVENUE_CAT_ANDROID_APIKEY}` : `Bearer ${REVENUE_CAT_IOS_APIKEY}`
                     },
                     body: JSON.stringify({
                         app_user_id: deviceId,
@@ -198,7 +185,7 @@ const Offer = () => {
                         </Text>
 
                         <Text style={styles.contentText}>
-                            {`- Only in $17.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited yearly messages to chat with EVA.\n- More detailed answers.\n- 1 year Access`}
+                            {`- 3 days free trial \n- You will be charged After 3 free days \n- Only in $17.99 \n- Improved AI performance\n- GPT - 4 access\n- No Ads.\n- Unlimited yearly messages to chat with EVA.\n- More detailed answers.\n- 1 year Access`}
                         </Text>
 
 
@@ -227,7 +214,7 @@ const Offer = () => {
                                 style={[styles.buttonOpacity, { backgroundColor: themeColors.primary }]}
                             >
                                 <Text style={styles.acceptTxtStyles} >
-                                    Ok
+                                    Purchase
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -248,10 +235,12 @@ const Offer = () => {
                     <SvgXml xml={blackcross} width="20" height="12" />
                 </TouchableOpacity>
                 <View style={styles.offerview}>
-                    <View style={styles.offerview2}>
+                    <LinearGradient colors={['#667EFF', '#5572F1', '#3D5FDD', '#3558D5']}
+                        style={styles.offerview2}
+                    >
                         <Text style={styles.headerText}>Get this exclusive offer and </Text>
                         <Text style={styles.headerText}>enjoy all access pass!</Text>
-                    </View>
+                    </LinearGradient>
                 </View>
                 <View style={styles.discountContainer}>
                     <Text style={styles.discountText}>50% OFF</Text>
@@ -262,31 +251,33 @@ const Offer = () => {
             <View style={styles.overlay}>
 
                 <View style={styles.priceContainer}>
-                    <View style={styles.freeTrialWrapper}>
-                        <View style={styles.freeTrialContainer}>
-                            <Text style={styles.freeTrial}>3-day free trial</Text>
-                        </View>
+                    <View style={styles.freeTrialContainer}>
+                        <Text style={styles.freeTrial}>3-day free trial</Text>
                     </View>
-
-                    <Text style={styles.price}>YEARLY</Text>
-                    <Text style={styles.priceAmount}>US$17.99 / year</Text>
-
-                    <Text style={styles.priceMonthly}>($1.49 / month) -50%</Text>
-
+                    <View style={{ marginLeft: responsiveScreenWidth(5), gap: responsiveFontSize(0.2), }}>
+                        <Text style={styles.price}>YEARLY</Text>
+                        <Text style={styles.priceAmount}>US$17.99 / <Text style={{ fontFamily: FONTS.Manrope_Medium }}>year</Text></Text>
+                        <Text style={styles.priceMonthly}>($1.49 / month) </Text>
+                    </View>
+                    <Text style={styles.discountNumberStyle} > -50%</Text>
                 </View>
 
-                <TouchableOpacity
-                    onPress={async () => {
-                        console.log('[reeesed')
-                        setSubsModalClose(true)
-                    }}
-                    style={styles.subscribeButton}>
-                    <Text style={styles.subscribeText}>TRY 3 DAYS AND SUBSCRIBE</Text>
-                </TouchableOpacity>
+                <LinearGradient colors={['#667EFF', '#3558D5']}
+                    style={styles.subscribeButton}
+                >
+                    <TouchableOpacity
+                        onPress={async () => {
+                            console.log('[reeesed')
+                            setSubsModalClose(true)
+                        }}
+                    >
+                        <Text style={styles.subscribeText}>TRY 3 DAYS AND SUBSCRIBE</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
 
-                <Text style={styles.footerText}>*US$17.99 billed annually. Cancel anytime.</Text>
+                <Text style={styles.footerText}>*$17.99 billed annually. Cancel anytime.</Text>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 };
 
@@ -301,32 +292,40 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)', 
         borderRadius: 10,
         alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
         height: "30%"
     },
     freeTrialWrapper: {
         position: 'absolute',
-        top: -15,
+        top: responsiveScreenHeight(-2),
+        backgroundColor: 'green'
     },
     freeTrialContainer: {
         backgroundColor: '#627BFC',
-        borderRadius: 4,
+        width: '80%',
+        borderRadius: responsiveFontSize(0.5),
         alignItems: 'center',
-        paddingVertical: 5,
-        paddingHorizontal: 25,
+        alignSelf: 'center',
+        paddingVertical: responsiveFontSize(1),
+        paddingHorizontal: responsiveFontSize(2),
+        top: responsiveScreenHeight(-2),
+        position: 'absolute'
     },
     freeTrial: {
         color: '#fff',
-        fontSize: 12,
+        fontSize: responsiveFontSize(1.5),
         fontWeight: 'bold',
     },
     headerText: {
         color: '#fff',
-        fontSize: 18,
+        fontFamily: FONTS.Manrope_Bold,
+        fontSize: responsiveFontSize(2),
         textAlign: 'center',
+        letterSpacing:0.3
     },
     discountContainer: {
         position: 'absolute',
@@ -336,13 +335,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     discountText: {
-        fontSize: 40,
         color: '#fff',
-        fontWeight: 'bold',
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(4)
     },
     subText: {
-        color: '#ccc',
-        fontSize: 16,
+        color: '#fff',
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(1.8)
     },
     offerview2: {
         backgroundColor: "#5572F1",
@@ -358,33 +358,34 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)',
     },
     contentText: {
-        marginVertical: responsiveFontSize(3),
+        marginVertical: responsiveFontSize(2),
         color: 'black',
         fontFamily: FONTS.Manrope_Regular,
-        width: responsiveScreenWidth(95),
+        width: '100%',
         alignSelf: 'center',
     },
 
     priceContainer: {
-        marginTop: "7%",
-        width: "45%",
-        padding: 12,
-        borderWidth: 5,
-        borderRadius: 4,
-        alignItems: 'center',
-        borderColor: "#385BD8"
+        width: "43%",
+        height: responsiveScreenHeight(12),
+        borderWidth: responsiveFontSize(0.7),
+        borderRadius: responsiveFontSize(0.7),
+        alignItems: 'flex-start',
+        justifyContent: 'flex-end',
+        borderColor: "#385BD8",
+        paddingBottom: 10
     },
     buttonOpacity: {
-        width: '45%',
-        backgroundColor: 'grey',
+        width: '49%',
         justifyContent: 'center',
         alignItems: 'center',
+        padding: responsiveFontSize(1),
         borderRadius: responsiveFontSize(5),
     },
-
     price: {
         color: '#fff',
-        fontWeight: 'bold'
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(1.5)
     },
     offerview: {
         alignItems: "center",
@@ -392,33 +393,47 @@ const styles = StyleSheet.create({
         marginTop: "2%"
     },
     contentContainer: {
-        width: '100%',
+        width: '85%',
         alignSelf: 'center',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: responsiveFontSize(2),
+        padding: responsiveFontSize(1),
         borderRadius: responsiveFontSize(3),
         backgroundColor: 'white'
     },
     cancelTxtStyles: {
-        padding: responsiveFontSize(2),
-        alignSelf: 'center',
         color: themeColors.white,
-        fontFamily: FONTS.Manrope_ExtraBold,
-        fontSize: responsiveFontSize(2)
+        fontFamily: FONTS.Manrope_Regular,
+        fontSize: responsiveFontSize(1.7)
     },
 
     priceAmount: {
-        color: '#fff',
-        fontWeight: 'bold',
+        color: '#627BFC',
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(1.8),
+        letterSpacing: 0.5
     },
     priceMonthly: {
-        color: '#4A90E2',
+        color: '#fff',
+        fontFamily: FONTS.Manrope_Medium,
+        fontSize: responsiveFontSize(1.5)
+    },
+    discountNumberStyle: {
+        position: 'absolute',
+        right: 0,
+        bottom: 0,
+        color: 'white',
+        backgroundColor: "#4867E6",
+        padding: 2,
+        borderTopLeftRadius: responsiveFontSize(0.5),
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(1.5)
     },
     titleText: {
         color: 'black',
-        fontSize: responsiveScreenFontSize(4),
-        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveScreenFontSize(3),
+        fontFamily: FONTS.Manrope_SemiBold,
+        textAlign: 'center'
     },
 
     subscribeButton: {
@@ -431,21 +446,19 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     acceptTxtStyles: {
-        padding: responsiveFontSize(2),
-        borderRadius: responsiveFontSize(5),
-        alignSelf: 'center',
         color: themeColors.white,
-        fontFamily: FONTS.Manrope_ExtraBold,
-        fontSize: responsiveFontSize(2)
+        fontFamily: FONTS.Manrope_Regular,
+        fontSize: responsiveFontSize(1.5)
     },
 
     subscribeText: {
         color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 16,
+        fontFamily: FONTS.Manrope_ExtraBold,
+        fontSize: responsiveFontSize(1.8),
+        letterSpacing: 0.3
     },
     twoRowItemsContainer: {
-        width: '95%',
+        width: '100%',
         justifyContent: 'space-between',
         flexDirection: 'row',
         alignSelf: 'center',
@@ -454,8 +467,9 @@ const styles = StyleSheet.create({
     },
 
     footerText: {
-        color: '#ccc',
-        fontSize: 12,
+        color: '#A6A6A6',
+        fontFamily: FONTS.Manrope_Medium,
+        fontSize: responsiveFontSize(1.5),
         marginTop: "2%",
         textAlign: 'center',
     },

@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React, { FC } from "react";
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import { IDefaultProps } from "../../utils/types.ts";
 import themeColors from "../../theme/colors.ts";
 import { TransFormedCategory } from "./variables/types.ts";

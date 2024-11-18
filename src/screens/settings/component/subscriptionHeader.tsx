@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { IDefaultProps } from "../../../utils/types.ts";
 import themeColors from "../../../theme/colors.ts";
@@ -11,16 +11,14 @@ interface ChatScreenHeaderProps extends IDefaultProps {
 const SubscriptionScreenHeader: FC<ChatScreenHeaderProps> = ({ ...props }) => {
     const navigation = useNavigation();
     return (
-        <SafeAreaView style={styles.container}>
-         
-        </SafeAreaView>
+        <View style={styles.container}>
+
+        </View>
     )
 }
 
-const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        paddingVertical: 26,
-        paddingHorizontal: 20,
         backgroundColor: themeColors.black,
         borderBottomWidth: 2,
         borderBottomColor: themeColors.blackLight,

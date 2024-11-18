@@ -77,11 +77,6 @@ const OnboardingScreen: FC<FirstOnboardingScreenProps> = ({...props}) => {
                                 index: 0,
                                 routes: [{
                                     name: 'home-entry' as never,
-                                    state: {
-                                        routes: [{
-                                            name: 'plans'
-                                        }]
-                                    }
 
                                 }]
                             })

@@ -129,12 +129,13 @@ export function SubscriptionProvider({ children }: IDefaultProps) {
     }
 
     async function checkForSubscription() {
-        let res = await Purchases.getCustomerInfo()
-        if (res?.entitlements?.active) {
-            await clearSubscription()
-        } else {
-            subscribe(res)
-        }
+        // let res = await Purchases.getCustomerInfo()
+        // console.log('res', res)
+        // if (res?.entitlements?.active) {
+        //     await clearSubscription()
+        // } else {
+        //     subscribe(res)
+        // }
 
     }
 
@@ -149,7 +150,7 @@ export function SubscriptionProvider({ children }: IDefaultProps) {
         const databaseInstance = await getDatabaseInstance();
 
         if (Platform.OS === 'android') {
-            Plan = extra?.subscriber?.subscriptions?.["com.aichat"]
+            Plan = extra?.subscriber?.subscriptions?.["com.aichatbot"]
             groupid = Plan.product_plan_identifier
         } else {
             if (extra?.subscriber?.subscriptions?.[extra?.selectedPackage]) {

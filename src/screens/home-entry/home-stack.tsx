@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { IDefaultProps } from "../../utils/types.ts";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -13,7 +13,6 @@ import SettingScreenHeader from "../settings/component/settings-screen-header.ts
 import usePlanOfferCronJob from "../../hooks/usePlanOfferCronJob.ts";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SubscriptionScreenHeader from "../settings/component/subscriptionHeader.tsx";
 
 
 const Tab = createBottomTabNavigator();
@@ -23,22 +22,6 @@ interface HomeEntryProps extends IDefaultProps {
 
 }
 
-const SubscriptionStack: FC<HomeEntryProps> = ({ ...props }) => {
-    return (
-        <View style={{ flex: 1 }}>
-            <Stack.Navigator
-            >
-                <Stack.Screen
-                    name={'Subscription'}
-                    component={Subscription}
-                    options={{
-                        headerShown: false
-                    }}
-                />
-            </Stack.Navigator>
-        </View>
-    )
-}
 
 const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
     usePlanOfferCronJob();
@@ -75,10 +58,9 @@ const HomeEntry: FC<HomeEntryProps> = ({ ...props }) => {
                 component={Home} />
             <Tab.Screen name="history" component={HistoryScreen} />
 
-            <Tab.Screen name="plans" component={SubscriptionStack}
+            <Tab.Screen name="plans" component={Subscription}
                 options={{
-                    headerShown: true,
-                    header: () => <SubscriptionScreenHeader />
+                    headerShown: false,
                 }}
             />
             <Tab.Screen name="settings"

@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import {useEffect, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
 import {
   FIRST_TIME_OFFER_FLAG,
   LAST_TIME_OFFER_OPENED,
@@ -43,14 +43,26 @@ export default function usePlanOfferCronJob() {
     }
   }
 
-  function focusListener() {}
-
   useEffect(() => {
     checkIfUserFirstTimeLoggedIn();
     checkIfLastTimePopUpHasBeen24Hours();
   }, []);
 
   useEffect(() => {
+
+    async function getAsyncValue() {
+      const isFirstTime = await AsyncStorage.getItem('isFirstTime')
+      return isFirstTime
+    }
+
+    getAsyncValue().then(async (res) => {
+      if (!res) {
+        await AsyncStorage.setItem('isFirstTime', JSON.stringify(true))
+        navigation.navigate('subsPlans' as never);
+        return
+      }
+    })
+
     let res = subscription.productIdentifier?.includes('discounted');
     if (!actions.isLoaded) return;
     if (!isFirstTime && lastTimePopUpHasBeen24Hours && !res) {

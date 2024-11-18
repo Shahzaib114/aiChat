@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     width: '95%',
     alignSelf: 'center',
     backgroundColor: "white",
-    padding: responsiveFontSize(2.5),
+    padding: responsiveFontSize(2),
     borderRadius: responsiveFontSize(1.5),
     borderWidth: 1,
     borderColor: "black",

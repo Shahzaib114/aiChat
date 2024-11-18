@@ -43,7 +43,7 @@ const SettingScreenHeader: FC<ChatScreenHeaderProps> = ({ ...props }) => {
     )
 }
 
-const styles: StyleSheet.NamedStyles<any> = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         paddingVertical: 26,
         paddingHorizontal: 20,

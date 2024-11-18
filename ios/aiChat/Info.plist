@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>LSMinimumSystemVersion</key>
+    <string>13.0.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>Eva AI</string>
 	<key>CFBundleExecutable</key>
