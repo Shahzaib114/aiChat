@@ -12,15 +12,15 @@ import { SvgXml } from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 import { BlueCheckSvg } from '../../../assets/svgs/blueCheckSvg.js';
 
-const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircleActive, purchased, handleCardPress, handleCirclePress }: any) => {
-    const getAndroidAndIosTitles = (txt:any) => {
+const CustomCard = ({ description, oldSubs, androidTitle, text, smallDesc, save, isCircleActive, purchased, handleCardPress, handleCirclePress }: any) => {
+    const getAndroidAndIosTitles = (txt: any) => {
         if (txt?.toLowerCase().includes('week')) {
             return 'WEEKLY \nPLAN'
         } else if (txt?.toLowerCase().includes('month')) {
             return 'Monthly \nPLAN'
         } else if (txt?.toLowerCase().includes('year')) {
             return 'YEARLY \nPLAN'
-        }else {
+        } else {
             return;
         }
     }
@@ -78,21 +78,15 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
                         {save?.toLowerCase().includes('week') ?
                             Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$14.99'
                             :
-                            save?.toLowerCase().includes('month') ?
-                                Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$9.19'
-                                :
-                                save?.toLowerCase().includes('year') &&
-                                    Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$34.99'
+                            save?.toLowerCase().includes('year') &&
+                                Platform.OS === 'android' ? androidTitle?.formattedPrice + androidTitle?.priceCurrencyCode : 'US$34.99'
                         }
                         <Text style={[styles.smallDescription, {}]}>
                             {save?.toLowerCase().includes('week') ?
                                 '\n/weekly'
                                 :
-                                save?.toLowerCase().includes('month') ?
-                                    '\n/monthly'
-                                    :
-                                    save?.toLowerCase().includes('year') &&
-                                    '  /yearly'
+                                save?.toLowerCase().includes('year') &&
+                                '  /yearly'
                             }
                         </Text>
                     </Text>
@@ -104,7 +98,7 @@ const CustomCard = ({ description, androidTitle, text, smallDesc, save, isCircle
                                 textDecorationLine: 'line-through',
                                 color: themeColors.osloGray
                             }]}>
-                                US$139.49
+                                {Platform.OS === 'ios' ? oldSubs?.localizedPrice : oldSubs?.formattedPrice}
                             </Text>
                         </View>
                     }

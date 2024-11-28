@@ -41,26 +41,28 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const [selected, setSelected] = useState<any>()
     const [isGetPackage, setIsGetPackage] = useState(false)
     const [description, setDescription] = useState('')
-    const iosProductIds = ["weekly.subscription", "monthly.subscription", "yearly.subscription"]; // Replace with your actual product IDs
+    const iosProductIds = ["weekly.subscription", "yearly.subscription", "yearly.highPrice.subscription"]; // Replace with your actual product IDs
     const androidProductIds = ["com.aichatbot"]; // Replace with your actual product IDs
     const [selectedProdToken, setSelectedProdToken] = useState();
     const selectedProdId = useRef(null);  //
     const [subsDetails, setsubsDetails] = useState('')
-    const [isFirstTime, setIsFirstTime] = useState<boolean>(false);
-    const [isSelectedPurchased, setIsSelectedPurchased] = useState(false)
+    const [oldPriceSubs, setOldPriceSubs] = useState()
 
-  
+
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const products: any = await getSubscriptions({ skus: Platform.OS === 'ios' ? iosProductIds : androidProductIds });
                 if (Platform.OS === 'ios') {
-                    const sortedSubscriptions = products.sort((a: any, b: any) => {
+                    const oldProduct = products?.filter((item) => { return item?.productId === "yearly.highPrice.subscription" })
+                    setOldPriceSubs(oldProduct[0])
+                    
+                    const splitProducts = products?.filter((item) => { return item?.productId !== "yearly.highPrice.subscription" })
+                    const sortedSubscriptions = splitProducts.sort((a: any, b: any) => {
                         const order: any = {
                             "YEAR": 1,
-                            "MONTH": 2,
-                            "DAY": 3
+                            "DAY": 2
                         };
 
                         return order[a.subscriptionPeriodUnitIOS] - order[b.subscriptionPeriodUnitIOS];
@@ -71,6 +73,10 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                     let filteredArray = [];
                     const includedBasePlans = ["com-weekly-subscription"];
                     const includedOfferId = ["com-yearlyfreetrial"];
+                    const oldSubscription = products[0].subscriptionOfferDetails.find(
+                        (detail) => { return detail?.basePlanId === "com-highprice-subscription" }
+                    );
+                    setOldPriceSubs(oldSubscription?.pricingPhases?.pricingPhaseList[0])
                     // Filter by basePlanId and offerId
                     const filteredDetails = products[0].subscriptionOfferDetails.filter(
                         (detail) => includedBasePlans.includes(detail.basePlanId)
@@ -436,6 +442,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                                     save={productId}
                                                     smallDesc={Platform.OS === 'android' ? `/${pricesAndPeriods[index]?.period}` : `/${pricesAndPeriods?.period}`}
                                                     isCircleActive={selected === productId}
+                                                    oldSubs={oldPriceSubs}
                                                     purchased={subscriptionHook.status === "active" && subscriptionHook?.productIdentifier === productId}
                                                     handleCardPress={() => {
                                                         let selectedProd = Platform.OS === 'android' ? item?.basePlanId : item?.productId

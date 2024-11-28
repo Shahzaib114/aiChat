@@ -3,7 +3,8 @@ import {
     Text,
     View, Platform,
     Alert,
-    Modal
+    Modal,
+    ActivityIndicator
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import FONTS from "../../theme/FONTS";
@@ -262,19 +263,22 @@ const Offer = () => {
                     <Text style={styles.discountNumberStyle} > -50%</Text>
                 </View>
 
-                <LinearGradient colors={['#667EFF', '#3558D5']}
-                    style={styles.subscribeButton}
-                >
-                    <TouchableOpacity
-                        onPress={async () => {
-                            console.log('[reeesed')
-                            setSubsModalClose(true)
-                        }}
+                {isLoader ?
+                    <ActivityIndicator size={'large'} color={'white'} style={{ marginTop: responsiveScreenHeight(2) }} />
+                    :
+                    <LinearGradient colors={['#667EFF', '#3558D5']}
+                        style={styles.subscribeButton}
                     >
-                        <Text style={styles.subscribeText}>TRY 3 DAYS AND SUBSCRIBE</Text>
-                    </TouchableOpacity>
-                </LinearGradient>
-
+                        <TouchableOpacity
+                            onPress={async () => {
+                                console.log('[reeesed')
+                                setSubsModalClose(true)
+                            }}
+                        >
+                            <Text style={styles.subscribeText}>TRY 3 DAYS AND SUBSCRIBE</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                }
                 <Text style={styles.footerText}>*$17.99 billed annually. Cancel anytime.</Text>
             </View>
         </SafeAreaView >
@@ -292,7 +296,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)', 
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
@@ -325,7 +329,7 @@ const styles = StyleSheet.create({
         fontFamily: FONTS.Manrope_Bold,
         fontSize: responsiveFontSize(2),
         textAlign: 'center',
-        letterSpacing:0.3
+        letterSpacing: 0.3
     },
     discountContainer: {
         position: 'absolute',
