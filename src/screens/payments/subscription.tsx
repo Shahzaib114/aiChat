@@ -41,7 +41,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
     const [selected, setSelected] = useState<any>()
     const [isGetPackage, setIsGetPackage] = useState(false)
     const [description, setDescription] = useState('')
-    const iosProductIds = ["weekly.subscription", "yearly.subscription", "yearly.highPrice.subscription"]; // Replace with your actual product IDs
+    const iosProductIds = ["weekly.subscription", "yearly.subscription"]; // Replace with your actual product IDs
     const androidProductIds = ["com.aichatbot"]; // Replace with your actual product IDs
     const [selectedProdToken, setSelectedProdToken] = useState();
     const selectedProdId = useRef(null);  //
@@ -55,11 +55,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
             try {
                 const products: any = await getSubscriptions({ skus: Platform.OS === 'ios' ? iosProductIds : androidProductIds });
                 if (Platform.OS === 'ios') {
-                    const oldProduct = products?.filter((item) => { return item?.productId === "yearly.highPrice.subscription" })
-                    setOldPriceSubs(oldProduct[0])
-                    
-                    const splitProducts = products?.filter((item) => { return item?.productId !== "yearly.highPrice.subscription" })
-                    const sortedSubscriptions = splitProducts.sort((a: any, b: any) => {
+                    const sortedSubscriptions = products.sort((a: any, b: any) => {
                         const order: any = {
                             "YEAR": 1,
                             "DAY": 2
@@ -308,6 +304,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
         return (
             <SafeAreaView style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
                 <ActivityIndicator color={themeColors.black} size={'large'} />
+                <Text style={[styles.contentText,{alignSelf:'center', textAlign:'center'}]}>{`Loading Available Subscriptions!\n Please wait!`}</Text>
             </SafeAreaView>
         )
     } else {
@@ -377,7 +374,7 @@ const Subscription: FC<HomeProps> = ({ ...props }) => {
                                 </View>
                             </View>
                         </Modal>
-                        <View style={{ position: 'absolute', top: 0, width: responsiveScreenWidth(100), height: responsiveScreenHeight(68), backgroundColor: "red" }}>
+                        <View style={{ position: 'absolute', top: 0, width: responsiveScreenWidth(100), height: responsiveScreenHeight(68) }}>
                             <Image
                                 source={require('../../../assets/images/AIChat.png')}
                                 style={styles.imageBackground}
@@ -623,18 +620,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
     },
     container: {
-        backgroundColor: 'red',
         overflow: 'hidden'
     },
     imageBackground: {
         width: '100%',
         height: '100%',
-        backgroundColor: 'red'
     },
     toptouchable: {
         flexDirection: 'row',
         margin: responsiveScreenWidth(3),
-        // marginTop: Platform.OS === 'ios' ? responsiveScreenHeight(3) : 0,
         width: responsiveScreenWidth(5)
 
     },

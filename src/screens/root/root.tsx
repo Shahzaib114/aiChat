@@ -8,7 +8,7 @@ import themeColors from "../../theme/colors.ts";
 import Offer from "../common/Offer.tsx";
 import ChatScreen from "../history/chat/chat.tsx";
 import { useEffect } from "react";
-import { getAvailablePurchases, initConnection } from "react-native-iap";
+import { clearProductsIOS, clearTransactionIOS, getAvailablePurchases, initConnection } from "react-native-iap";
 import Subscription from "../payments/subscription.tsx";
 import { getDatabaseInstance } from "../../utils/firebaseInstance.tsx";
 import useSession from "../../hooks/useSession.ts";
@@ -108,7 +108,13 @@ export default function Root({ onboarded }: {
                 );
 
                 if (activeSubscriptions.length > 0) {
-                    console.log('Active subscription found:', activeSubscriptions);
+                    if (Platform.OS === 'ios') {
+                        if (availablePurchases.length > 0) {
+                            await clearTransactionIOS();
+                            await clearProductsIOS();
+                        }
+                    }
+                    console.log('Active subscription found:', availablePurchases);
                     // Use activeSubscriptions[0].productId or handle other subscription details here
                 } else {
                     console.log('No active subscriptions found');
@@ -140,7 +146,7 @@ export default function Root({ onboarded }: {
 
             }
         } catch (error) {
-            console.error('Error checking for active subscriptions:', error);
+            console.log('Error checking for active subscriptions:', error);
         }
     };
 

@@ -37,7 +37,6 @@ const CustomCard = ({ description, oldSubs, androidTitle, text, smallDesc, save,
                 height: responsiveScreenHeight(39),
                 borderWidth: isCircleActive ? 5 : 0,
                 borderColor: isCircleActive ? '#619AFC' : undefined,
-
             }]}
         >
 
@@ -98,7 +97,7 @@ const CustomCard = ({ description, oldSubs, androidTitle, text, smallDesc, save,
                                 textDecorationLine: 'line-through',
                                 color: themeColors.osloGray
                             }]}>
-                                {Platform.OS === 'ios' ? oldSubs?.localizedPrice : oldSubs?.formattedPrice}
+                                {Platform.OS === 'ios' ? '$139.00' : oldSubs?.formattedPrice}
                             </Text>
                         </View>
                     }
@@ -153,6 +152,7 @@ const CustomCard = ({ description, oldSubs, androidTitle, text, smallDesc, save,
                         Updated Prompts 24/7
                     </Text>
                 </View>
+                
                 <View style={{
                     flexDirection: 'row',
                 }}>
@@ -175,7 +175,7 @@ const CustomCard = ({ description, oldSubs, androidTitle, text, smallDesc, save,
                     <Pressable
                         style={{ alignSelf: 'center' }}
                         onPress={() => {
-                            Linking.openURL("https://www.akromaxtech.com/terms-conditions")
+                            Linking.openURL("https://www.akromaxtech.com/privacy-policy")
                         }}
                     >
                         <Text style={[styles.termsTxt, { color: themeColors.malibu }]}>Privacy Policy</Text>
